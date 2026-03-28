@@ -139,7 +139,7 @@ const Slide = ({media, title, subtitle, cta}:slideType ) =>{
       </div>
 
       <div className="absolute inset-0 z-0 select-none">
-    
+
         <div className="absolute inset-0 z-10 bg-linear-to-t from-black via-transparent via-70% to-transparent opacity-90"></div>
 
         {/* Media Component */}

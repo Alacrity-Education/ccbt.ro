@@ -36,9 +36,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    staticGenerationRetryCount: 1,
+    staticGenerationRetryCount: 3,
     staticGenerationMaxConcurrency: 2,
-    staticGenerationMinPagesPerWorker: 25
+
   },
 }
 
