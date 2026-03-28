@@ -6,6 +6,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { link } from '@/fields/link'
 
 import { linkGroup } from '@/fields/linkGroup'
 
@@ -106,6 +107,26 @@ export const hero: Field = {
           type: 'text',
 
         },
+        {
+          name: 'cta',
+          type: 'group',
+          label: 'Call To Action',
+          fields: [
+            {
+              name:"enable",
+              type:"checkbox",
+              defaultValue: false,
+              label:"Enable CTA Button",
+            },
+            link({
+              overrides:{
+                  admin:{
+                    condition: (_, { enable } = {}) => enable === true,
+                  }
+              }
+            }),
+          ]
+        }
       ]
     },
     {

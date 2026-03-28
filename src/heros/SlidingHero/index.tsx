@@ -4,6 +4,16 @@ import React, {Suspense, useEffect, useState} from "react";
 import {Media as MediaType} from "@/payload-types"
 import type { Page } from "@/payload-types";
 import { Media } from "@/components/Media";
+import {CMSLink} from "@/components/Link";
+
+type pageType = Page["hero"]
+
+
+type NonNullable<T> = Exclude<T, null | undefined>;  // Remove null and undefined from T
+
+type Unpacked<T> = T extends (infer U)[] ? U : T;
+type slidesType =  pageType['slides']
+type slideType = NonNullable<Unpacked<slidesType>>
 
 export const SlidingHero: React.FC<Page["hero"]> = ({ slides, timeout }) => {
   const [visibleSlide, setVisibleSlide] = useState<number>(0);
@@ -18,8 +28,6 @@ export const SlidingHero: React.FC<Page["hero"]> = ({ slides, timeout }) => {
       });
     }, timeout || 4000);
 
-    // React will run this cleanup function (clearing the interval)
-    // every time visibleSlide changes, effectively resetting the timer!
     return () => clearInterval(intervalId);
   }, [sliderLength, timeout, visibleSlide]);
 
@@ -106,7 +114,7 @@ export const SlidingHero: React.FC<Page["hero"]> = ({ slides, timeout }) => {
 };
 
 
-const Slide = ({media, title, subtitle}:{media?: MediaType | null | number, title?:string | null, subtitle?:string | null} ) =>{
+const Slide = ({media, title, subtitle, cta}:slideType ) =>{
   return (
     <div
       className={"relative flex h-screen items-center justify-center overflow-hidden text-white"}
@@ -124,12 +132,14 @@ const Slide = ({media, title, subtitle}:{media?: MediaType | null | number, titl
               {subtitle}
             </p>
           )}
+          {cta&& cta.enable && (
+            <CMSLink className={"mb-14 sm:mb-14 sm:btn-lg"} {...cta.link} />
+          )}
         </div>
       </div>
 
       <div className="absolute inset-0 z-0 select-none">
-        {/* Dark Overlay */}
-        {/* Changed to absolute inset-0 to ensure it actually covers the image */}
+    
         <div className="absolute inset-0 z-10 bg-linear-to-t from-black via-transparent via-70% to-transparent opacity-90"></div>
 
         {/* Media Component */}

@@ -58,7 +58,7 @@ export const LogoCarousel: React.FC<LogoCarouselProps> = ({ title, logos, speed 
 };
 
 const LogoItem = ({ item }: { item: { image: MediaType | null; alt: string } }) => (
-  <div className="relative h-38 w-38 md:h-64 md:w-64 shrink-0">
+  <div className="relative h-38 w-38 md:h-38 md:w-38 shrink-0">
     <Media
       resource={item.image as MediaType}
       imgClassName="object-contain h-full w-full"
