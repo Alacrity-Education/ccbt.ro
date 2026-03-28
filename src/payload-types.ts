@@ -371,7 +371,8 @@ export interface Post {
   id: number;
   title: string;
   subtitle?: string | null;
-  heroImage?: (number | null) | Media;
+  heroImageMD?: (number | null) | Media;
+  heroImageSM?: (number | null) | Media;
   content: {
     root: {
       type: string;
@@ -1564,7 +1565,8 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
-  heroImage?: T;
+  heroImageMD?: T;
+  heroImageSM?: T;
   content?: T;
   relatedPosts?: T;
   categories?: T;

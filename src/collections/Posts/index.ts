@@ -82,7 +82,14 @@ export const Posts: CollectionConfig<'posts'> = {
         {
           fields: [
             {
-              name: 'heroImage',
+              name: 'heroImageMD',
+              label: 'Hero Image (Desktop)',
+              type: 'upload',
+              relationTo: 'media',
+            },
+            {
+              name: 'heroImageSM',
+              label: 'Hero Image (Mobile)',
               type: 'upload',
               relationTo: 'media',
             },

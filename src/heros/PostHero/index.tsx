@@ -5,19 +5,26 @@ import type { Post } from "@/payload-types";
 
 import { Media } from "@/components/Media";
 import { formatAuthors } from "@/utilities/formatAuthors";
+import {cn} from "@/utilities/ui";
 
 export const PostHero: React.FC<{
   post: Post;
 }> = ({ post }) => {
-  const { categories, heroImage, populatedAuthors, publishedAt, title, subtitle } = post;
+  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle } = post;
 
   const hasAuthors =
     populatedAuthors &&
     populatedAuthors.length > 0 &&
     formatAuthors(populatedAuthors) !== "";
 
+  const hasMD = heroImageMD && typeof heroImageMD !== undefined;
+  const hasSM = heroImageSM && typeof heroImageSM !== undefined;
+
+  const aspectClass = "aspect-[210/297] sm:aspect-[3/2]";
+
+
   return (
-    <div className="relative -mt-[9rem] min-h-[80vh] flex items-end">
+    <div className={cn(aspectClass,"relative w-full -mt-[9rem] min-h-max flex items-end")}>
       <div className="relative z-10 container pb-8 z-10 text-white lg:grid lg:grid-cols-[1fr_48rem_1fr]">
         <div className="col-span-1 col-start-1 md:col-span-2 md:col-start-2">
           <div className="mb-6 text-sm uppercase">
@@ -68,17 +75,33 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className="min-h-[80vh] w-full select-none absolute top-0 left-0 inset-0">
-        {heroImage && typeof heroImage !== "string" && (
+      <div className={cn(aspectClass," h-full w-full select-none absolute top-0 left-0 inset-0")}>
+
+        {/* MD Image: Shows on md+ screens if both exist, otherwise shows everywhere */}
+        {hasMD && (
           <Media
             fill
             priority
-            className={"h-full w-full"}
+            className={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
             imgClassName="z-0 object-cover"
-            pictureClassName={"h-full w-full"}
-            resource={heroImage}
+            pictureClassName={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
+            resource={heroImageMD}
           />
         )}
+
+        {/* SM Image: Shows on mobile if both exist, otherwise shows everywhere */}
+        {hasSM && (
+          <Media
+            fill
+            priority
+            className={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
+            imgClassName="z-0 object-cover"
+            pictureClassName={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
+            resource={heroImageSM}
+          />
+        )}
+
+        {/* Gradient Overlay */}
         <div className="pointer-events-none absolute bottom-0 left-0 h-1/2 w-full bg-linear-to-t from-black to-transparent" />
       </div>
     </div>
