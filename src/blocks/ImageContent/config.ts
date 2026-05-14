@@ -1,110 +1,59 @@
 import type { Block } from "payload";
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import { link } from "@/fields/link";
-import { linkGroup } from "@/fields/linkGroup";
 
 export const ImageContentBlock: Block = {
   slug: "imageContent",
   interfaceName: "ImageContentBlock",
   labels: {
-    plural: "Image Content Blocks",
-    singular: "Image Content Block",
+    plural: "Feature Blocks",
+    singular: "Feature Block",
   },
   fields: [
     {
-      name: "title",
+      name: "sectionEyebrow",
       type: "text",
-      label: "Block Title",
-    },
-    // Optional grid controls for lg screens
-    {
-      name: "colsLg",
-      type: "number",
-      label: "Columns on Large Screens",
-      defaultValue: 2,
-      min: 1,
-      max: 4,
-      admin: { description: "Number of columns at lg breakpoint (1-4)" },
+      label: "Section eyebrow",
+      defaultValue: "Implică-te",
     },
     {
-      name: "rowsLg",
-      type: "number",
-      label: "Rows on Large Screens",
-      defaultValue: 2,
-      min: 1,
-
-      admin: { description: "Number of rows at lg breakpoint" },
+      name: "sectionTitle",
+      type: "text",
+      label: "Section heading",
     },
     {
-      name: "cells",
+      name: "items",
       type: "array",
-      label: "Cells",
+      label: "Feature cards",
       minRows: 1,
-      maxRows: 8,
-      labels: {
-        plural: "Cells",
-        singular: "Cell",
-      },
+      maxRows: 2,
       fields: [
-        {
-          name: "type",
-          type: "select",
-          label: "Cell Type",
-          defaultValue: "text",
-          options: [
-            { label: "Text", value: "text" },
-            { label: "Media", value: "media" },
-          ],
-          required: true,
-        },
-        {
-          name: "rowSpan",
-          type: "number",
-          label: "Row Span (md+)",
-          defaultValue: 1,
-          min: 1,
-
-          admin: { description: "How many rows this cell spans on md+ (1-2)" },
-        },
-        {
-          name: "richText",
-          type: "richText",
-          label: "Text",
-          admin: {
-            condition: (data, siblingData) => siblingData?.type === "text",
+        { name: "eyebrow", type: "text", label: "Eyebrow badge" },
+        { name: "title", type: "text", required: true },
+        { name: "body", type: "textarea" },
+        link({
+          appearances: false,
+          overrides: {
+            name: "ctaLink",
+            label: "CTA link",
+            required: false,
           },
-          editor: lexicalEditor({
-            features: ({ rootFeatures }) => {
-              return [
-                ...rootFeatures,
-                HeadingFeature({ enabledHeadingSizes: ["h2", "h3", "h4"] }),
-                FixedToolbarFeature(),
-                InlineToolbarFeature(),
-              ];
-            },
-          }),
-        },
-            linkGroup({
-              appearances: ["default", "secondary"],
-              overrides: {
-                name:"links",
-                maxRows: 2,
-                
-              },
-            }),
+        }),
         {
           name: "media",
           type: "upload",
           relationTo: "media",
-          label: "Media",
-          admin: {
-            condition: (data, siblingData) => siblingData?.type === "media",
-          },
+          required: false,
+          label: "Image",
+        },
+        {
+          name: "tone",
+          type: "select",
+          label: "Card tone",
+          defaultValue: "navy",
+          options: [
+            { label: "Navy (dark)", value: "navy" },
+            { label: "Cream (light)", value: "cream" },
+          ],
         },
       ],
     },

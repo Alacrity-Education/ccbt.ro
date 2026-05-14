@@ -20,7 +20,7 @@ export const PostHero: React.FC<{
   const hasMD = heroImageMD && typeof heroImageMD !== undefined;
   const hasSM = heroImageSM && typeof heroImageSM !== undefined;
 
-  const aspectClass = "aspect-[210/297] sm:aspect-[3/2]";
+  const aspectClass = "aspect-[4/3] sm:aspect-[3/2] sm:max-h-[36rem]";
 
 
   return (
@@ -75,7 +75,7 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className={cn(aspectClass," h-full w-full select-none absolute top-0 left-0 inset-0")}>
+      <div className="h-full w-full select-none absolute top-0 left-0 inset-0">
 
         {/* MD Image: Shows on md+ screens if both exist, otherwise shows everywhere */}
         {hasMD && (

@@ -193,7 +193,7 @@ export interface Page {
   id: number;
   title?: string | null;
   hero: {
-    type: 'none' | 'homeHero' | 'slidingHero';
+    type: 'none' | 'homeHero' | 'slidingHero' | 'highImpactHero';
     richText?: {
       root: {
         type: string;
@@ -214,6 +214,27 @@ export interface Page {
     timeout?: number | null;
     slides?: Slides;
     media?: (number | null) | Media;
+    eyebrow?: string | null;
+    body?: string | null;
+    ctaLink?: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      url?: string | null;
+      label?: string | null;
+      /**
+       * Choose how the link should be rendered.
+       */
+      appearance?: ('default' | 'secondary' | 'primary' | 'outline') | null;
+    };
   };
   layout?:
     | (
@@ -226,6 +247,9 @@ export interface Page {
         | LogoCarouselBlock
         | ImageContentBlock
         | StaticMapBlock
+        | AboutSectionBlock
+        | TeamTeaserBlock
+        | ChronologyBlock
       )[]
     | null;
   meta?: {
@@ -779,7 +803,9 @@ export interface ArchiveBlock {
     };
     [k: string]: unknown;
   } | null;
-  style?: ('long' | 'cards' | 'list') | null;
+  eventsOnly?: boolean | null;
+  sectionLabel?: string | null;
+  viewAllUrl?: string | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
   categories?: (number | Category)[] | null;
@@ -832,38 +858,13 @@ export interface FormBlock {
  * via the `definition` "CardBlock".
  */
 export interface CardBlock {
-  title?: string | null;
+  sectionTitle?: string | null;
+  sectionSubtitle?: string | null;
   cards?:
     | {
         title: string;
-        description?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        size: 'spanable' | 'vertical' | 'horizontal';
-        variant: 'primary' | 'secondary' | 'starry' | 'white';
-        /**
-         * 1 or 2 columns (on md and larger)
-         */
-        colSpan?: number | null;
-        /**
-         * 1 or 2 rows (on lg screens)
-         */
-        rowSpan?: number | null;
-        /**
-         * Enable to add a link to the card
-         */
+        description?: string | null;
+        icon?: ('cross' | 'diamond') | null;
         withLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -880,15 +881,6 @@ export interface CardBlock {
           url?: string | null;
           label?: string | null;
         };
-        backgroundStyle?: ('none' | 'image') | null;
-        /**
-         * Shown as an object-cover background when enabled
-         */
-        backgroundImage?: (number | null) | Media;
-        /**
-         * Controls the darkness overlay over the background image
-         */
-        backgroundOpacity?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -901,14 +893,12 @@ export interface CardBlock {
  * via the `definition` "LogoCarouselBlock".
  */
 export interface LogoCarouselBlock {
-  title?: string | null;
-  logos: {
-    image: number | Media;
-    alt?: string | null;
-    id?: string | null;
-  }[];
-  speed?: number | null;
-  gap?: number | null;
+  partners?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'logoCarousel';
@@ -918,62 +908,30 @@ export interface LogoCarouselBlock {
  * via the `definition` "ImageContentBlock".
  */
 export interface ImageContentBlock {
-  title?: string | null;
-  /**
-   * Number of columns at lg breakpoint (1-4)
-   */
-  colsLg?: number | null;
-  /**
-   * Number of rows at lg breakpoint
-   */
-  rowsLg?: number | null;
-  cells?:
+  sectionEyebrow?: string | null;
+  sectionTitle?: string | null;
+  items?:
     | {
-        type: 'text' | 'media';
-        /**
-         * How many rows this cell spans on md+ (1-2)
-         */
-        rowSpan?: number | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        links?:
-          | {
-              link?: {
-                type?: ('reference' | 'custom') | null;
-                newTab?: boolean | null;
-                reference?:
-                  | ({
-                      relationTo: 'pages';
-                      value: number | Page;
-                    } | null)
-                  | ({
-                      relationTo: 'posts';
-                      value: number | Post;
-                    } | null);
-                url?: string | null;
-                label?: string | null;
-                /**
-                 * Choose how the link should be rendered.
-                 */
-                appearance?: ('default' | 'secondary') | null;
-              };
-              id?: string | null;
-            }[]
-          | null;
+        eyebrow?: string | null;
+        title: string;
+        body?: string | null;
+        ctaLink?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+        };
         media?: (number | null) | Media;
+        tone?: ('navy' | 'cream') | null;
         id?: string | null;
       }[]
     | null;
@@ -1005,6 +963,107 @@ export interface StaticMapBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'staticMap';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutSectionBlock".
+ */
+export interface AboutSectionBlock {
+  heading?: string | null;
+  body?: string | null;
+  ctaLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
+  pillars?:
+    | {
+        title: string;
+        body?: string | null;
+        tone?: ('red' | 'ink') | null;
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamTeaserBlock".
+ */
+export interface TeamTeaserBlock {
+  heading?: string | null;
+  ctaLink?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'teamTeaser';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ChronologyBlock".
+ */
+export interface ChronologyBlock {
+  variant: 'history' | 'upcoming';
+  title?: string | null;
+  milestones?:
+    | {
+        year: string;
+        title: string;
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  steps?:
+    | {
+        tag: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  newsletterEnabled?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'chronology';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1294,6 +1353,18 @@ export interface PagesSelect<T extends boolean = true> {
         timeout?: T;
         slides?: T | SlidesSelect<T>;
         media?: T;
+        eyebrow?: T;
+        body?: T;
+        ctaLink?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
       };
   layout?:
     | T
@@ -1307,6 +1378,9 @@ export interface PagesSelect<T extends boolean = true> {
         logoCarousel?: T | LogoCarouselBlockSelect<T>;
         imageContent?: T | ImageContentBlockSelect<T>;
         staticMap?: T | StaticMapBlockSelect<T>;
+        aboutSection?: T | AboutSectionBlockSelect<T>;
+        teamTeaser?: T | TeamTeaserBlockSelect<T>;
+        chronology?: T | ChronologyBlockSelect<T>;
       };
   meta?:
     | T
@@ -1420,7 +1494,9 @@ export interface MediaBlockSelect<T extends boolean = true> {
 export interface ArchiveBlockSelect<T extends boolean = true> {
   title?: T;
   introContent?: T;
-  style?: T;
+  eventsOnly?: T;
+  sectionLabel?: T;
+  viewAllUrl?: T;
   populateBy?: T;
   relationTo?: T;
   categories?: T;
@@ -1454,16 +1530,14 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CardBlock_select".
  */
 export interface CardBlockSelect<T extends boolean = true> {
-  title?: T;
+  sectionTitle?: T;
+  sectionSubtitle?: T;
   cards?:
     | T
     | {
         title?: T;
         description?: T;
-        size?: T;
-        variant?: T;
-        colSpan?: T;
-        rowSpan?: T;
+        icon?: T;
         withLink?: T;
         link?:
           | T
@@ -1474,9 +1548,6 @@ export interface CardBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
-        backgroundStyle?: T;
-        backgroundImage?: T;
-        backgroundOpacity?: T;
         id?: T;
       };
   id?: T;
@@ -1487,16 +1558,12 @@ export interface CardBlockSelect<T extends boolean = true> {
  * via the `definition` "LogoCarouselBlock_select".
  */
 export interface LogoCarouselBlockSelect<T extends boolean = true> {
-  title?: T;
-  logos?:
+  partners?:
     | T
     | {
-        image?: T;
-        alt?: T;
+        name?: T;
         id?: T;
       };
-  speed?: T;
-  gap?: T;
   id?: T;
   blockName?: T;
 }
@@ -1505,31 +1572,25 @@ export interface LogoCarouselBlockSelect<T extends boolean = true> {
  * via the `definition` "ImageContentBlock_select".
  */
 export interface ImageContentBlockSelect<T extends boolean = true> {
-  title?: T;
-  colsLg?: T;
-  rowsLg?: T;
-  cells?:
+  sectionEyebrow?: T;
+  sectionTitle?: T;
+  items?:
     | T
     | {
-        type?: T;
-        rowSpan?: T;
-        richText?: T;
-        links?:
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        ctaLink?:
           | T
           | {
-              link?:
-                | T
-                | {
-                    type?: T;
-                    newTab?: T;
-                    reference?: T;
-                    url?: T;
-                    label?: T;
-                    appearance?: T;
-                  };
-              id?: T;
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
             };
         media?: T;
+        tone?: T;
         id?: T;
       };
   id?: T;
@@ -1558,6 +1619,86 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
         subtitle?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutSectionBlock_select".
+ */
+export interface AboutSectionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  body?: T;
+  ctaLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  pillars?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        tone?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamTeaserBlock_select".
+ */
+export interface TeamTeaserBlockSelect<T extends boolean = true> {
+  heading?: T;
+  ctaLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ChronologyBlock_select".
+ */
+export interface ChronologyBlockSelect<T extends boolean = true> {
+  variant?: T;
+  title?: T;
+  milestones?:
+    | T
+    | {
+        year?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        tag?: T;
+        text?: T;
+        id?: T;
+      };
+  newsletterEnabled?: T;
   id?: T;
   blockName?: T;
 }

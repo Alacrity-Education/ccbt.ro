@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 24" role="img" aria-label="Folk band horizontal" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <pattern id="bandh" x="0" y="0" width="40" height="24" patternUnits="userSpaceOnUse">
+      <g fill="#C8A456">
+        <path d="M20 4 L28 12 L20 20 L12 12 Z"></path>
+        <rect x="0" y="10" width="4" height="4" transform="rotate(45 2 12)"></rect>
+        <rect x="36" y="10" width="4" height="4" transform="rotate(45 38 12)"></rect>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="320" height="24" fill="url(#bandh)"></rect>
+</svg>

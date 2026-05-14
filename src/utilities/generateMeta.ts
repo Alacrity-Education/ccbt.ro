@@ -27,8 +27,8 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Memorialul Ipotești - Centrul Național de Studii Mihai Eminescu'
-    : 'Memorialul Ipotești - Centrul Național de Studii Mihai Eminescu'
+    ? doc?.meta?.title + ' | Centrul Cultural Botoșani'
+    : 'Centrul Cultural Botoșani'
 
   return {
     description: doc?.meta?.description,

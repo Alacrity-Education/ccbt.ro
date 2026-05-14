@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Values icon">
+  <g fill="#C8A456">
+    <path d="M32 6 L46 20 L32 34 L18 20 Z"></path>
+    <path d="M32 16 L40 24 L32 32 L24 24 Z" fill="#F5EDE0"></path>
+    <path d="M16 38 L24 46 L16 54 L8 46 Z"></path>
+    <path d="M48 38 L56 46 L48 54 L40 46 Z"></path>
+    <path d="M32 40 L40 48 L32 56 L24 48 Z"></path>
+  </g>
+</svg>

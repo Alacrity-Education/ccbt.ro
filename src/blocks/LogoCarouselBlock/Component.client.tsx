@@ -1,68 +1,183 @@
 "use client";
 import React from "react";
-import type { LogoCarouselBlock as LogoCarouselProps, Media as MediaType } from "@/payload-types";
-import { Media } from "@/components/Media";
+import { useViewport } from "@/hooks/useViewport";
+import { Diamond } from "@/components/Motif";
+import type { LogoCarouselBlock as Props } from "@/payload-types";
 
-export const LogoCarousel: React.FC<LogoCarouselProps> = ({ title, logos, speed = 30, gap = 24 }) => {
-  const items = (logos || [])
-    .map((l) => ({
-      image: typeof l?.image === "object" ? (l.image as MediaType) : null,
-      alt: l?.alt ?? "",
-    }))
-    .filter((i) => i.image);
-
-  if (items.length === 0) return null;
-
-  // Ensure we have enough items to fill the screen width to avoid visual gaps
-  // If the list is short, we repeat it internally before creating the strips
-  let loopItems = items;
-  if (items.length < 6) {
-    loopItems = [...items, ...items, ...items, ...items];
-  }
-
+function Crest({ name }: { name: string }) {
   return (
-    <div className="w-full h-max ">
-      {title && (
-        <h2 className="text-primary  text-center text-xl font-semibold md:text-3xl">{title}</h2>
-      )}
-      <section className="w-full py-10 h-max overflow-hidden">
+    <div
+      style={{
+        fontSize: 9.5,
+        fontWeight: 600,
+        letterSpacing: "0.08em",
+        color: "var(--ink-soft)",
+        textAlign: "center",
+        lineHeight: 1.35,
+        whiteSpace: "pre-line",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        opacity: 0.8,
+        flexShrink: 0,
+      }}
+    >
+      <span
+        style={{
+          width: 32,
+          height: 32,
+          border: "1.5px solid var(--ink-soft)",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 1,
+        }}
+      >
+        <Diamond size={6} color="var(--ink-soft)" />
+      </span>
+      <span>{name}</span>
+    </div>
+  );
+}
+
+const DEFAULT_PARTNERS = [
+  "CONSILIUL JUDEȚEAN\nBOTOȘANI",
+  "PRIMĂRIA\nMUNICIPIULUI BOTOȘANI",
+  'TEATRUL\n„MIHAI EMINESCU”\nBOTOȘANI',
+  "MUZEUL JUDEȚEAN\nBOTOȘANI",
+  'UNIVERSITATEA\n„Stefan cel Mare”\nSUCEAVA',
+  "TVR\nIAȘI",
+  "RADIO ROMÂNIA\nIAȘI",
+];
+
+export const LogoCarousel: React.FC<Props> = (props) => {
+  const { partners: partnerItems } = props as any;
+  const vp = useViewport();
+  const m = vp.isMobile;
+  const t = vp.isTablet;
+
+  const partnerNames: string[] =
+    partnerItems?.length
+      ? partnerItems.map((p: any) => p.name || "")
+      : DEFAULT_PARTNERS;
+
+  if (m) {
+    return (
+      <section
+        style={{
+          background: "var(--cream)",
+          padding: "28px 0 24px",
+          borderTop: "1px solid var(--rule)",
+          overflow: "hidden",
+        }}
+      >
+        <style>{`
+          @keyframes partners-marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+          }
+          .partners-track {
+            display: flex; gap: 36px; width: max-content;
+            animation: partners-marquee 28s linear infinite;
+          }
+          .partners-mask {
+            position: relative;
+            mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+          }
+        `}</style>
         <div
-          className="flex w-full select-none overflow-hidden"
           style={{
-            // Tailwind v4: Pass dynamic values as CSS variables
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            "--marquee-duration": `${speed}s`,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            "--marquee-gap": `${gap}px`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            marginBottom: 18,
           }}
         >
-          {/* Strip 1 */}
-          <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-[var(--marquee-gap)] pr-[var(--marquee-gap)]">
-            {loopItems.map((item, idx) => (
-              <LogoItem key={`a-${idx}`} item={item} />
-            ))}
-          </div>
-
-          {/* Strip 2 (Duplicate for seamless loop) */}
-          <div aria-hidden="true" className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-[var(--marquee-gap)] pr-[var(--marquee-gap)]">
-            {loopItems.map((item, idx) => (
-              <LogoItem key={`b-${idx}`} item={item} />
-            ))}
+          <Diamond color="var(--red)" />
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", color: "var(--ink)" }}>
+            PARTENERI
+          </span>
+        </div>
+        <div className="partners-mask">
+          <div className="partners-track">
+            {partnerNames.map((p, i) => <Crest key={`a-${i}`} name={p} />)}
+            {partnerNames.map((p, i) => <Crest key={`b-${i}`} name={p} />)}
           </div>
         </div>
       </section>
-    </div>
+    );
+  }
+
+  return (
+    <section style={{ background: "var(--cream)", padding: "28px 0", borderTop: "1px solid var(--rule)" }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: t ? "0 40px" : "0 64px",
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+        }}
+      >
+        <button
+          aria-label="prev"
+          style={{
+            background: "none",
+            border: "none",
+            color: "var(--ink-soft)",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            paddingRight: 14,
+            borderRight: "1px solid var(--rule)",
+            flexShrink: 0,
+          }}
+        >
+          <Diamond color="var(--red)" />
+          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", color: "var(--ink)" }}>PARTENERI</span>
+        </div>
+
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            gap: 14,
+            justifyContent: "space-between",
+            overflow: "hidden",
+          }}
+        >
+          {partnerNames.map((p, i) => <Crest key={i} name={p} />)}
+        </div>
+
+        <button
+          aria-label="next"
+          style={{
+            background: "none",
+            border: "none",
+            color: "var(--ink-soft)",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </button>
+      </div>
+    </section>
   );
 };
-
-const LogoItem = ({ item }: { item: { image: MediaType | null; alt: string } }) => (
-  <div className="relative h-38 w-38 md:h-38 md:w-38 shrink-0">
-    <Media
-      resource={item.image as MediaType}
-      imgClassName="object-contain h-full w-full"
-      fill
-    />
-  </div>
-);

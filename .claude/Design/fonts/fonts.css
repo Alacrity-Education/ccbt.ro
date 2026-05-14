@@ -1,0 +1,41 @@
+/* Brand fonts
+   ----------------------------------------------------------------------
+   Display: Castoro (serif)   — local .ttf files
+   Body:    Inter   (variable)— local variable .ttf files
+   ---------------------------------------------------------------------- */
+
+/* ── Castoro (display) ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Castoro";
+  src: url("./Castoro-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Castoro";
+  src: url("./Castoro-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── Inter (body) — variable ───────────────────────────────────────────── */
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter-VariableFont_opsz_wght.ttf") format("truetype-variations"),
+       url("./Inter-VariableFont_opsz_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-stretch: 25% 151%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype-variations"),
+       url("./Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-stretch: 25% 151%;
+  font-style: italic;
+  font-display: swap;
+}

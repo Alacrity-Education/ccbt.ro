@@ -20,10 +20,13 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import {CardBlock} from "@/blocks/CardBlock/config";
-import {LogoCarouselBlock} from "@/blocks/LogoCarouselBlock/config";
+import { CardBlock } from "@/blocks/CardBlock/config";
+import { LogoCarouselBlock } from "@/blocks/LogoCarouselBlock/config";
 import { ImageContentBlock } from "@/blocks/ImageContent/config";
 import { StaticMap } from "@/blocks/StaticMap/config";
+import { AboutSectionBlock } from "@/blocks/AboutSection/config";
+import { TeamTeaserBlock } from "@/blocks/TeamTeaser/config";
+import { ChronologyBlock } from "@/blocks/ChronologyBlock/config";
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -76,7 +79,20 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, LogoCarouselBlock, ImageContentBlock, StaticMap ],
+              blocks: [
+              CallToAction,
+              Content,
+              MediaBlock,
+              Archive,
+              FormBlock,
+              CardBlock,
+              LogoCarouselBlock,
+              ImageContentBlock,
+              StaticMap,
+              AboutSectionBlock,
+              TeamTeaserBlock,
+              ChronologyBlock,
+            ],
               required: false,
               admin: {
                 initCollapsed: true,

@@ -4,52 +4,22 @@ export const LogoCarouselBlock: Block = {
   slug: "logoCarousel",
   interfaceName: "LogoCarouselBlock",
   labels: {
-    singular: "Logo Carousel",
-    plural: "Logo Carousels",
+    singular: "Partners Strip",
+    plural: "Partners Strips",
   },
   fields: [
     {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
-    {
-      name: "logos",
+      name: "partners",
       type: "array",
-      labels: {
-        singular: "Logo",
-        plural: "Logos",
-      },
-      required: true,
+      label: "Partner names",
       fields: [
         {
-          name: "image",
-          type: "upload",
-          relationTo: "media",
+          name: "name",
+          type: "text",
+          label: "Partner name (use \\n for line breaks)",
           required: true,
         },
-        {
-          name: "alt",
-          type: "text",
-          label: "Alt text",
-        },
       ],
-    },
-    {
-      name: "speed",
-      type: "number",
-      label: "Scroll speed (seconds per loop)",
-      defaultValue: 30,
-      min: 5,
-      max: 120,
-    },
-    {
-      name: "gap",
-      type: "number",
-      label: "Gap between logos (px)",
-      defaultValue: 24,
-      min: 0,
-      max: 200,
     },
   ],
 };

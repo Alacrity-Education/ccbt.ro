@@ -32,14 +32,28 @@ export const Archive: Block = {
       label: "Intro Content",
     },
     {
-      name: "style",
-      type: "select",
-      options: [
-        { label: "Long", value: "long" },
-        { label: "Cards (mobile)", value: "cards" },
-        { label: "List", value: "list" },
-      ],
-      defaultValue: "long",
+      name: "eventsOnly",
+      type: "checkbox",
+      label: "Show events only (upcoming future events)",
+      defaultValue: false,
+    },
+    {
+      name: "sectionLabel",
+      type: "text",
+      label: "Section label",
+      defaultValue: "Evenimente",
+      admin: {
+        condition: (_, siblingData) => siblingData.eventsOnly === true,
+      },
+    },
+    {
+      name: "viewAllUrl",
+      type: "text",
+      label: "\"View all\" link URL",
+      defaultValue: "/posts",
+      admin: {
+        condition: (_, siblingData) => siblingData.eventsOnly === true,
+      },
     },
     {
       name: "populateBy",
@@ -105,9 +119,6 @@ export const Archive: Block = {
       name: "longCardStyles",
       type: "group",
       label: "Card Styles",
-      admin: {
-        condition: (_, siblingData) => siblingData.style === "long" || siblingData.style === "cards",
-      },
       fields: [
         {
           name: "card1",

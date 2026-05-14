@@ -32,6 +32,10 @@ export const hero: Field = {
           label: 'Sliding Hero',
           value: 'slidingHero',
         },
+        {
+          label: 'High Impact Hero',
+          value: 'highImpactHero',
+        },
       ],
       required: true,
     },
@@ -133,11 +137,37 @@ export const hero: Field = {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['homeHero'].includes(type),
+        condition: (_, { type } = {}) => ['homeHero', 'highImpactHero'].includes(type),
       },
       relationTo: 'media',
       required: false,
     },
+    {
+      name: 'eyebrow',
+      type: 'text',
+      label: 'Eyebrow label',
+      defaultValue: 'DESPRE NOI',
+      admin: {
+        condition: (_, { type } = {}) => type === 'highImpactHero',
+      },
+    },
+    {
+      name: 'body',
+      type: 'textarea',
+      label: 'Body text',
+      admin: {
+        condition: (_, { type } = {}) => type === 'highImpactHero',
+      },
+    },
+    link({
+      overrides: {
+        name: 'ctaLink',
+        label: 'CTA button link',
+        admin: {
+          condition: (_, { type } = {}) => type === 'highImpactHero',
+        },
+      },
+    }),
   ],
   label: false,
 }
