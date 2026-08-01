@@ -2,17 +2,7 @@ import React from "react";
 
 import type { DividerBlock as DividerBlockProps } from "@/payload-types";
 
-// Palette (raw brand hexes, matching the source SVGs and globals.css).
-const COLORS: Record<string, string> = {
-  purple: "#5F0058",
-  coral: "#FB3524",
-  cyan: "#5ED9FC",
-  green: "#009E5C",
-  pink: "#F6C4DA",
-  amber: "#9B5B00",
-  white: "#FFFFFF",
-  ink: "#201D1E",
-};
+import { brandHex } from "@/utilities/brand";
 
 // Each pattern is kept verbatim from the exported SVG. Recoloring maps the
 // pattern's source hexes (roles c1/c2/c3) onto the chosen palette colors, with
@@ -126,28 +116,20 @@ const SVG_D = `<svg width="1602" height="107" viewBox="0 0 1602 107" fill="none"
 
 type Roles = { c1: string; c2: string; c3?: string };
 
-const PATTERNS: Record<
-  string,
-  { svg: string; roles: Roles; defaults: { c1: string; c2: string; c3?: string } }
-> = {
-  a: { svg: SVG_A, roles: { c1: "#009E5C", c2: "#FB3524" }, defaults: { c1: "green", c2: "coral" } },
-  b: {
-    svg: SVG_B,
-    roles: { c1: "#FB3524", c2: "#5F0058", c3: "#009E5C" },
-    defaults: { c1: "coral", c2: "purple", c3: "green" },
-  },
-  c: { svg: SVG_C, roles: { c1: "#009E5C", c2: "#5F0058" }, defaults: { c1: "green", c2: "purple" } },
-  d: {
-    svg: SVG_D,
-    roles: { c1: "#5ED9FC", c2: "#FB3524", c3: "#F6C4DA" },
-    defaults: { c1: "cyan", c2: "coral", c3: "pink" },
-  },
+// `roles` are the hexes present in the exported artwork, which act as the search
+// keys for recoloring. Leaving a slot on "default" keeps the artwork's own hex,
+// so the pattern renders exactly as designed.
+const PATTERNS: Record<string, { svg: string; roles: Roles }> = {
+  a: { svg: SVG_A, roles: { c1: "#009E5C", c2: "#FB3524" } },
+  b: { svg: SVG_B, roles: { c1: "#FB3524", c2: "#5F0058", c3: "#009E5C" } },
+  c: { svg: SVG_C, roles: { c1: "#009E5C", c2: "#5F0058" } },
+  d: { svg: SVG_D, roles: { c1: "#5ED9FC", c2: "#FB3524", c3: "#F6C4DA" } },
 };
 
-/** Resolve a chosen palette name (or "default") to a hex, falling back to the pattern default. */
-function resolve(chosen: string | null | undefined, fallbackName: string, originalHex: string) {
-  const name = chosen && chosen !== "default" ? chosen : fallbackName;
-  return COLORS[name] ?? originalHex;
+/** Resolve a chosen palette name to a hex; "default" keeps the artwork's own. */
+function resolve(chosen: string | null | undefined, originalHex: string) {
+  if (!chosen || chosen === "default") return originalHex;
+  return brandHex(chosen, "coral");
 }
 
 export const DividerBlock: React.FC<DividerBlockProps> = ({
@@ -171,7 +153,7 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
     svg = svg.split(def.roles[key] as string).join(`__DV_${key}__`);
   });
   (Object.keys(def.roles) as (keyof Roles)[]).forEach((key) => {
-    const hex = resolve(chosen[key], def.defaults[key] as string, def.roles[key] as string);
+    const hex = resolve(chosen[key], def.roles[key] as string);
     svg = svg.split(`__DV_${key}__`).join(hex);
   });
 

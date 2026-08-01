@@ -9,6 +9,7 @@ import {
 import { link } from '@/fields/link'
 
 import { linkGroup } from '@/fields/linkGroup'
+import { GRADIENT_COLORS, HERO_COLORS, brandOptions } from '@/utilities/brand'
 
 const IMPACT_TYPES = ['homeHero', 'highImpactHero', 'lowImpact']
 const WITH_MEDIA = ['homeHero', 'highImpactHero']
@@ -39,13 +40,7 @@ export const hero: Field = {
       type: 'select',
       label: 'Background color',
       defaultValue: 'base',
-      options: [
-        { label: 'Base (light)', value: 'base' },
-        { label: 'Purple', value: 'purple' },
-        { label: 'Green', value: 'green' },
-        { label: 'Coral', value: 'coral' },
-        { label: 'Cyan', value: 'cyan' },
-      ],
+      options: brandOptions(HERO_COLORS),
       admin: {
         description:
           'Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact).',
@@ -119,12 +114,7 @@ export const hero: Field = {
           type: 'select',
           label: 'Background color',
           defaultValue: 'purple',
-          options: [
-            { label: 'Purple', value: 'purple' },
-            { label: 'Green', value: 'green' },
-            { label: 'Coral', value: 'coral' },
-            { label: 'Cyan', value: 'cyan' },
-          ],
+          options: brandOptions(GRADIENT_COLORS),
           admin: { description: 'Gradient color for this slide.' },
         },
         {

@@ -8,15 +8,11 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { link } from '@/fields/link'
+import { SURFACE_COLORS, brandOptions } from '@/utilities/brand'
 
 // Brand palette shared by the decorator's two lines; the fills live in
-// components/CornerDecorator, mapped onto the theme tokens.
-const decoratorColorOptions = [
-  { label: 'Coral', value: 'coral' },
-  { label: 'Purple', value: 'purple' },
-  { label: 'Cyan', value: 'cyan' },
-  { label: 'Green', value: 'green' },
-] as const
+// utilities/brand, mapped onto the theme tokens.
+const decoratorColorOptions = brandOptions(SURFACE_COLORS)
 
 const columnFields: Field[] = [
   {

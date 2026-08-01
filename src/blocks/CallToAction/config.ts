@@ -9,6 +9,7 @@ import {
 
 import { linkGroup } from "../../fields/linkGroup";
 import { link } from "@/fields/link";
+import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
 
 // The "highlight" variant renders left-aligned when the motif is enabled (the motif
 // claims the right side of the section) and centered otherwise. See
@@ -143,12 +144,7 @@ export const CallToAction: Block = {
           type: "select",
           required: true,
           defaultValue: "coral",
-          options: [
-            { label: "Coral", value: "coral" },
-            { label: "Purple", value: "purple" },
-            { label: "Cyan", value: "cyan" },
-            { label: "Green", value: "green" },
-          ],
+          options: brandOptions(SURFACE_COLORS),
         },
         {
           name: "withLink",

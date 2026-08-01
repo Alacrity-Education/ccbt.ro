@@ -5,17 +5,10 @@ import type { Media as MediaType } from "@/payload-types";
 import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
+import { brandSurface, type SurfaceColor } from "@/utilities/brand";
 
-export type PillarCardColor = "coral" | "purple" | "cyan" | "green";
+export type PillarCardColor = SurfaceColor;
 export type PillarCardOrientation = "vertical" | "horizontal";
-
-// Surface colors mirror the "ccbt" daisyUI theme tokens.
-const COLOR_CLASSES: Record<PillarCardColor, string> = {
-  coral: "bg-secondary text-secondary-content",
-  purple: "bg-primary text-primary-content",
-  cyan: "bg-accent text-accent-content",
-  green: "bg-success text-success-content",
-};
 
 const ORIENTATION_CLASSES: Record<PillarCardOrientation, string> = {
   // Rectangular, height-limited. Aspect sets the shape; max-h caps how tall they
@@ -54,7 +47,7 @@ export const PillarCard: React.FC<PillarCardProps> = ({
   children,
   className,
 }) => {
-  const colorClass = COLOR_CLASSES[color ?? "coral"] ?? COLOR_CLASSES.coral;
+  const colorClass = brandSurface(color, "coral");
   const orientationClass =
     ORIENTATION_CLASSES[orientation ?? "vertical"] ?? ORIENTATION_CLASSES.vertical;
   const hasHref = withLink && (link?.url || link?.reference);

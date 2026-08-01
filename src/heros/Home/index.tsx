@@ -5,9 +5,10 @@ import type { Page } from "@/payload-types";
 import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
+import { BRAND, type HeroSurfaceColor } from "@/utilities/brand";
 
 export type HeroImpact = "high" | "medium" | "low";
-export type HeroColor = "base" | "purple" | "green" | "coral" | "cyan";
+export type HeroColor = HeroSurfaceColor;
 
 type HeroProps = Page["hero"] & {
   impact: HeroImpact;
@@ -23,20 +24,8 @@ type HeroContent = {
 };
 
 export function resolveColor(color: HeroColor) {
-  switch (color) {
-    case "purple":
-      return { bg: "var(--ccbt-purple)", dark: true };
-    case "green":
-      return { bg: "var(--ccbt-green)", dark: true };
-    case "coral":
-      return { bg: "var(--ccbt-coral)", dark: true };
-    case "cyan":
-      // Light surface — use dark (black) foreground text.
-      return { bg: "var(--ccbt-cyan)", dark: false };
-    case "base":
-    default:
-      return { bg: "var(--ccbt-base)", dark: false };
-  }
+  const entry = BRAND[color] ?? BRAND.base;
+  return { bg: entry.cssVar ?? entry.hex, dark: entry.dark };
 }
 
 /** CTA button that stays legible on any surface. */

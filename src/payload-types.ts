@@ -789,6 +789,9 @@ export interface ContentBlock {
           [k: string]: unknown;
         } | null;
         media?: (number | null) | Media;
+        /**
+         * L-shaped brand mark drawn over the image's top-right corner.
+         */
         decorator?: {
           enabled?: boolean | null;
           verticalColor?: ('coral' | 'purple' | 'cyan' | 'green') | null;

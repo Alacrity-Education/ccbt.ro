@@ -6,6 +6,7 @@ import type { StaticMapBlock } from "@/payload-types";
 import { FaLocationDot } from "react-icons/fa6";
 import Link from "next/link";
 import RichText from "@/components/RichText";
+import { SectionTitle } from "@/components/SectionTitle";
 
 const VARIANT_TO_STYLE: Record<NonNullable<StaticMapBlock["variant"]>, string> = {
   default: process.env.NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT || "",
@@ -26,7 +27,7 @@ export const StaticMapBlockComponent: React.FC<StaticMapBlock> = (props) => {
   return (
     <div className={`container mx-auto ${width} ${height}  min-h-[300px] relative`}>
       {title && (
-        <h2 className="text-primary pb-4 text-center text-xl font-semibold md:text-2xl">{title}</h2>
+        <SectionTitle title={title} className="pb-4 text-center" />
       )}
       <div className={`w-full h-full  shadow-2xl rounded-xl overflow-clip`}>
         <Map

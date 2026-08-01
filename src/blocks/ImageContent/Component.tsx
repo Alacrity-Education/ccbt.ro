@@ -3,8 +3,8 @@ import { Media } from "@/components/Media";
 import RichText from "@/components/RichText";
 import { cn } from "@/utilities/ui";
 import { ImageContentBlock  as ImageContentBlockProps} from "@/payload-types";
-import { link } from "fs";
 import { CMSLink } from "@/components/Link";
+import { SectionTitle } from "@/components/SectionTitle";
 
 type Cell = {
   type: 'text' | 'media';
@@ -30,9 +30,7 @@ export const ImageContentBlock: React.FC<ImageContentBlockProps> = (props) => {
 
   return (
     <div className="w-full">
-      {title && (
-        <h2 className="text-primary py-10 text-center text-base font-semibold md:text-3xl">{title}</h2>
-      )}
+      <SectionTitle title={title} className="py-10 text-center" />
       <div className={cn("container mx-auto")}>
         <div
           className={cn(

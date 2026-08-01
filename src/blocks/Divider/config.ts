@@ -1,15 +1,10 @@
 import type { Block } from "payload";
 
+import { DIVIDER_COLORS, brandOptions } from "@/utilities/brand";
+
 const colorOptions = [
   { label: "Default (pattern)", value: "default" },
-  { label: "Purple", value: "purple" },
-  { label: "Coral", value: "coral" },
-  { label: "Cyan", value: "cyan" },
-  { label: "Green", value: "green" },
-  { label: "Pink", value: "pink" },
-  { label: "Amber", value: "amber" },
-  { label: "White", value: "white" },
-  { label: "Ink", value: "ink" },
+  ...brandOptions(DIVIDER_COLORS),
 ];
 
 export const Divider: Block = {

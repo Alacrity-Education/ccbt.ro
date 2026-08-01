@@ -2,6 +2,8 @@ import React from "react";
 
 import type { ArchiveBlock as ArchiveBlockProps } from "@/payload-types";
 
+import { SectionTitle } from "@/components/SectionTitle";
+
 import { CardsArchiveBlock } from "./Cards";
 import { TextArchiveBlock } from "./Text";
 
@@ -32,9 +34,7 @@ export const ArchiveBlock: React.FC<
     <div className="w-full">
       {showWrapperTitle && (
         <div className="container mx-auto">
-          <h2 className="text-primary text-center text-xl font-semibold md:text-3xl">
-            {title}
-          </h2>
+          <SectionTitle title={title} className="text-center" />
         </div>
       )}
       <ArchiveBlockToRender {...props} />

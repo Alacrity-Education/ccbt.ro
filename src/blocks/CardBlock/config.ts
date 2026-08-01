@@ -6,6 +6,7 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 import { link } from "@/fields/link";
+import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
 
 export const CardBlock: Block = {
   slug: "cardBlock",
@@ -48,12 +49,7 @@ export const CardBlock: Block = {
           type: "select",
           required: true,
           defaultValue: "coral",
-          options: [
-            { label: "Coral", value: "coral" },
-            { label: "Purple", value: "purple" },
-            { label: "Cyan", value: "cyan" },
-            { label: "Green", value: "green" },
-          ],
+          options: brandOptions(SURFACE_COLORS),
         },
         {
           name: "orientation",

@@ -13,6 +13,7 @@ import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
 
 import { fields } from "./fields";
 import { getClientSideURL } from "@/utilities/getURL";
+import { SectionTitle } from "@/components/SectionTitle";
 
 export type FormBlockType = {
   blockName?: string;
@@ -133,7 +134,9 @@ export const FormBlock: React.FC<
   return (
     <div className="container mx-auto border-0 lg:max-w-3xl">
       {showTitle && formTitle && !hasSubmitted && (
-        <h2 className="text-lg text-primary text-center mb-4">{formTitle}</h2>
+        // Deliberately smaller than a section heading: this sits inside the form
+        // card, not above a page section.
+        <SectionTitle title={formTitle} className="mb-4 text-center text-lg md:text-xl" />
       )}
       {enableIntro && introContent && !hasSubmitted && (
         <RichText

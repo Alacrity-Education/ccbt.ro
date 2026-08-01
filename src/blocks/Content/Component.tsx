@@ -5,6 +5,7 @@ import type { ContentBlock as ContentBlockProps } from "@/payload-types";
 import { CMSLink } from "../../components/Link";
 import { Media } from "@/components/Media";
 import { CornerDecorator } from "@/components/CornerDecorator";
+import { SectionTitle } from "@/components/SectionTitle";
 
 export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns, title } = props;
@@ -19,11 +20,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
 
   return (
     <div className="container mx-auto my-4 w-full sm:my-10">
-      {title && (
-        <h2 className="text-primary py-10 text-center text-xl font-semibold md:text-3xl">
-          {title}
-        </h2>
-      )}
+      <SectionTitle title={title} className="py-10 text-center" />
       {/* 2. Ensure parent is grid-cols-12 at md breakpoint */}
       <div className="grid grid-cols-4 gap-x-16 gap-y-8 md:grid-cols-12">
         {columns &&
