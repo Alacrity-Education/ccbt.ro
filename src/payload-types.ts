@@ -772,6 +772,7 @@ export interface ContentBlock {
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        type?: ('text' | 'media') | null;
         richText?: {
           root: {
             type: string;
@@ -787,6 +788,12 @@ export interface ContentBlock {
           };
           [k: string]: unknown;
         } | null;
+        media?: (number | null) | Media;
+        decorator?: {
+          enabled?: boolean | null;
+          verticalColor?: ('coral' | 'purple' | 'cyan' | 'green') | null;
+          horizontalColor?: ('coral' | 'purple' | 'cyan' | 'green') | null;
+        };
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -1565,7 +1572,16 @@ export interface ContentBlockSelect<T extends boolean = true> {
     | T
     | {
         size?: T;
+        type?: T;
         richText?: T;
+        media?: T;
+        decorator?:
+          | T
+          | {
+              enabled?: T;
+              verticalColor?: T;
+              horizontalColor?: T;
+            };
         enableLink?: T;
         link?:
           | T

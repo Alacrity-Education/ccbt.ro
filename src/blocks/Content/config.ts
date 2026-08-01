@@ -9,6 +9,15 @@ import {
 
 import { link } from '@/fields/link'
 
+// Brand palette shared by the decorator's two lines; the fills live in
+// components/CornerDecorator, mapped onto the theme tokens.
+const decoratorColorOptions = [
+  { label: 'Coral', value: 'coral' },
+  { label: 'Purple', value: 'purple' },
+  { label: 'Cyan', value: 'cyan' },
+  { label: 'Green', value: 'green' },
+] as const
+
 const columnFields: Field[] = [
   {
     name: 'size',
@@ -35,6 +44,20 @@ const columnFields: Field[] = [
     ],
   },
 
+  // A column holds either text or an image, never both — the grid stays predictable
+  // and the irrelevant field hides itself. Values mirror the ImageContent block's
+  // cell type so both blocks read the same. Not required: existing rows predate the
+  // field and read as text (see the `?? 'text'` fallback in Component.tsx).
+  {
+    name: 'type',
+    type: 'select',
+    label: 'Column Content',
+    defaultValue: 'text',
+    options: [
+      { label: 'Text', value: 'text' },
+      { label: 'Media', value: 'media' },
+    ],
+  },
   {
     name: 'richText',
     type: 'richText',
@@ -49,6 +72,62 @@ const columnFields: Field[] = [
       },
     }),
     label: false,
+    admin: {
+      condition: (_data, siblingData) => siblingData?.type !== 'media',
+    },
+  },
+  {
+    name: 'media',
+    type: 'upload',
+    relationTo: 'media',
+    label: 'Image',
+    admin: {
+      condition: (_data, siblingData) => siblingData?.type === 'media',
+    },
+  },
+  {
+    name: 'decorator',
+    type: 'group',
+    label: 'Corner decorator',
+    admin: {
+      description: "L-shaped brand mark drawn over the image's top-right corner.",
+      condition: (_data, siblingData) => siblingData?.type === 'media',
+    },
+    fields: [
+      {
+        name: 'enabled',
+        type: 'checkbox',
+        label: 'Enable decorator',
+        defaultValue: false,
+      },
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'verticalColor',
+            type: 'select',
+            label: 'Vertical line',
+            defaultValue: 'coral',
+            options: decoratorColorOptions,
+            admin: {
+              width: '50%',
+              condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+            },
+          },
+          {
+            name: 'horizontalColor',
+            type: 'select',
+            label: 'Horizontal line',
+            defaultValue: 'purple',
+            options: decoratorColorOptions,
+            admin: {
+              width: '50%',
+              condition: (_data, siblingData) => Boolean(siblingData?.enabled),
+            },
+          },
+        ],
+      },
+    ],
   },
   {
     name: 'enableLink',

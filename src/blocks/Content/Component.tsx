@@ -3,6 +3,8 @@ import React from "react";
 import RichText from "@/components/RichText";
 import type { ContentBlock as ContentBlockProps } from "@/payload-types";
 import { CMSLink } from "../../components/Link";
+import { Media } from "@/components/Media";
+import { CornerDecorator } from "@/components/CornerDecorator";
 
 export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns, title } = props;
@@ -27,7 +29,9 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
         {columns &&
           columns.length > 0 &&
           columns.map((col, index) => {
-            const { enableLink, link, richText, size } = col;
+            const { decorator, enableLink, link, media, richText, size, type } = col;
+            const isMedia = (type ?? "text") === "media";
+            const showDecorator = isMedia && Boolean(decorator?.enabled);
 
             return (
               <div
@@ -37,8 +41,32 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                 )}
                 key={index}
               >
-                {richText && <RichText data={richText} enableGutter={false} />}
-                {enableLink && <CMSLink {...link} />}
+                {isMedia
+                  ? media && (
+                      <div className="relative">
+                        <Media
+                          resource={media}
+                          className="w-full"
+                          imgClassName={cn(
+                            "h-auto w-full object-cover",
+                            !showDecorator && "rounded-box",
+                          )}
+                        />
+                        {showDecorator && (
+                          <CornerDecorator
+                            verticalColor={decorator?.verticalColor}
+                            horizontalColor={decorator?.horizontalColor}
+                            className="pointer-events-none absolute top-0 right-0 z-10"
+                          />
+                        )}
+                      </div>
+                    )
+                  : richText && <RichText data={richText} enableGutter={false} />}
+                {enableLink && (
+                  <div className="mt-6">
+                    <CMSLink {...link} />
+                  </div>
+                )}
               </div>
             );
           })}
