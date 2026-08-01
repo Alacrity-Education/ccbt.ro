@@ -1,31 +1,29 @@
 import type { Block } from "payload";
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from "@payloadcms/richtext-lexical";
 import { link } from "@/fields/link";
 
 export const CardBlock: Block = {
   slug: "cardBlock",
   interfaceName: "CardBlock",
   labels: {
-    singular: "Services Grid",
-    plural: "Services Grids",
+    singular: "Card Block",
+    plural: "Card Blocks",
   },
   fields: [
     {
-      name: "sectionTitle",
+      name: "title",
       type: "text",
-      label: "Section heading",
-      defaultValue: "Trei direcții, o singură misiune",
-    },
-    {
-      name: "sectionSubtitle",
-      type: "textarea",
-      label: "Section description",
+      label: "Block Title",
     },
     {
       name: "cards",
       type: "array",
-      label: "Service cards",
-      minRows: 1,
-      maxRows: 6,
+      label: "Cards",
       fields: [
         {
           name: "title",
@@ -34,34 +32,75 @@ export const CardBlock: Block = {
         },
         {
           name: "description",
-          type: "textarea",
+          type: "richText",
           label: "Description",
+          editor: lexicalEditor({
+            features: ({ rootFeatures }) => [
+              ...rootFeatures,
+              HeadingFeature({ enabledHeadingSizes: ["h3", "h4"] }),
+              FixedToolbarFeature(),
+              InlineToolbarFeature(),
+            ],
+          }),
         },
         {
-          name: "icon",
+          name: "color",
           type: "select",
-          label: "Icon",
-          defaultValue: "cross",
+          required: true,
+          defaultValue: "coral",
           options: [
-            { label: "Cross (folk star)", value: "cross" },
-            { label: "Diamond", value: "diamond" },
+            { label: "Coral", value: "coral" },
+            { label: "Purple", value: "purple" },
+            { label: "Cyan", value: "cyan" },
+            { label: "Green", value: "green" },
+          ],
+        },
+        {
+          name: "orientation",
+          type: "select",
+          required: true,
+          defaultValue: "vertical",
+          options: [
+            { label: "Vertical", value: "vertical" },
+            { label: "Horizontal", value: "horizontal" },
           ],
         },
         {
           name: "withLink",
           type: "checkbox",
-          label: "Enable link",
+          label: "Enable Link",
           defaultValue: false,
+          admin: { description: "Enable to add a link to the card" },
         },
         link({
           appearances: false,
           overrides: {
             required: false,
+            validate: () => true,
             admin: {
-              condition: (_, sibling) => sibling?.withLink === true,
+              condition: (_data, siblingData) => siblingData?.withLink === true,
             },
           },
         }),
+        {
+          name: "backgroundImage",
+          type: "upload",
+          relationTo: "media",
+          label: "Background image",
+          admin: { description: "Optional image shown behind the card, over its color." },
+        },
+        {
+          name: "backgroundOpacity",
+          type: "number",
+          label: "Background image opacity (%)",
+          defaultValue: 100,
+          min: 0,
+          max: 100,
+          admin: {
+            step: 1,
+            condition: (_data, siblingData) => Boolean(siblingData?.backgroundImage),
+          },
+        },
       ],
     },
   ],

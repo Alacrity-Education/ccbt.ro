@@ -6,7 +6,7 @@ import redirects from './redirects.js'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    dangerouslyAllowLocalIP: true,
+    dangerouslyAllowLocalIP:true,
     remotePatterns: [
 
       ...[process.env.NEXT_PUBLIC_SERVER_URL].map((item) => {
@@ -17,14 +17,7 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-        pathname: '/api/media/**',
-      },
     ],
-
   },
 
   webpack: (webpackConfig) => {

@@ -1,25 +1,36 @@
-import type { Block } from "payload";
+import type { Block } from 'payload'
 
-export const LogoCarouselBlock: Block = {
-  slug: "logoCarousel",
-  interfaceName: "LogoCarouselBlock",
-  labels: {
-    singular: "Partners Strip",
-    plural: "Partners Strips",
-  },
+export const CarouselLogoBlock: Block = {
+  slug: 'carouselLogoBlock',
+  interfaceName: 'CarouselLogoBlock',
   fields: [
     {
-      name: "partners",
-      type: "array",
-      label: "Partner names",
+      name: 'title',
+      type: 'text',
+      label: 'Section Title',
+    },
+    {
+      name: 'items',
+      type: 'array',
+      label: 'Logos to be displayed',
       fields: [
         {
-          name: "name",
-          type: "text",
-          label: "Partner name (use \\n for line breaks)",
+          name: 'title',
+          type: 'text',
+          label: 'Logo title',
           required: true,
+        },
+        {
+          name: 'media',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'link',
+          type: 'text',
         },
       ],
     },
   ],
-};
+}

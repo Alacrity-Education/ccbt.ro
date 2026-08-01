@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 
 import { cn } from "@/utilities/ui";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import { Montserrat } from "next/font/google";
 import React from "react";
 
 import { AdminBar } from "@/components/AdminBar";
@@ -15,6 +18,12 @@ import "./globals.css";
 import { getServerSideURL } from "@/utilities/getURL";
 import Script from "next/script";
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-montserrat",
+});
+
 export default async function RootLayout({
   children,
 }: {
@@ -24,7 +33,12 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="ro"
+      className={cn(
+        GeistSans.variable,
+        montserrat.variable,
+        GeistMono.variable,
+      )}
+      lang="en"
       suppressHydrationWarning
     >
       <head>
@@ -44,11 +58,9 @@ export default async function RootLayout({
           {children}
           <Footer />
         </Providers>
-        <Script
-          defer={true}
-          id="accessibility"
-          src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna-accessibility.umd.js"
-        />
+      <Script strategy="lazyOnload" id={"accessiblity"} src={"https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna-accessibility.umd.js"}>
+
+      </Script>
       </body>
     </html>
   );

@@ -3,14 +3,14 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Centrul Cultural Botoșani — instituție publică de cultură, artă și educație.',
+  description: 'An open-source website built with Payload and Next.js.',
   images: [
     {
-      url: `${getServerSideURL()}/logo.svg`,
+      url: `${getServerSideURL()}/website-template-OG.webp`,
     },
   ],
-  siteName: 'Centrul Cultural Botoșani',
-  title: 'Centrul Cultural Botoșani',
+  siteName: 'Payload Website Template',
+  title: 'Payload Website Template',
 }
 
 export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {

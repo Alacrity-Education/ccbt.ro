@@ -1,90 +1,184 @@
 "use client";
-import React, { useEffect } from "react";
-import { useHeaderTheme } from "@/providers/HeaderTheme";
+import React from "react";
+
 import type { Page } from "@/payload-types";
 import { Media } from "@/components/Media";
-import { Divider } from "@/components/Motif";
+import { CMSLink } from "@/components/Link";
+import { cn } from "@/utilities/ui";
 
-export const HomeHero: React.FC<Page["hero"]> = ({ media, title, subtitle }) => {
-  const { setHeaderTheme } = useHeaderTheme();
-  useEffect(() => { setHeaderTheme("dark"); });
+export type HeroImpact = "high" | "medium" | "low";
+export type HeroColor = "base" | "purple" | "green" | "coral" | "cyan";
+
+type HeroProps = Page["hero"] & {
+  impact: HeroImpact;
+  color: HeroColor;
+};
+
+type HeroContent = {
+  title?: string | null;
+  subtitle?: string | null;
+  body?: string | null;
+  media?: any;
+  ctaLink?: any;
+};
+
+export function resolveColor(color: HeroColor) {
+  switch (color) {
+    case "purple":
+      return { bg: "var(--ccbt-purple)", dark: true };
+    case "green":
+      return { bg: "var(--ccbt-green)", dark: true };
+    case "coral":
+      return { bg: "var(--ccbt-coral)", dark: true };
+    case "cyan":
+      // Light surface — use dark (black) foreground text.
+      return { bg: "var(--ccbt-cyan)", dark: false };
+    case "base":
+    default:
+      return { bg: "var(--ccbt-base)", dark: false };
+  }
+}
+
+/** CTA button that stays legible on any surface. */
+const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({ ctaLink, dark }) => {
+  if (!ctaLink?.label) return null;
+  const hasHref = ctaLink?.url || ctaLink?.reference;
+  if (!hasHref) return null;
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100svh",
-        minHeight: 480,
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "flex-end",
-        background: "var(--ink)",
-      }}
-    >
-      {/* Background image */}
-      {media && (
-        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 2,
-              background: "linear-gradient(to top, rgba(27,42,74,0.82) 0%, rgba(27,42,74,0.35) 55%, rgba(27,42,74,0.15) 100%)",
-            }}
-          />
-          <Media
-            fill
-            priority
-            resource={media}
-            imgClassName="object-cover"
-          />
-        </div>
-      )}
+    <CMSLink
+      {...ctaLink}
+      size={"lg"}
+    />
+  );
+};
 
-      {/* Text */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: 1280,
-          margin: "0 auto",
-          width: "100%",
-          padding: "0 clamp(24px, 5vw, 64px) clamp(48px, 6vw, 96px)",
-        }}
+export const Hero: React.FC<HeroProps> = (props) => {
+  const { impact, color } = props;
+  const { title, subtitle, body, media, ctaLink } =
+    props as unknown as HeroContent;
+
+  const { bg, dark } = resolveColor(color);
+
+  const bodyClass = dark ? "text-white/90" : "text-base-content/80";
+
+  /* ----------------------------- HIGH IMPACT ----------------------------- */
+  if (impact === "high") {
+    return (
+      <section
+        className={cn(
+          "relative flex h-[80vh] items-center overflow-hidden",
+          dark ? "text-white" : "text-base-content",
+        )}
+        data-theme={dark ? "dark" : undefined}
       >
-        <Divider style={{ marginBottom: 28, opacity: 0.55 }} />
-        {title && (
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 500,
-              fontSize: "clamp(2.5rem, 5.5vw, 5rem)",
-              lineHeight: 1.05,
-              letterSpacing: "-0.015em",
-              color: "var(--cream)",
-              margin: "0 0 16px",
-              maxWidth: 760,
-            }}
-          >
-            {title}
-          </h1>
+        <div className="font-base relative z-20 container mx-auto flex h-full items-center justify-start">
+          <div className="max-w-4xl pb-8 md:text-start">
+            {title && (
+              <h1 className="mb-5 max-w-[15ch] lg:max-w-1/2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl lg:text-7xl xl:text-7xl leading-[0.98] md:leading-[0.95]">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="mb-6 max-w-2xl text-lg text-balance sm:text-xl md:text-2xl xl:text-3xl">
+                {subtitle}
+              </p>
+            )}
+            {body && (
+              <p className={cn("mb-8 max-w-xl text-sm sm:text-base md:text-lg", bodyClass)}>
+                {body}
+              </p>
+            )}
+            <HeroCta ctaLink={ctaLink} dark />
+          </div>
+        </div>
+
+        <div className="absolute inset-0 z-0 select-none">
+          <div
+            className="absolute z-10 h-full w-full"
+            style={{ background: `linear-gradient(to right, ${bg} ,${bg} 30%, transparent )` }}
+          />
+          {media && (
+            <Media
+              fill
+              priority
+              resource={media}
+              pictureClassName="absolute h-[80vh] w-[160vh] left-1/2 -ml-[80vh] sm:h-full sm:w-full sm:left-0 sm:ml-0"
+              imgClassName="object-cover z-0 animate-ken-burns sm:animate-none"
+            />
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  /* ---------------------------- MEDIUM IMPACT ---------------------------- */
+  if (impact === "medium") {
+    return (
+      <section
+        className={cn(
+          "relative overflow-hidden",
+          dark ? "text-white" : "text-base-content",
         )}
-        {subtitle && (
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "clamp(1rem, 2vw, 1.25rem)",
-              lineHeight: 1.6,
-              color: "rgba(245,237,224,0.75)",
-              margin: 0,
-              maxWidth: 520,
-            }}
-          >
-            {subtitle}
-          </p>
-        )}
+        style={{ background: bg }}
+        data-theme={dark ? "dark" : undefined}
+      >
+        <div className="font-base container mx-auto grid items-center gap-10 py-16 md:grid-cols-2 md:gap-14 md:py-24">
+          <div className="max-w-xl">
+            {title && (
+              <h1 className="mb-5 text-4xl font-semibold text-balance md:text-5xl xl:text-6xl">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="mb-5 text-xl text-balance md:text-2xl xl:text-3xl">
+                {subtitle}
+              </p>
+            )}
+            {body && (
+              <p className={cn("mb-8 text-base md:text-lg", bodyClass)}>{body}</p>
+            )}
+            <HeroCta ctaLink={ctaLink} dark={dark} />
+          </div>
+
+          {media && (
+            <div className="rounded-box relative aspect-4/3 w-full overflow-hidden">
+              <Media
+                fill
+                resource={media}
+                pictureClassName="absolute inset-0 h-full w-full"
+                imgClassName="object-cover"
+              />
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  /* ------------------------------ LOW IMPACT ----------------------------- */
+  return (
+    <section
+      className={cn(
+        "relative overflow-hidden",
+        dark ? "text-white" : "text-base-content",
+      )}
+      style={{ background: bg }}
+      data-theme={dark ? "dark" : undefined}
+    >
+      <div className="font-base mx-auto container py-14 md:py-20">
+        <div className="max-w-3xl">
+          {title && (
+            <h1 className="mb-4 text-3xl font-semibold text-balance md:text-4xl xl:text-5xl">
+              {title}
+            </h1>
+          )}
+          {body && (
+            <p className={cn("mb-6 text-base md:text-lg", bodyClass)}>{body}</p>
+          )}
+          <HeroCta ctaLink={ctaLink} dark={dark} />
+        </div>
       </div>
-    </div>
+    </section>
   );
 };

@@ -83,6 +83,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Căutare | Centrul Cultural Botoșani`,
+    title: `Payload Website Template Search`,
   }
 }

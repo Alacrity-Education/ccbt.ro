@@ -176,6 +176,17 @@ export const Posts: CollectionConfig<'posts'> = {
       ],
     },
     {
+      name: 'showMotif',
+      type: 'checkbox',
+      label: 'Show decorative motif',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Purple strip + woven ribbon between the hero and the article. On by default; switch off to hide it for this post.',
+      },
+    },
+    {
       name: 'isEvent',
       type: 'checkbox',
       label: 'Is event',

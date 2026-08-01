@@ -6,6 +6,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+import { link } from "@/fields/link";
 
 export const Archive: Block = {
   slug: "archive",
@@ -15,6 +16,15 @@ export const Archive: Block = {
       name: "title",
       type: "text",
       label: "Block Title",
+    },
+    {
+      name: "eyebrow",
+      type: "text",
+      label: "Eyebrow",
+      admin: {
+        description: "Small label above the title (Text variant).",
+        condition: (_, siblingData) => siblingData.style === "text",
+      },
     },
     {
       name: "introContent",
@@ -32,29 +42,23 @@ export const Archive: Block = {
       label: "Intro Content",
     },
     {
-      name: "eventsOnly",
-      type: "checkbox",
-      label: "Show events only (upcoming future events)",
-      defaultValue: false,
+      name: "style",
+      type: "select",
+      options: [
+        { label: "Text", value: "text" },
+        { label: "Cards", value: "cards" },
+      ],
+      defaultValue: "text",
     },
-    {
-      name: "sectionLabel",
-      type: "text",
-      label: "Section label",
-      defaultValue: "Evenimente",
-      admin: {
-        condition: (_, siblingData) => siblingData.eventsOnly === true,
+    link({
+      appearances: false,
+      overrides: {
+        label: "Button",
+        admin: {
+          condition: (_, siblingData) => siblingData.style === "text",
+        },
       },
-    },
-    {
-      name: "viewAllUrl",
-      type: "text",
-      label: "\"View all\" link URL",
-      defaultValue: "/posts",
-      admin: {
-        condition: (_, siblingData) => siblingData.eventsOnly === true,
-      },
-    },
+    }),
     {
       name: "populateBy",
       type: "select",
@@ -119,6 +123,9 @@ export const Archive: Block = {
       name: "longCardStyles",
       type: "group",
       label: "Card Styles",
+      admin: {
+        condition: (_, siblingData) => siblingData.style === "cards",
+      },
       fields: [
         {
           name: "card1",

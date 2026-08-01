@@ -1,8 +1,6 @@
+
 @import "tailwindcss";
 
-@plugin "daisyui" {
-  themes: "ccbt" --default;
-}
 
 @plugin "@tailwindcss/typography";
 @plugin "tailwindcss-noise";
@@ -13,26 +11,27 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: #F5EDE0;
-  --color-base-200: #EFE5D4;
-  --color-base-300: #E7DBC4;
-  --color-base-content: #1B2A4A;
-  --color-primary: #1B2A4A;
-  --color-primary-content: #F5EDE0;
-  --color-secondary: #C8A456;
-  --color-secondary-content: #1B2A4A;
-  --color-accent: #B03A2E;
-  --color-accent-content: #FFFFFF;
-  --color-neutral: #4D5B7A;
-  --color-neutral-content: #F5EDE0;
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
+  /* CCBT — Centrul Cultural Botoșani. Disciplined purple + coral palette. */
+  --color-base-100: #F1F3FB; /* cool off-white page base */
+  --color-base-200: #F5E8FF; /* lavender soft section */
+  --color-base-300: #E7DBF5; /* deeper lavender */
+  --color-base-content: #201D1E; /* near-black ink */
+  --color-primary: #5F0058; /* purple */
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #E84935; /* coral */
+  --color-secondary-content: #FFFFFF;
+  --color-accent: #5ED9FC; /* cyan (accent 1) */
+  --color-accent-content: #201D1E;
+  --color-neutral: #201D1E; /* ink — dark neutral surfaces */
+  --color-neutral-content: #F1F3FB;
+  --color-info: #5ED9FC;
+  --color-info-content: #201D1E;
+  --color-success: #009E5C; /* green (accent 2) */
+  --color-success-content: #FFFFFF;
   --color-warning: oklch(82% 0.189 84.429);
   --color-warning-content: oklch(13% 0.028 261.692);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
+  --color-error: #E84935;
+  --color-error-content: #FFFFFF;
   --radius-selector: 0.125rem;
   --radius-field: 0.125rem;
   --radius-box: 0.25rem;
@@ -41,96 +40,41 @@
   --noise: 0;
 }
 
-/* ── Fonts ───────────────────────────────────────────────────────────── */
-@font-face {
-  font-family: "Castoro";
-  src: url("/fonts/Castoro-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Castoro";
-  src: url("/fonts/Castoro-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter-VariableFont_opsz_wght.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
+
+@plugin "daisyui" {
+  themes: "ccbt" --default;
 }
 
-/* ── Design tokens (mirrored from tokens.css) ────────────────────────── */
-:root {
-  --ink:        #1B2A4A;
-  --ink-2:      #2C3B5F;
-  --ink-soft:   #4D5B7A;
-  --ink-mute:   #7B86A1;
-
-  --cream:      #F5EDE0;
-  --cream-2:    #EFE5D4;
-  --cream-3:    #E7DBC4;
-  --paper:      #FFFFFF;
-
-  --red:        #B03A2E;
-  --red-deep:   #8E2E25;
-  --red-soft:   #D8615A;
-
-  --gold:       #C8A456;
-  --gold-deep:  #A1822F;
-  --gold-soft:  #E4CC8E;
-
-  --rule:       #D9CFB9;
-  --rule-dark:  rgba(255,255,255,.14);
-
-  --font-display: "Castoro", "EB Garamond", Georgia, serif;
-  --font-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-  --ease-standard: cubic-bezier(.2,.6,.2,1);
-  --dur-fast:    120ms;
-  --dur-medium:  240ms;
-  --dur-slow:    800ms;
-
-  --shadow-card: 0 1px 2px rgba(27,42,74,.06), 0 6px 18px rgba(27,42,74,.06);
-  --shadow-lift: 0 4px 10px rgba(27,42,74,.08), 0 18px 40px rgba(27,42,74,.10);
-}
-
-/* ── Typography prose utilities ──────────────────────────────────────── */
 .text-primary-content{
-  @apply prose-h1:text-primary-content prose-h2:text-primary-content prose-h3:text-primary-content prose-h4:text-primary-content prose-p:text-primary-content prose-a:text-primary-content prose-strong:text-primary-content prose-strong:font-bold;
-}
-.text-secondary-content {
-  @apply prose-h1:text-secondary-content prose-h2:text-secondary-content prose-h3:text-secondary-content prose-h4:text-secondary-content prose-p:text-secondary-content prose-a:text-secondary-content prose-strong:text-secondary-content prose-strong:font-bold;
-}
-.text-accent-content{
-  @apply prose-h1:text-accent-content prose-h2:text-accent-content prose-h3:text-accent-content prose-h4:text-accent-content prose-p:text-accent-content prose-a:text-accent-content prose-strong:text-accent-content prose-strong:font-bold;
-}
-.text-neutral-content{
-  @apply prose-h1:text-neutral-content prose-h2:text-neutral-content prose-h3:text-neutral-content prose-h4:text-neutral-content prose-p:text-neutral-content prose-a:text-neutral-content prose-strong:text-neutral-content prose-strong:font-bold;
-}
-.text-base-content{
-  @apply prose-h1:text-base-content prose-h2:text-base-content prose-h3:text-base-content prose-h4:text-base-content prose-p:text-base-content prose-a:text-base-content prose-strong:text-base-content prose-strong:font-bold;
+  @apply prose-h1:text-primary-content prose-h2:text-primary-content prose-h3:text-primary-content prose-h4:text-primary-content prose-h5:text-primary-content prose-h6:text-primary-content prose-p:text-primary-content prose-a:text-primary-content prose-strong:text-primary-content prose-strong:font-bold ;
 }
 
-/* ── Animations ──────────────────────────────────────────────────────── */
+.text-secondary-content {
+  @apply prose-h1:text-secondary-content prose-h2:text-secondary-content prose-h3:text-secondary-content prose-h4:text-secondary-content prose-h5:text-secondary-content prose-h6:text-secondary-content prose-p:text-secondary-content prose-a:text-secondary-content prose-strong:text-secondary-content prose-strong:font-bold ;
+}
+
+.text-accent-content{
+  @apply prose-h1:text-accent-content prose-h2:text-accent-content prose-h3:text-accent-content prose-h4:text-accent-content prose-h5:text-accent-content prose-h6:text-accent-content prose-p:text-accent-content prose-a:text-accent-content prose-strong:text-accent-content prose-strong:font-bold ;
+}
+
+.text-neutral-content{
+  @apply prose-h1:text-neutral-content prose-h2:text-neutral-content prose-h3:text-neutral-content prose-h4:text-neutral-content prose-h5:text-neutral-content prose-h6:text-neutral-content prose-p:text-neutral-content prose-a:text-neutral-content prose-strong:text-neutral-content prose-strong:font-bold ;
+}
+
+.text-base-content{
+  @apply prose-h1:text-base-content prose-h2:text-base-content prose-h3:text-base-content prose-h4:text-base-content prose-h5:text-base-content prose-h6:text-base-content prose-p:text-base-content prose-a:text-base-content prose-strong:text-base-content prose-strong:font-bold ;
+}
+
 @theme {
   --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
 
+  /* Define the keyframes */
   @keyframes marquee {
-    to { transform: translateX(-100%); }
+    to {
+      transform: translateX(-100%);
+    }
   }
-
+  /* 1. Define your custom breakpoints (screens) */
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
@@ -140,41 +84,84 @@
   --animate-ken-burns: ken-burns 20s ease-in-out infinite alternate;
 
   @keyframes ken-burns {
-    0%   { transform: scale(1) translate(0, 0); }
-    100% { transform: scale(1.05) translate(15%, -2%); }
+    0% {
+      transform: scale(1) translate(0, 0);
+    }
+
+    100% {
+      transform: scale(1.05) translate(15%, -2%);
+    }
   }
 }
 
-/* ── Base font mapping ───────────────────────────────────────────────── */
-@theme inline {
-  --font-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+:root {
+  /* ---- Raw palette ---- */
+  --ccbt-purple:        #5F0058;
+  --ccbt-purple-deep:   #44003F;
+  --ccbt-purple-tint:   #7A1A72;
+  --ccbt-coral:         #E84935;
+  --ccbt-coral-bright:  #FB3524;
+  --ccbt-coral-deep:    #B03A2E;
+  --ccbt-cyan:          #5ED9FC;
+  --ccbt-green:         #009E5C;
+  --ccbt-cyan-soft:     #E6F8FF;
+  --ccbt-green-soft:    #E1F4EC;
+  --ccbt-ink:           #201D1E;
+  --ccbt-black:         #000000;
+  --ccbt-gray-700:      #525252;
+  --ccbt-gray-500:      #767474;
+  --ccbt-gray-300:      #D9D9D9;
+  --ccbt-gray-150:      #F3F3F3;
+  --ccbt-base:          #F1F3FB;
+  --ccbt-lavender-bg:   #F5E8FF;
+  --ccbt-white:         #FFFFFF;
+
+
 }
 
 .container {
-  @apply px-6;
+  @apply px-6
 }
 
-/* ── Base element resets ─────────────────────────────────────────────── */
+@theme inline {
+  --font-base: var(--font-montserrat);
+}
+
+
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-size: unset;
     font-weight: unset;
   }
 
+
+}
+
+@layer base {
+
+  /* * {
+    @apply border-border;
+  } */
   body {
-    font-family: var(--font-body);
-    @apply bg-base-100 text-base-content flex min-h-screen flex-col;
+    @apply bg-base-100 text-base-100 flex min-h-screen flex-col;
   }
 }
 
-/* Anti-FOUC */
-html { opacity: 0; }
+html {
+  opacity: 0;
+}
+
 html[data-theme="dark"],
-html[data-theme="light"],
-html[data-theme="ccbt"] {
+html[data-theme="light"] {
   opacity: initial;
 }
+
 
 @tailwind utilities;
 
@@ -182,20 +169,31 @@ html[data-theme="ccbt"] {
   .stars {
     position: relative;
     overflow: visible;
+    /* We removed the hardcoded variable definition from here */
   }
 
   .stars::before {
     content: "";
     position: absolute;
     inset: 0;
+
+    /* Used your original SVG */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='xMidYMid slice'%3E%3Cg filter='url(%23filter0_n_92_1326)'%3E%3Crect width='100%25' height='100%25' rx='10' fill='black'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_n_92_1326' x='0' y='0' width='100%25' height='100%25' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='BackgroundImageFix'/%3E%3CfeBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.60000000298023224 0.60000000298023224' stitchTiles='stitch' numOctaves='3' result='noise' seed='9963'/%3E%3CfeColorMatrix in='noise' type='luminanceToAlpha' result='alphaNoise'/%3E%3CfeComponentTransfer in='alphaNoise' result='coloredNoise1'%3E%3CfeFuncA type='discrete' tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 1 0 1 1 1 1'/%3E%3C/feComponentTransfer%3E%3CfeComposite operator='in' in2='shape' in='coloredNoise1' result='noise1Clipped'/%3E%3CfeFlood flood-color='rgba(255, 255, 255, 0.8)' result='color1Flood'/%3E%3CfeComposite operator='in' in2='noise1Clipped' in='color1Flood' result='color1'/%3E%3CfeMerge result='effect1_noise_92_1326'%3E%3CfeMergeNode in='color1'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
     background-repeat: repeat;
     background-position: center;
+
+
+    /* CHANGE IS HERE:
+       If --star-scale exists (from your utility), use it.
+       Otherwise, default to 300px. */
     background-size: var(--star-scale, 200px);
     opacity: var(--star-opacity, 1);
     mask-image: linear-gradient(to bottom, black 50%, transparent 150%);
+
     pointer-events: none;
     z-index: 1;
+
+    /* Ensure mix-blend-mode is on so the underlying bg-primary shows through the black parts of the SVG */
     mix-blend-mode: screen;
   }
 
@@ -204,8 +202,9 @@ html[data-theme="ccbt"] {
     z-index: 2;
   }
 
+  /* Continuous horizontal marquee animation */
   @keyframes marquee {
-    0%   { transform: translateX(0); }
+    0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
   }
 
@@ -216,6 +215,6 @@ html[data-theme="ccbt"] {
   }
 }
 
-body, html {
+body,html {
   @apply max-w-screen overflow-x-clip;
 }

@@ -58,6 +58,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Articole | Centrul Cultural Botoșani`,
+    title: `Payload Website Template Posts`,
   }
 }

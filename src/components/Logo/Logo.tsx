@@ -21,18 +21,18 @@ export const Logo = (props: Props) => {
     /* eslint-disable @next/next/no-img-element */
     <>
       <img
-        alt="Payload Logo"
+        alt="CCBT Logo"
         loading={loading}
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          "hidden h-10 p-1 sm:inline-block sm:h-20 sm:p-2",
+          "hidden h-10 p-1 sm:inline-block sm:h-16 sm:p-2",
           className,
         )}
         src="/logo.svg"
       />
       <img
-        alt="Payload Logo"
+        alt="CCBT Logo"
         width={50}
         height={50}
         loading={loading}

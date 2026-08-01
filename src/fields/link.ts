@@ -2,25 +2,45 @@ import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
-export type LinkAppearances =  'default' | "secondary" | "outline" | "primary"
+export type LinkAppearances =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'neutral'
+  | 'success'
+  | 'outline'
 
+// Color values mirror the "ccbt" daisyUI theme tokens declared in globals.css.
 export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
   default: {
     label: 'Default',
     value: 'default',
   },
+  primary: {
+    label: 'Primary (Purple)',
+    value: 'primary',
+  },
   secondary: {
-    label: 'Secondary',
+    label: 'Secondary (Coral)',
     value: 'secondary',
   },
-  outline: {
-    label: "Outline",
-    value: "outline"
+  accent: {
+    label: 'Accent (Cyan)',
+    value: 'accent',
   },
-    primary: {
-    label: "Primary",
-    value: "primary"
-  }
+  neutral: {
+    label: 'Neutral (Ink)',
+    value: 'neutral',
+  },
+  success: {
+    label: 'Success (Green)',
+    value: 'success',
+  },
+  outline: {
+    label: 'Outline',
+    value: 'outline',
+  },
 }
 
 type LinkType = (options?: {
@@ -143,7 +163,15 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
   }
 
   if (appearances !== false) {
-    let appearanceOptionsToUse = [appearanceOptions.default, appearanceOptions.secondary, appearanceOptions.primary, appearanceOptions.outline]
+    let appearanceOptionsToUse = [
+      appearanceOptions.default,
+      appearanceOptions.primary,
+      appearanceOptions.secondary,
+      appearanceOptions.accent,
+      appearanceOptions.neutral,
+      appearanceOptions.success,
+      appearanceOptions.outline,
+    ]
 
     if (appearances) {
       appearanceOptionsToUse = appearances.map((appearance) => appearanceOptions[appearance])

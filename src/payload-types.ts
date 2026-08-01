@@ -12,6 +12,10 @@
  */
 export type Slides =
   | {
+      /**
+       * Gradient color for this slide.
+       */
+      color?: ('purple' | 'green' | 'coral' | 'cyan') | null;
       media?: (number | null) | Media;
       title?: string | null;
       subtitle?: string | null;
@@ -34,7 +38,7 @@ export type Slides =
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'secondary' | 'primary' | 'outline') | null;
+          appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
         };
       };
       id?: string | null;
@@ -193,28 +197,13 @@ export interface Page {
   id: number;
   title?: string | null;
   hero: {
-    type: 'none' | 'homeHero' | 'slidingHero' | 'highImpactHero';
-    richText?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
+    type: 'none' | 'homeHero' | 'highImpactHero' | 'lowImpact' | 'slidingHero';
+    /**
+     * Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact).
+     */
+    bgColor?: ('base' | 'purple' | 'green' | 'coral' | 'cyan') | null;
     title?: string | null;
     subtitle?: string | null;
-    timeout?: number | null;
-    slides?: Slides;
-    media?: (number | null) | Media;
-    eyebrow?: string | null;
     body?: string | null;
     ctaLink?: {
       type?: ('reference' | 'custom') | null;
@@ -233,8 +222,26 @@ export interface Page {
       /**
        * Choose how the link should be rendered.
        */
-      appearance?: ('default' | 'secondary' | 'primary' | 'outline') | null;
+      appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
     };
+    media?: (number | null) | Media;
+    timeout?: number | null;
+    slides?: Slides;
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   layout?:
     | (
@@ -244,12 +251,11 @@ export interface Page {
         | ArchiveBlock
         | FormBlock
         | CardBlock
-        | LogoCarouselBlock
+        | CarouselLogoBlock
         | ImageContentBlock
         | StaticMapBlock
-        | AboutSectionBlock
-        | TeamTeaserBlock
-        | ChronologyBlock
+        | DividerBlock
+        | TimelineBlock
       )[]
     | null;
   meta?: {
@@ -261,6 +267,64 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  subtitle?: string | null;
+  heroImageMD?: (number | null) | Media;
+  heroImageSM?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  relatedPosts?: (number | Post)[] | null;
+  categories?: (number | Category)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Purple strip + woven ribbon between the hero and the article. On by default; switch off to hide it for this post.
+   */
+  showMotif?: boolean | null;
+  isEvent?: boolean | null;
+  eventDate?: string | null;
+  publishedAt?: string | null;
+  authors?: (number | User)[] | null;
+  populatedAuthors?:
+    | {
+        id?: string | null;
+        name?: string | null;
+      }[]
+    | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -391,60 +455,6 @@ export interface FolderInterface {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: number;
-  title: string;
-  subtitle?: string | null;
-  heroImageMD?: (number | null) | Media;
-  heroImageSM?: (number | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
-  isEvent?: boolean | null;
-  eventDate?: string | null;
-  publishedAt?: string | null;
-  authors?: (number | User)[] | null;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
@@ -499,6 +509,10 @@ export interface User {
  */
 export interface CallToActionBlock {
   title?: string | null;
+  /**
+   * Colored line shown under the title (Highlight variants).
+   */
+  subtitle?: string | null;
   richText?: {
     root: {
       type: string;
@@ -514,7 +528,7 @@ export interface CallToActionBlock {
     };
     [k: string]: unknown;
   } | null;
-  variant?: ('primary' | 'starry' | 'background' | 'secondary') | null;
+  variant?: ('primary' | 'secondary' | 'background' | 'highlightLeft' | 'highlightCentered') | null;
   media?: (number | null) | Media;
   ctaType?: ('links' | 'modal') | null;
   modalButtonText?: string | null;
@@ -540,6 +554,43 @@ export interface CallToActionBlock {
            */
           appearance?: ('outline' | 'secondary' | 'default') | null;
         };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Draws a placeholder purple rectangle down the side of the section — replace with your SVG.
+   */
+  enableMotif?: boolean | null;
+  enableCards?: boolean | null;
+  cards?:
+    | {
+        title: string;
+        body?: string | null;
+        color: 'coral' | 'purple' | 'cyan' | 'green';
+        withLink?: boolean | null;
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+        };
+        /**
+         * Optional image shown behind the card, over its color.
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * How visible the background image is over the card color.
+         */
+        backgroundOpacity?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -664,9 +715,6 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
-  /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
-   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -686,9 +734,6 @@ export interface Form {
   redirect?: {
     url: string;
   };
-  /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
-   */
   emails?:
     | {
         emailTo?: string | null;
@@ -697,9 +742,6 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
-        /**
-         * Enter the message that should be sent in this email.
-         */
         message?: {
           root: {
             type: string;
@@ -763,7 +805,7 @@ export interface ContentBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'secondary' | 'primary' | 'outline') | null;
+          appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
         };
         id?: string | null;
       }[]
@@ -788,6 +830,10 @@ export interface MediaBlock {
  */
 export interface ArchiveBlock {
   title?: string | null;
+  /**
+   * Small label above the title (Text variant).
+   */
+  eyebrow?: string | null;
   introContent?: {
     root: {
       type: string;
@@ -803,9 +849,22 @@ export interface ArchiveBlock {
     };
     [k: string]: unknown;
   } | null;
-  eventsOnly?: boolean | null;
-  sectionLabel?: string | null;
-  viewAllUrl?: string | null;
+  style?: ('text' | 'cards') | null;
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
   categories?: (number | Category)[] | null;
@@ -858,13 +917,30 @@ export interface FormBlock {
  * via the `definition` "CardBlock".
  */
 export interface CardBlock {
-  sectionTitle?: string | null;
-  sectionSubtitle?: string | null;
+  title?: string | null;
   cards?:
     | {
         title: string;
-        description?: string | null;
-        icon?: ('cross' | 'diamond') | null;
+        description?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        color: 'coral' | 'purple' | 'cyan' | 'green';
+        orientation: 'vertical' | 'horizontal';
+        /**
+         * Enable to add a link to the card
+         */
         withLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -881,6 +957,11 @@ export interface CardBlock {
           url?: string | null;
           label?: string | null;
         };
+        /**
+         * Optional image shown behind the card, over its color.
+         */
+        backgroundImage?: (number | null) | Media;
+        backgroundOpacity?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -890,48 +971,83 @@ export interface CardBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LogoCarouselBlock".
+ * via the `definition` "CarouselLogoBlock".
  */
-export interface LogoCarouselBlock {
-  partners?:
+export interface CarouselLogoBlock {
+  title?: string | null;
+  items?:
     | {
-        name: string;
+        title: string;
+        media: number | Media;
+        link?: string | null;
         id?: string | null;
       }[]
     | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'logoCarousel';
+  blockType: 'carouselLogoBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ImageContentBlock".
  */
 export interface ImageContentBlock {
-  sectionEyebrow?: string | null;
-  sectionTitle?: string | null;
-  items?:
+  title?: string | null;
+  /**
+   * Number of columns at lg breakpoint (1-4)
+   */
+  colsLg?: number | null;
+  /**
+   * Number of rows at lg breakpoint
+   */
+  rowsLg?: number | null;
+  cells?:
     | {
-        eyebrow?: string | null;
-        title: string;
-        body?: string | null;
-        ctaLink?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label?: string | null;
-        };
+        type: 'text' | 'media';
+        /**
+         * How many rows this cell spans on md+ (1-2)
+         */
+        rowSpan?: number | null;
+        richText?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        links?:
+          | {
+              link?: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label?: string | null;
+                /**
+                 * Choose how the link should be rendered.
+                 */
+                appearance?: ('default' | 'secondary') | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
         media?: (number | null) | Media;
-        tone?: ('navy' | 'cream') | null;
         id?: string | null;
       }[]
     | null;
@@ -966,31 +1082,48 @@ export interface StaticMapBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "AboutSectionBlock".
+ * via the `definition` "DividerBlock".
  */
-export interface AboutSectionBlock {
-  heading?: string | null;
-  body?: string | null;
-  ctaLink?: {
-    type?: ('reference' | 'custom') | null;
-    newTab?: boolean | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-    label?: string | null;
-  };
-  pillars?:
+export interface DividerBlock {
+  pattern: 'a' | 'b' | 'c' | 'd';
+  primaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
+  secondaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
+  /**
+   * Only used by patterns B and D.
+   */
+  tertiaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'divider';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  title?: string | null;
+  entries?:
     | {
-        title: string;
-        body?: string | null;
-        tone?: ('red' | 'ink') | null;
+        /**
+         * The coral label, e.g. "IANUARIE 2023".
+         */
+        date: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        withLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -1011,59 +1144,7 @@ export interface AboutSectionBlock {
     | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'aboutSection';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TeamTeaserBlock".
- */
-export interface TeamTeaserBlock {
-  heading?: string | null;
-  ctaLink?: {
-    type?: ('reference' | 'custom') | null;
-    newTab?: boolean | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-    label?: string | null;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'teamTeaser';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ChronologyBlock".
- */
-export interface ChronologyBlock {
-  variant: 'history' | 'upcoming';
-  title?: string | null;
-  milestones?:
-    | {
-        year: string;
-        title: string;
-        body?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  steps?:
-    | {
-        tag: string;
-        text: string;
-        id?: string | null;
-      }[]
-    | null;
-  newsletterEnabled?: boolean | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'chronology';
+  blockType: 'timeline';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1347,13 +1428,9 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
-        richText?: T;
+        bgColor?: T;
         title?: T;
         subtitle?: T;
-        timeout?: T;
-        slides?: T | SlidesSelect<T>;
-        media?: T;
-        eyebrow?: T;
         body?: T;
         ctaLink?:
           | T
@@ -1365,6 +1442,10 @@ export interface PagesSelect<T extends boolean = true> {
               label?: T;
               appearance?: T;
             };
+        media?: T;
+        timeout?: T;
+        slides?: T | SlidesSelect<T>;
+        richText?: T;
       };
   layout?:
     | T
@@ -1375,12 +1456,11 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         cardBlock?: T | CardBlockSelect<T>;
-        logoCarousel?: T | LogoCarouselBlockSelect<T>;
+        carouselLogoBlock?: T | CarouselLogoBlockSelect<T>;
         imageContent?: T | ImageContentBlockSelect<T>;
         staticMap?: T | StaticMapBlockSelect<T>;
-        aboutSection?: T | AboutSectionBlockSelect<T>;
-        teamTeaser?: T | TeamTeaserBlockSelect<T>;
-        chronology?: T | ChronologyBlockSelect<T>;
+        divider?: T | DividerBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
       };
   meta?:
     | T
@@ -1401,6 +1481,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "Slides_select".
  */
 export interface SlidesSelect<T extends boolean = true> {
+  color?: T;
   media?: T;
   title?: T;
   subtitle?: T;
@@ -1427,6 +1508,7 @@ export interface SlidesSelect<T extends boolean = true> {
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
   title?: T;
+  subtitle?: T;
   richText?: T;
   variant?: T;
   media?: T;
@@ -1446,6 +1528,28 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               label?: T;
               appearance?: T;
             };
+        id?: T;
+      };
+  enableMotif?: T;
+  enableCards?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        color?: T;
+        withLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        backgroundImage?: T;
+        backgroundOpacity?: T;
         id?: T;
       };
   id?: T;
@@ -1493,10 +1597,18 @@ export interface MediaBlockSelect<T extends boolean = true> {
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
   title?: T;
+  eyebrow?: T;
   introContent?: T;
-  eventsOnly?: T;
-  sectionLabel?: T;
-  viewAllUrl?: T;
+  style?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   populateBy?: T;
   relationTo?: T;
   categories?: T;
@@ -1530,14 +1642,14 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CardBlock_select".
  */
 export interface CardBlockSelect<T extends boolean = true> {
-  sectionTitle?: T;
-  sectionSubtitle?: T;
+  title?: T;
   cards?:
     | T
     | {
         title?: T;
         description?: T;
-        icon?: T;
+        color?: T;
+        orientation?: T;
         withLink?: T;
         link?:
           | T
@@ -1548,6 +1660,8 @@ export interface CardBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        backgroundImage?: T;
+        backgroundOpacity?: T;
         id?: T;
       };
   id?: T;
@@ -1555,13 +1669,16 @@ export interface CardBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "LogoCarouselBlock_select".
+ * via the `definition` "CarouselLogoBlock_select".
  */
-export interface LogoCarouselBlockSelect<T extends boolean = true> {
-  partners?:
+export interface CarouselLogoBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
     | T
     | {
-        name?: T;
+        title?: T;
+        media?: T;
+        link?: T;
         id?: T;
       };
   id?: T;
@@ -1572,25 +1689,31 @@ export interface LogoCarouselBlockSelect<T extends boolean = true> {
  * via the `definition` "ImageContentBlock_select".
  */
 export interface ImageContentBlockSelect<T extends boolean = true> {
-  sectionEyebrow?: T;
-  sectionTitle?: T;
-  items?:
+  title?: T;
+  colsLg?: T;
+  rowsLg?: T;
+  cells?:
     | T
     | {
-        eyebrow?: T;
-        title?: T;
-        body?: T;
-        ctaLink?:
+        type?: T;
+        rowSpan?: T;
+        richText?: T;
+        links?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
             };
         media?: T;
-        tone?: T;
         id?: T;
       };
   id?: T;
@@ -1624,26 +1747,28 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "AboutSectionBlock_select".
+ * via the `definition` "DividerBlock_select".
  */
-export interface AboutSectionBlockSelect<T extends boolean = true> {
-  heading?: T;
-  body?: T;
-  ctaLink?:
+export interface DividerBlockSelect<T extends boolean = true> {
+  pattern?: T;
+  primaryColor?: T;
+  secondaryColor?: T;
+  tertiaryColor?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  title?: T;
+  entries?:
     | T
     | {
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
-        label?: T;
-      };
-  pillars?:
-    | T
-    | {
-        title?: T;
-        body?: T;
-        tone?: T;
+        date?: T;
+        content?: T;
+        withLink?: T;
         link?:
           | T
           | {
@@ -1655,50 +1780,6 @@ export interface AboutSectionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TeamTeaserBlock_select".
- */
-export interface TeamTeaserBlockSelect<T extends boolean = true> {
-  heading?: T;
-  ctaLink?:
-    | T
-    | {
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
-        label?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ChronologyBlock_select".
- */
-export interface ChronologyBlockSelect<T extends boolean = true> {
-  variant?: T;
-  title?: T;
-  milestones?:
-    | T
-    | {
-        year?: T;
-        title?: T;
-        body?: T;
-        id?: T;
-      };
-  steps?:
-    | T
-    | {
-        tag?: T;
-        text?: T;
-        id?: T;
-      };
-  newsletterEnabled?: T;
   id?: T;
   blockName?: T;
 }
@@ -1721,6 +1802,7 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  showMotif?: T;
   isEvent?: T;
   eventDate?: T;
   publishedAt?: T;
