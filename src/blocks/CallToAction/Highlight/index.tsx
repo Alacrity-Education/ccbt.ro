@@ -33,35 +33,42 @@ const HighlightCardItem: React.FC<HighlightCard> = ({
   </PillarCard>
 );
 
-export const HighlightCTA: React.FC<
-  CTABlockProps & { align?: "left" | "center" }
-> = ({ title, subtitle, richText, links, enableCards, cards, enableMotif, align = "left" }) => {
-  const centered = align === "center";
-  // The motif only applies to the left-aligned variant.
-  const showMotif = enableMotif && !centered;
+export const HighlightCTA: React.FC<CTABlockProps> = ({
+  title,
+  subtitle,
+  richText,
+  links,
+  enableCards,
+  cards,
+  enableMotif,
+}) => {
+  // Alignment follows the motif: it claims the right side of the section, which only
+  // works with left-aligned content. Without it the layout is centered.
+  const showMotif = Boolean(enableMotif);
+  const centered = !showMotif;
 
   return (
-    <section className="relative bg-base-200">
-      {/* Woven-ribbon motif. Anchored to the CTA's top edge and bled upward with a
-          negative offset so it overlaps the purple transition strip and the bottom
-          of the hero above. The strip sits directly above the CTA at a fixed height,
-          so this overlap stays consistent regardless of the hero's viewport height.
-          Horizontal overflow is clipped by the body (overflow-x-clip); vertical
-          overflow is left visible so the motif can reach up into the hero. */}
+    <section className="relative overflow-hidden bg-base-200">
+      {/* Woven-ribbon motif. It keeps its natural length — the negative top offset and
+          min-height let the artwork run at full scale, so the tails are always long
+          enough — while overflow-hidden on the section clips it to the CTA's own bounds.
+          Whatever runs past the top or bottom edge is simply cut, never drawn over the
+          hero above or the section below. */}
       {showMotif && (
         <div
           aria-hidden
-          className="pointer-events-none absolute right-0 bottom-0 z-0 hidden w-[200px] flex-col lg:top-[-130px] lg:flex lg:min-h-[833px] xl:top-[-160px] xl:w-[250px] xl:min-h-[1041px]"
+          className="pointer-events-none absolute right-0 bottom-0 z-0 hidden w-[200px] flex-col lg:top-[-130px] lg:flex lg:min-h-[956px] xl:top-[-160px] xl:w-[250px] xl:min-h-[1195px]"
         >
           {/* Head: plus + weave + start of the tails (cropped just below the weave). */}
-          <HighlightMotif viewBoxHeight={885} className="h-auto w-full shrink-0" />
+          <HighlightMotif viewBoxHeight={915} className="h-auto w-full shrink-0" />
           {/* Tails continue as percentage-aligned bars, filling down to the section
-              bottom. min-height keeps them at least the motif's natural length when
-              the CTA is shorter than the motif. */}
+              bottom. Offsets and colors mirror the artwork's bottom bars (x 2-51,
+              78-128, 153-202 of the 204-wide viewBox). min-height keeps them at least
+              the motif's natural length when the CTA is shorter than the motif. */}
           <div className="relative w-full grow">
-            <span className="absolute inset-y-0" style={{ left: "35.27%", width: "13.45%", background: "#57C6FF" }} />
-            <span className="absolute inset-y-0" style={{ left: "54.91%", width: "13.45%", background: "#009E5C" }} />
-            <span className="absolute inset-y-0" style={{ left: "74.91%", width: "13.45%", background: "#5F0058" }} />
+            <span className="absolute inset-y-0" style={{ left: "0.98%", width: "24.02%", background: "#5ED9FC" }} />
+            <span className="absolute inset-y-0" style={{ left: "38.24%", width: "24.51%", background: "#5F0058" }} />
+            <span className="absolute inset-y-0" style={{ left: "75%", width: "24.02%", background: "#E84935" }} />
           </div>
         </div>
       )}

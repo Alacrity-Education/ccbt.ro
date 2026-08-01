@@ -7,23 +7,15 @@ import { BackgroundCTA } from "./Background";
 import { SecondaryCTA } from "./Secondary";
 import { HighlightCTA } from "./Highlight";
 
-const HighlightLeftCTA: React.FC<CTABlockProps> = (props) => (
-  <HighlightCTA {...props} align="left" />
-);
-const HighlightCenteredCTA: React.FC<CTABlockProps> = (props) => (
-  <HighlightCTA {...props} align="center" />
-);
-
 const variants = {
   primary: PrimaryCTA,
   background: BackgroundCTA,
   secondary: SecondaryCTA,
-  highlightLeft: HighlightLeftCTA,
-  highlightCentered: HighlightCenteredCTA,
+  highlight: HighlightCTA,
 };
 
-// Highlight variants render their own heading, so the generic wrapper title is skipped.
-const SELF_TITLED_VARIANTS = ["highlightLeft", "highlightCentered"];
+// The highlight variant renders its own heading, so the generic wrapper title is skipped.
+const SELF_TITLED_VARIANTS = ["highlight"];
 
 export const CallToActionBlock: React.FC<CTABlockProps> = (props) => {
   const { variant, title } = props || {};

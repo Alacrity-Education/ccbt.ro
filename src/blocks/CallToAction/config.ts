@@ -10,10 +10,10 @@ import {
 import { linkGroup } from "../../fields/linkGroup";
 import { link } from "@/fields/link";
 
-// The two "highlight" variants share the same fields (heading + body + button +
-// optional highlight cards + optional motif); they only differ in alignment.
-const HIGHLIGHT_VARIANTS = ["highlightLeft", "highlightCentered"];
-const isHighlight = (variant?: string) => HIGHLIGHT_VARIANTS.includes(variant ?? "");
+// The "highlight" variant renders left-aligned when the motif is enabled (the motif
+// claims the right side of the section) and centered otherwise. See
+// blocks/CallToAction/Highlight — alignment is derived, never picked by the editor.
+const isHighlight = (variant?: string) => variant === "highlight";
 
 export const CallToAction: Block = {
   slug: "cta",
@@ -55,8 +55,7 @@ export const CallToAction: Block = {
         { label: "Purple", value: "primary" },
         { label: "Coral", value: "secondary" },
         { label: "Background image", value: "background" },
-        { label: "Highlight — Left", value: "highlightLeft" },
-        { label: "Highlight — Centered", value: "highlightCentered" },
+        { label: "Highlight", value: "highlight" },
       ],
     },
     {
@@ -112,8 +111,8 @@ export const CallToAction: Block = {
       defaultValue: false,
       admin: {
         description:
-          "Draws a placeholder purple rectangle down the side of the section — replace with your SVG.",
-        condition: (_, sibling) => sibling?.variant === "highlightLeft",
+          "Draws the woven-ribbon motif down the right side of the section. The motif takes up that space, so enabling it also left-aligns the content; leave it off for a centered layout.",
+        condition: (_, sibling) => isHighlight(sibling?.variant),
       },
     },
     {

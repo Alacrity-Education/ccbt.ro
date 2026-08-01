@@ -528,7 +528,7 @@ export interface CallToActionBlock {
     };
     [k: string]: unknown;
   } | null;
-  variant?: ('primary' | 'secondary' | 'background' | 'highlightLeft' | 'highlightCentered') | null;
+  variant?: ('primary' | 'secondary' | 'background' | 'highlight') | null;
   media?: (number | null) | Media;
   ctaType?: ('links' | 'modal') | null;
   modalButtonText?: string | null;
@@ -558,7 +558,7 @@ export interface CallToActionBlock {
       }[]
     | null;
   /**
-   * Draws a placeholder purple rectangle down the side of the section — replace with your SVG.
+   * Draws the woven-ribbon motif down the right side of the section. The motif takes up that space, so enabling it also left-aligns the content; leave it off for a centered layout.
    */
   enableMotif?: boolean | null;
   enableCards?: boolean | null;
