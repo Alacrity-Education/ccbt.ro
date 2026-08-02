@@ -90,10 +90,10 @@ export const CardsArchiveBlock: React.FC<
       )}
       <div className={cn("w-full")}>
         <div
-          className={cn(
-            "grid grid-cols-1 gap-4",
-            "sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
-          )}
+          // Cards are horizontal, so they need real width before splitting into
+          // columns — at two columns on a 768px tablet the text well was down to
+          // ~144px. The second column waits for lg.
+          className={cn("grid grid-cols-1 gap-4", "lg:grid-cols-2 xl:grid-cols-3")}
         >
           {posts?.map((post, index) => {
             if (typeof post !== "object" || post === null) return null;
@@ -119,10 +119,13 @@ export const CardsArchiveBlock: React.FC<
                   key={index}
                   className={cn(
                     variantClasses,
-                    "shadow-lg rounded-lg p-4 flex h-max w-full flex-row-reverse hover:cursor-pointer"
+                    "shadow-lg rounded-lg p-4 flex h-max w-full flex-col gap-4 sm:flex-row-reverse sm:gap-0 hover:cursor-pointer"
                   )}
                 >
-                  <div className="relative h-46 sm:h-60 aspect-2/3 shrink-0">
+                  {/* Side by side the portrait crop reads well, but stacked on a
+                      phone it would eat most of the screen — so it goes landscape
+                      and full width there instead. */}
+                  <div className="relative w-full shrink-0 aspect-3/2 sm:aspect-2/3 sm:h-60 sm:w-auto">
                     {!metaImage && (
                       <div className="bg-base-200 rounded-lg h-full w-full flex items-center justify-center text-xs">
                         No Image
@@ -139,7 +142,7 @@ export const CardsArchiveBlock: React.FC<
                   </div>
 
 
-                  <div className="min-w-0 flex-1 lg:pr-0 h-full text-base flex flex-col pr-4">
+                  <div className="min-w-0 flex-1 h-full text-base flex flex-col sm:pr-4">
                     {title && (
                       <div className="w-full text-start text-base sm:text-xl font-bold no-underline ">
                         <h3>{title}</h3>
