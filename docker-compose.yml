@@ -1,31 +1,82 @@
-version: '3'
+# Switching databases: run `docker compose down` BEFORE editing COMPOSE_PROFILES.
+# down only touches services in the currently enabled profiles, so flipping the
+# value first leaves the old stack running and port 3000 stays taken. If that has
+# already happened: docker compose --profile postgres --profile mongo down
+
+x-app: &app
+  build:
+    context: .
+    target: dev
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/app
+    - node_modules:/app/node_modules
+    - next_cache:/app/.next
+  env_file:
+    - .env
+  # -H 0.0.0.0 is what makes the published port reachable: next dev otherwise binds
+  # to the container's loopback, where the port mapping cannot see it. The giveaway
+  # is a startup banner with a "Local:" line but no "Network:" line.
+  command: sh -c "[ -x node_modules/.bin/next ] || npm ci; exec npm run dev -- -H 0.0.0.0"
+  restart: unless-stopped
 
 services:
-  payload:
-    image: node:18-alpine
-    ports:
-      - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
+  app-postgres:
+    <<: *app
+    container_name: ccbt-app-postgres
+    profiles: ["postgres"]
+    environment:
+      DATABASE_URI: postgresql://payload:payload@postgres:5432/ccbt
     depends_on:
-      - mongo
-    env_file:
-      - .env
+      postgres:
+        condition: service_healthy
+
+  app-mongo:
+    <<: *app
+    container_name: ccbt-app-mongo
+    profiles: ["mongo"]
+    environment:
+      DATABASE_URI: mongodb://mongo:27017/ccbt
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  postgres:
+    container_name: ccbt-db-postgres
+    profiles: ["postgres"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: ccbt
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payload -d ccbt"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   mongo:
-    image: mongo:latest
+    container_name: ccbt-db-mongo
+    profiles: ["mongo"]
+    image: mongo:7
+    command: ["--storageEngine=wiredTiger"]
     ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
+      - "${MONGO_PORT:-27017}:27017"
     volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
-  data:
+  postgres_data:
+  mongo_data:
   node_modules:
+  next_cache:

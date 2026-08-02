@@ -1,0 +1,17 @@
+# Without this, `COPY . .` ships the host's node_modules and build output into the
+# image, which is slow and can overwrite the Linux binaries installed by `npm ci`.
+node_modules
+.next
+.git
+.github
+.idea
+.vscode
+
+# Secrets stay out of the image; compose passes them in via env_file at run time.
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
+media

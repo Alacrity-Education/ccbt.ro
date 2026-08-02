@@ -5,6 +5,9 @@ import redirects from './redirects.js'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Emits .next/standalone, which the Dockerfile's production stage copies. Harmless
+  // outside Docker — `next dev` and `next start` are unaffected.
+  output: 'standalone',
   images: {
     dangerouslyAllowLocalIP:true,
     remotePatterns: [
