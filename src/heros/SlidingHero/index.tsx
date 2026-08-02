@@ -4,6 +4,7 @@ import type { Page } from "@/payload-types";
 import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
 import { resolveColor, type HeroColor } from "@/heros/Home";
+import { HeroScrim } from "@/heros/HeroScrim";
 
 type pageType = Page["hero"];
 
@@ -51,7 +52,7 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroColor }> = ({
   const prevIndex = (visibleSlide - 1 + len) % len;
 
   return (
-    <div className="relative isolate flex h-[80vh] w-full overflow-hidden text-white">
+    <div className="relative isolate flex h-[80svh] min-h-[30rem] w-full overflow-hidden text-white">
       {slides?.map((slide, index) => {
         // 2. Determine the state of this specific slide
         const isCurrent = index === visibleSlide;
@@ -113,17 +114,19 @@ const Slide = ({
 }) => {
   const { media, title, subtitle, cta } = slide;
   // Each slide sets its own gradient color; fall back to the hero-level color.
-  const { bg, dark } = resolveColor((slide.color as HeroColor) ?? fallbackColor);
+  const { bg, dark } = resolveColor(
+    (slide.color as HeroColor) ?? fallbackColor,
+  );
 
   return (
     <div
       className={`relative flex h-full items-center overflow-hidden ${dark ? "text-white" : "text-base-content"}`}
       data-theme={dark ? "dark" : undefined}
     >
-      <div className="font-base relative z-20 container mx-auto flex h-full items-center justify-start">
-        <div className="max-w-4xl pb-8 md:text-start">
+      <div className="font-base relative z-20 container mx-auto py-16">
+        <div className="max-w-4xl md:text-start">
           {title && (
-            <h1 className="mb-5 max-w-[15ch] text-4xl font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl leading-[0.98] md:leading-[0.95]">
+            <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95]">
               {title}
             </h1>
           )}
@@ -151,21 +154,14 @@ const Slide = ({
       </div>
 
       <div className="absolute inset-0 z-0 select-none">
-        {/* Left-to-right gradient in the selected color, mirroring the High Impact hero. */}
-        <div
-          className="absolute z-10 h-full w-full"
-          style={{
-            background: `linear-gradient(to right, ${bg} ,${bg} 30%, transparent )`,
-          }}
-        />
+        <HeroScrim color={bg} />
 
-        {/* Media Component */}
         {media && (
           <Media
             fill
             resource={media}
-            pictureClassName="absolute h-[80vh] w-[160vh] left-1/2 -ml-[80vh] sm:h-full sm:w-full sm:left-0 sm:ml-0"
-            imgClassName="object-cover z-0 animate-ken-burns sm:animate-none"
+            pictureClassName="absolute inset-0 h-full w-full"
+            imgClassName="object-cover object-center z-0 animate-ken-burns sm:animate-none"
           />
         )}
       </div>

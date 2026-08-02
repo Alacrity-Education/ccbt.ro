@@ -6,6 +6,7 @@ import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
 import { BRAND, type HeroSurfaceColor } from "@/utilities/brand";
+import { HeroScrim } from "@/heros/HeroScrim";
 
 export type HeroImpact = "high" | "medium" | "low";
 export type HeroColor = HeroSurfaceColor;
@@ -29,17 +30,15 @@ export function resolveColor(color: HeroColor) {
 }
 
 /** CTA button that stays legible on any surface. */
-const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({ ctaLink, dark }) => {
+const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({
+  ctaLink,
+  dark,
+}) => {
   if (!ctaLink?.label) return null;
   const hasHref = ctaLink?.url || ctaLink?.reference;
   if (!hasHref) return null;
 
-  return (
-    <CMSLink
-      {...ctaLink}
-      size={"lg"}
-    />
-  );
+  return <CMSLink {...ctaLink} size={"lg"} />;
 };
 
 export const Hero: React.FC<HeroProps> = (props) => {
@@ -56,15 +55,15 @@ export const Hero: React.FC<HeroProps> = (props) => {
     return (
       <section
         className={cn(
-          "relative flex h-[80vh] items-center overflow-hidden",
+          "relative flex min-h-[80svh] items-center overflow-hidden",
           dark ? "text-white" : "text-base-content",
         )}
         data-theme={dark ? "dark" : undefined}
       >
-        <div className="font-base relative z-20 container mx-auto flex h-full items-center justify-start">
-          <div className="max-w-4xl pb-8 md:text-start">
+        <div className="font-base relative z-20 container mx-auto py-16">
+          <div className="max-w-4xl md:text-start">
             {title && (
-              <h1 className="mb-5 max-w-[15ch] lg:max-w-1/2 text-4xl font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl lg:text-7xl xl:text-7xl leading-[0.98] md:leading-[0.95]">
+              <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95] lg:max-w-1/2 lg:text-7xl xl:text-7xl">
                 {title}
               </h1>
             )}
@@ -74,7 +73,12 @@ export const Hero: React.FC<HeroProps> = (props) => {
               </p>
             )}
             {body && (
-              <p className={cn("mb-8 max-w-xl text-sm sm:text-base md:text-lg", bodyClass)}>
+              <p
+                className={cn(
+                  "mb-8 max-w-xl text-sm sm:text-base md:text-lg",
+                  bodyClass,
+                )}
+              >
                 {body}
               </p>
             )}
@@ -83,17 +87,14 @@ export const Hero: React.FC<HeroProps> = (props) => {
         </div>
 
         <div className="absolute inset-0 z-0 select-none">
-          <div
-            className="absolute z-10 h-full w-full"
-            style={{ background: `linear-gradient(to right, ${bg} ,${bg} 30%, transparent )` }}
-          />
+          <HeroScrim color={bg} />
           {media && (
             <Media
               fill
               priority
               resource={media}
-              pictureClassName="absolute h-[80vh] w-[160vh] left-1/2 -ml-[80vh] sm:h-full sm:w-full sm:left-0 sm:ml-0"
-              imgClassName="object-cover z-0 animate-ken-burns sm:animate-none"
+              pictureClassName="absolute inset-0 h-full w-full"
+              imgClassName="object-cover object-center z-0 animate-ken-burns sm:animate-none"
             />
           )}
         </div>
@@ -125,7 +126,9 @@ export const Hero: React.FC<HeroProps> = (props) => {
               </p>
             )}
             {body && (
-              <p className={cn("mb-8 text-base md:text-lg", bodyClass)}>{body}</p>
+              <p className={cn("mb-8 text-base md:text-lg", bodyClass)}>
+                {body}
+              </p>
             )}
             <HeroCta ctaLink={ctaLink} dark={dark} />
           </div>
@@ -155,7 +158,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
       style={{ background: bg }}
       data-theme={dark ? "dark" : undefined}
     >
-      <div className="font-base mx-auto container py-14 md:py-20">
+      <div className="font-base container mx-auto py-14 md:py-20">
         <div className="max-w-3xl">
           {title && (
             <h1 className="mb-4 text-3xl font-semibold text-balance md:text-4xl xl:text-5xl">
