@@ -1099,7 +1099,7 @@ export interface DividerBlock {
   primaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
   secondaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
   /**
-   * Only used by patterns B and D.
+   * Patterns A and C are drawn in two colours, so this slot does nothing there.
    */
   tertiaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
   id?: string | null;

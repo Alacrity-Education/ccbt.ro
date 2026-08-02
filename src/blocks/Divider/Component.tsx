@@ -116,14 +116,51 @@ const SVG_D = `<svg width="1602" height="107" viewBox="0 0 1602 107" fill="none"
 
 type Roles = { c1: string; c2: string; c3?: string };
 
-// `roles` are the hexes present in the exported artwork, which act as the search
-// keys for recoloring. Leaving a slot on "default" keeps the artwork's own hex,
-// so the pattern renders exactly as designed.
-const PATTERNS: Record<string, { svg: string; roles: Roles }> = {
-  a: { svg: SVG_A, roles: { c1: "#009E5C", c2: "#FB3524" } },
-  b: { svg: SVG_B, roles: { c1: "#FB3524", c2: "#5F0058", c3: "#009E5C" } },
-  c: { svg: SVG_C, roles: { c1: "#009E5C", c2: "#5F0058" } },
-  d: { svg: SVG_D, roles: { c1: "#5ED9FC", c2: "#FB3524", c3: "#F6C4DA" } },
+type Pattern = {
+  svg: string;
+  /**
+   * Hexes present in the exported artwork, acting as the search keys for
+   * recoloring. Leaving a slot on "default" keeps the artwork's own hex, so the
+   * pattern renders exactly as designed.
+   */
+  roles: Roles;
+  /** viewBox of the export. */
+  size: { w: number; h: number };
+  /** x-range the ornament occupies; everything outside it is plain bar. */
+  ornament: [number, number];
+  /** Width of the phone crop, in viewBox units — this is what sets its height. */
+  mobileWidth: number;
+};
+
+const PATTERNS: Record<string, Pattern> = {
+  a: {
+    svg: SVG_A,
+    roles: { c1: "#009E5C", c2: "#FB3524" },
+    size: { w: 1600, h: 69 },
+    ornament: [0, 317],
+    mobileWidth: 540,
+  },
+  b: {
+    svg: SVG_B,
+    roles: { c1: "#FB3524", c2: "#5F0058", c3: "#009E5C" },
+    size: { w: 1602, h: 74 },
+    ornament: [1023, 1126],
+    mobileWidth: 580,
+  },
+  c: {
+    svg: SVG_C,
+    roles: { c1: "#009E5C", c2: "#5F0058" },
+    size: { w: 1600, h: 51 },
+    ornament: [918, 1010],
+    mobileWidth: 400,
+  },
+  d: {
+    svg: SVG_D,
+    roles: { c1: "#5ED9FC", c2: "#FB3524", c3: "#F6C4DA" },
+    size: { w: 1602, h: 107 },
+    ornament: [0, 317],
+    mobileWidth: 700,
+  },
 };
 
 /** Resolve a chosen palette name to a hex; "default" keeps the artwork's own. */
@@ -132,41 +169,77 @@ function resolve(chosen: string | null | undefined, originalHex: string) {
   return brandHex(chosen, "coral");
 }
 
+function mobileViewBox({ size, ornament, mobileWidth }: Pattern) {
+  const centre = (ornament[0] + ornament[1]) / 2;
+  const ideal = centre - mobileWidth * (centre / size.w);
+
+  const lowest = Math.max(0, ornament[1] - mobileWidth);
+  const highest = Math.max(lowest, Math.min(ornament[0], size.w - mobileWidth));
+  const x = Math.min(Math.max(ideal, lowest), highest);
+
+  return `${Math.round(x)} 0 ${mobileWidth} ${size.h}`;
+}
+
 export const DividerBlock: React.FC<DividerBlockProps> = ({
+  id,
   pattern,
   primaryColor,
   secondaryColor,
   tertiaryColor,
 }) => {
-  const def = PATTERNS[pattern ?? "a"] ?? PATTERNS.a;
+  const key = pattern ?? "a";
+  const def = PATTERNS[key] ?? PATTERNS.a;
 
   const chosen: Record<keyof Roles, string | null | undefined> = {
     c1: primaryColor,
     c2: secondaryColor,
     c3: tertiaryColor,
   };
+  const roleKeys = Object.keys(def.roles) as (keyof Roles)[];
 
   // Two-phase swap (hex -> token -> hex) so a slot's new color can't be picked
   // up by a later slot's replacement.
   let svg = def.svg;
-  (Object.keys(def.roles) as (keyof Roles)[]).forEach((key) => {
-    svg = svg.split(def.roles[key] as string).join(`__DV_${key}__`);
+  roleKeys.forEach((role) => {
+    svg = svg.split(def.roles[role] as string).join(`__DV_${role}__`);
   });
-  (Object.keys(def.roles) as (keyof Roles)[]).forEach((key) => {
-    const hex = resolve(chosen[key], def.roles[key] as string);
-    svg = svg.split(`__DV_${key}__`).join(hex);
+  const hexes = roleKeys.map((role) =>
+    resolve(chosen[role], def.roles[role] as string),
+  );
+  roleKeys.forEach((role, i) => {
+    svg = svg.split(`__DV_${role}__`).join(hexes[i] as string);
   });
 
-  // "slice" makes the SVG cover its box (cropping horizontally) instead of
-  // shrinking to fit — combined with the small-screen min-height below, the
-  // divider stays a readable height on phones and just gets cropped.
-  svg = svg.replace("<svg ", '<svg preserveAspectRatio="xMidYMid slice" ');
+  const artworkId = `divider-${id ?? `${key}-${hexes.join("")}`.replace(/[^a-z0-9]/gi, "")}`;
+  const artwork = svg
+    .replace(/^[\s\S]*?<svg[^>]*>/, "")
+    .replace(/<\/svg>\s*$/, "");
+
+  const rootFill = def.svg.match(/<svg[^>]*\sfill="([^"]+)"/)?.[1] ?? "none";
+
+  const full = `0 0 ${def.size.w} ${def.size.h}`;
 
   return (
-    <div
-      aria-hidden
-      className="w-full [&_svg]:block [&_svg]:w-full [&_svg]:h-auto [&_svg]:min-h-14 md:[&_svg]:min-h-0"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div aria-hidden className="w-full">
+      <svg className="absolute h-0 w-0 overflow-hidden">
+        <defs>
+          <g
+            id={artworkId}
+            fill={rootFill}
+            dangerouslySetInnerHTML={{ __html: artwork }}
+          />
+        </defs>
+      </svg>
+
+      <svg
+        viewBox={mobileViewBox(def)}
+        className="block h-auto w-full md:hidden"
+      >
+        <use href={`#${artworkId}`} />
+      </svg>
+      <svg viewBox={full} className="hidden h-auto w-full md:block">
+        <use href={`#${artworkId}`} />
+      </svg>
+    </div>
   );
 };
