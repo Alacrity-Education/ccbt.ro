@@ -1,11 +1,6 @@
 import type { Field } from 'payload'
 
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+import { richTextEditor } from '@/fields/richTextEditor'
 import { link } from '@/fields/link'
 
 import { linkGroup } from '@/fields/linkGroup'
@@ -152,16 +147,7 @@ export const hero: Field = {
       // by the current heroes. Safe to remove later via a proper migration.
       name: 'richText',
       type: 'richText',
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
-        },
-      }),
+      editor: richTextEditor(['h1', 'h2', 'h3', 'h4']),
       label: false,
       admin: {
         hidden: true,

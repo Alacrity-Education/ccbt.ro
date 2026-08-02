@@ -1,10 +1,5 @@
 import type { Block } from "payload";
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
+import { richTextEditor } from "@/fields/richTextEditor";
 import { link } from "@/fields/link";
 import { linkGroup } from "@/fields/linkGroup";
 
@@ -78,16 +73,7 @@ export const ImageContentBlock: Block = {
           admin: {
             condition: (data, siblingData) => siblingData?.type === "text",
           },
-          editor: lexicalEditor({
-            features: ({ rootFeatures }) => {
-              return [
-                ...rootFeatures,
-                HeadingFeature({ enabledHeadingSizes: ["h2", "h3", "h4"] }),
-                FixedToolbarFeature(),
-                InlineToolbarFeature(),
-              ];
-            },
-          }),
+          editor: richTextEditor(['h2', 'h3', 'h4']),
         },
             linkGroup({
               appearances: ["default", "secondary"],

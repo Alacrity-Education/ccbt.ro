@@ -1,11 +1,6 @@
 import type { Block } from "payload";
 
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
+import { richTextEditor } from "@/fields/richTextEditor";
 
 import { link } from "@/fields/link";
 
@@ -38,14 +33,7 @@ export const Timeline: Block = {
           name: "content",
           type: "richText",
           label: "Content",
-          editor: lexicalEditor({
-            features: ({ rootFeatures }) => [
-              ...rootFeatures,
-              HeadingFeature({ enabledHeadingSizes: ["h3", "h4"] }),
-              FixedToolbarFeature(),
-              InlineToolbarFeature(),
-            ],
-          }),
+          editor: richTextEditor(['h3', 'h4']),
         },
         {
           name: "withLink",

@@ -1,10 +1,5 @@
 import type { Block } from "payload";
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
+import { richTextEditor } from "@/fields/richTextEditor";
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
 
@@ -35,14 +30,7 @@ export const CardBlock: Block = {
           name: "description",
           type: "richText",
           label: "Description",
-          editor: lexicalEditor({
-            features: ({ rootFeatures }) => [
-              ...rootFeatures,
-              HeadingFeature({ enabledHeadingSizes: ["h3", "h4"] }),
-              FixedToolbarFeature(),
-              InlineToolbarFeature(),
-            ],
-          }),
+          editor: richTextEditor(['h3', 'h4']),
         },
         {
           name: "color",
