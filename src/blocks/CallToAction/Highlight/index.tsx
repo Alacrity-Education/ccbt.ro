@@ -86,7 +86,7 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
           )}
         >
           {title && (
-            <h2 className="text-primary text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h2 className="text-primary text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
               {title}
             </h2>
           )}
@@ -121,8 +121,15 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
           )}
         </div>
 
+        {/* Sibling of the copy above, so it has to repeat that block's alignment
+            rather than inherit it — the cards keep their own left-aligned text. */}
         {enableCards && cards && cards.length > 0 && (
-          <div className="mt-12 sm:max-w-4/5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            className={cn(
+              "mt-12 grid gap-4 sm:max-w-4/5 sm:grid-cols-2 lg:grid-cols-3",
+              centered && "sm:mx-auto",
+            )}
+          >
             {cards.map((card, i) => (
               <HighlightCardItem key={card.id ?? i} {...card} />
             ))}

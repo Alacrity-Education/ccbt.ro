@@ -78,14 +78,14 @@ export const CTAPrimitive: React.FC<PrimitiveProps> = ({
         {useMediaBackground && (
           <div className="absolute top-0 left-0 z-0 h-full w-full bg-linear-to-r from-black to-transparent opacity-40 backdrop-blur-xs"></div>
         )}
-        <div className="relative z-20 flex h-max min-h-64 w-full flex-col rounded p-8">
+        <div className="relative z-20 flex h-max min-h-64 w-full flex-col rounded p-6 sm:p-8">
           <div className="max-w-3xl">
             {richText && (
               <RichText className={`mb-0 text-start ${textClass}`} data={richText} enableGutter={false} />
             )}
           </div>
           <div className="grow"></div>
-          <div className="max-w flex flex-col sm:flex-row gap-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
             {ctaType === "modal" && form ? (
               <CTAModal id="cta_modal" buttonText={modalButtonText || "Open"} form={form} buttonClassName={buttonClass} />
             ) : (
