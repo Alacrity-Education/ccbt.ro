@@ -66,7 +66,7 @@ export const TextArchiveBlock: React.FC<
             />
           )}
           {link?.label && (link.url || link.reference) && (
-            <CMSLink {...link} appearance="secondary" size="lg" />
+            <CMSLink {...link} appearance="brand" />
           )}
         </div>
 

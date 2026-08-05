@@ -109,12 +109,7 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
             <div className={cn("mt-8 flex flex-wrap gap-4", centered && "justify-center")}>
               {links.map(({ link }, i) =>
                 link ? (
-                  <CMSLink
-                    key={i}
-                    {...link}
-                    size="lg"
-                    appearance={link.appearance ?? "secondary"}
-                  />
+                  <CMSLink key={i} {...link} appearance="brand" />
                 ) : null,
               )}
             </div>

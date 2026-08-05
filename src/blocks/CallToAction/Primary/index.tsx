@@ -11,7 +11,6 @@ export const PrimaryCTA: React.FC<CTABlockProps> = (props) => {
       form={props.form as Form | undefined | null}
       bgToken="primary"
       textToken="primary"
-      buttonToken="base"
     />
   );
 };

@@ -126,6 +126,122 @@
 @theme inline {
   --font-base: var(--font-montserrat);
   --font-barlow: var(--font-barlow-sans);
+  --font-barlow-cond: var(--font-barlow-condensed);
+}
+
+/* ---------------------------------------------------------------------------
+   The action button
+   ---------------------------------------------------------------------------
+   One button for every block on the site. Header, footer and the heroes keep
+   their own treatments; everything else uses this, and the colour pickers left
+   in the admin are overridden at the call site.
+
+   It is drawn as two stacked rectangles: a coral face over a purple plinth
+   offset down and left. On hover the whole control travels onto the plinth and
+   the plinth counter-travels to meet it, so the two rectangles converge into
+   one — the button seating itself rather than lifting off the page.
+
+   Both rectangles are pseudo-elements at z-index -1 rather than a background on
+   the button itself: within the button's stacking context a negative-z child
+   paints *above* the element's own background, so a real background would be
+   covered by the plinth. ::before then ::after gives plinth-under-face for free.
+
+   Coral against white is 3.88:1 — below AA for body text, above the 3:1 bar for
+   large text. The 18px/700 label is what keeps it compliant, so the size and
+   weight are structural here, not styling.
+--------------------------------------------------------------------------- */
+.btn-brand {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.375rem;
+  background: none;
+  border: 0;
+  color: var(--color-base-100);
+  font-family: var(--font-barlow-condensed), var(--font-barlow-sans), sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  --btn-brand-offset: 6px;
+  --btn-brand-face: var(--color-secondary);
+  --btn-brand-plinth: var(--color-primary);
+  transition: transform 180ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.btn-brand::before,
+.btn-brand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  transition: transform 180ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Plinth, offset down-left. */
+.btn-brand::before {
+  background: var(--btn-brand-plinth);
+  transform: translate(calc(var(--btn-brand-offset) * -1), var(--btn-brand-offset));
+}
+
+/* Face. */
+.btn-brand::after {
+  background: var(--btn-brand-face);
+}
+
+.btn-brand:hover,
+.btn-brand:focus-visible {
+  transform: translate(calc(var(--btn-brand-offset) * -1), var(--btn-brand-offset));
+}
+
+.btn-brand:hover::before,
+.btn-brand:focus-visible::before {
+  transform: translate(0, 0);
+}
+
+.btn-brand:focus-visible {
+  outline: 3px solid var(--color-neutral);
+  outline-offset: 3px;
+}
+
+/* On saturated panels the face would vanish into the surface (coral on coral)
+   and the plinth into the background (purple on purple), so the two fills swap
+   for ink and off-white. Same geometry, same travel — only the fills change. */
+.btn-brand-invert {
+  --btn-brand-face: var(--color-base-100);
+  --btn-brand-plinth: var(--color-neutral);
+  color: var(--color-neutral);
+}
+
+.btn-brand-invert:focus-visible {
+  outline-color: var(--color-base-100);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-brand,
+  .btn-brand::before,
+  .btn-brand::after {
+    transition: none;
+  }
+
+  /* No travel; the plinth closing up still signals the state change. */
+  .btn-brand:hover,
+  .btn-brand:focus-visible {
+    transform: none;
+  }
+
+  .btn-brand:hover::before,
+  .btn-brand:focus-visible::before {
+    transform: translate(0, 0);
+  }
 }
 
 

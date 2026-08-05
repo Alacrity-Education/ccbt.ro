@@ -6,7 +6,6 @@ import type { TimelineBlock as TimelineBlockProps } from "@/payload-types";
 
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
-import { cn } from "@/utilities/ui";
 
 type Entry = NonNullable<TimelineBlockProps["entries"]>[number];
 
@@ -113,11 +112,7 @@ const TimelineEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         />
       )}
       {hasHref && (
-        <CMSLink
-          {...entry.link}
-          appearance="secondary"
-          className="mt-6 text-xs font-semibold tracking-wide uppercase"
-        />
+        <CMSLink {...entry.link} appearance="brand" className="mt-6" />
       )}
     </div>
   );

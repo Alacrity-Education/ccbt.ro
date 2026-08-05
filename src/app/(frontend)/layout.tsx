@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { cn } from "@/utilities/ui";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { Barlow, Montserrat } from "next/font/google";
+import { Barlow, Barlow_Condensed, Montserrat } from "next/font/google";
 import React from "react";
 
 import { AdminBar } from "@/components/AdminBar";
@@ -30,6 +30,15 @@ const barlow = Barlow({
   variable: "--font-barlow-sans",
 });
 
+// The condensed cut of the Barlow superfamily, loaded for one purpose: the
+// action button. Keeping it to that single role is what makes the button read as
+// a distinct object rather than another block of body text.
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin", "latin-ext"],
+  weight: ["700"],
+  variable: "--font-barlow-condensed",
+});
+
 export default async function RootLayout({
   children,
 }: {
@@ -43,6 +52,7 @@ export default async function RootLayout({
         GeistSans.variable,
         montserrat.variable,
         barlow.variable,
+        barlowCondensed.variable,
         GeistMono.variable,
       )}
       lang="en"

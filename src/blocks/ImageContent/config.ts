@@ -71,7 +71,7 @@ export const ImageContentBlock: Block = {
           editor: richTextEditor(['h2', 'h3', 'h4']),
         },
             linkGroup({
-              appearances: ["default", "secondary"],
+              appearances: ["brand", "default", "secondary"],
               overrides: {
                 name:"links",
                 maxRows: 2,

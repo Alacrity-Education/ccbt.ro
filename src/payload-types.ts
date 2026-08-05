@@ -38,7 +38,8 @@ export type Slides =
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+          appearance?:
+            ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
         };
       };
       id?: string | null;
@@ -222,7 +223,8 @@ export interface Page {
       /**
        * Choose how the link should be rendered.
        */
-      appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+      appearance?:
+        ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
     };
     media?: (number | null) | Media;
     timeout?: number | null;
@@ -552,7 +554,7 @@ export interface CallToActionBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('outline' | 'secondary' | 'default') | null;
+          appearance?: ('brand' | 'outline' | 'secondary' | 'default') | null;
         };
         id?: string | null;
       }[]
@@ -814,7 +816,8 @@ export interface ContentBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+          appearance?:
+            ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
         };
         id?: string | null;
       }[]
@@ -1046,7 +1049,7 @@ export interface ImageContentBlock {
                 /**
                  * Choose how the link should be rendered.
                  */
-                appearance?: ('default' | 'secondary') | null;
+                appearance?: ('brand' | 'default' | 'secondary') | null;
               };
               id?: string | null;
             }[]

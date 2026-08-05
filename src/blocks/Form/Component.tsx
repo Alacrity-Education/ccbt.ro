@@ -184,7 +184,7 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
+              <Button form={formID} type="submit" variant="brand" size="clear">
                 {submitButtonLabel}
               </Button>
             </form>

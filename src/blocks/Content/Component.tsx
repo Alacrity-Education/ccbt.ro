@@ -47,7 +47,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                     )}
                 {enableLink && (
                   <div className="mt-6">
-                    <CMSLink {...link} />
+                    <CMSLink {...link} appearance="brand" />
                   </div>
                 )}
               </div>

@@ -69,9 +69,8 @@ export const ImageContentBlock: React.FC<ImageContentBlockProps> = (props) => {
                     {links.map(({ link }, linkIndex) => (
                       <CMSLink
                         key={linkIndex}
-                        size="lg"
                         {...link}
-                        className={"btn btn-primary"}
+                        appearance="brand"
                       />
                     ))}
                   </div>

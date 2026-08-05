@@ -3,6 +3,7 @@ import type { Field, GroupField } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 
 export type LinkAppearances =
+  | 'brand'
   | 'default'
   | 'primary'
   | 'secondary'
@@ -13,6 +14,12 @@ export type LinkAppearances =
 
 // Color values mirror the "ccbt" daisyUI theme tokens declared in globals.css.
 export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
+  // The site's action button (see .btn-brand in globals.css). Listed first so it
+  // is the default every new link starts on.
+  brand: {
+    label: 'Button (site standard)',
+    value: 'brand',
+  },
   default: {
     label: 'Default',
     value: 'default',
@@ -163,7 +170,10 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
   }
 
   if (appearances !== false) {
+    // `defaultValue` below takes the first entry, so ordering is what makes the
+    // site standard the default.
     let appearanceOptionsToUse = [
+      appearanceOptions.brand,
       appearanceOptions.default,
       appearanceOptions.primary,
       appearanceOptions.secondary,

@@ -10,6 +10,6 @@ export const SecondaryCTA: React.FC<CTABlockProps> = (props) => {
 
       {...props}
       form={props.form as Form | undefined | null}
-      bgToken="secondary" textToken="secondary" buttonToken="base" />
+      bgToken="secondary" textToken="secondary" />
   );
 };

@@ -19,6 +19,10 @@ const buttonVariants = cva(
         sm: 'btn-sm',
       },
       variant: {
+        // The site's action button. Defined unlayered in globals.css, so it wins
+        // over the Tailwind utilities in the base string above.
+        brand: 'btn-brand',
+        brandInvert: 'btn-brand btn-brand-invert',
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         primary: 'btn btn-primary',
         secondary: 'btn btn-secondary',
