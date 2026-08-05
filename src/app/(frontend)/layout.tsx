@@ -3,7 +3,12 @@ import type { Metadata } from "next";
 import { cn } from "@/utilities/ui";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { Barlow, Barlow_Condensed, Montserrat } from "next/font/google";
+import {
+  Barlow,
+  Barlow_Condensed,
+  Barlow_Semi_Condensed,
+  Montserrat,
+} from "next/font/google";
 import React from "react";
 
 import { AdminBar } from "@/components/AdminBar";
@@ -39,6 +44,13 @@ const barlowCondensed = Barlow_Condensed({
   variable: "--font-barlow-condensed",
 });
 
+// The semi-condensed cut: the timeline's dates, titles and copy.
+const barlowSemiCondensed = Barlow_Semi_Condensed({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "600", "700"],
+  variable: "--font-barlow-semi-condensed",
+});
+
 export default async function RootLayout({
   children,
 }: {
@@ -53,6 +65,7 @@ export default async function RootLayout({
         montserrat.variable,
         barlow.variable,
         barlowCondensed.variable,
+        barlowSemiCondensed.variable,
         GeistMono.variable,
       )}
       lang="en"
@@ -75,9 +88,13 @@ export default async function RootLayout({
           {children}
           <Footer />
         </Providers>
-      <Script strategy="lazyOnload" id={"accessiblity"} src={"https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna-accessibility.umd.js"}>
-
-      </Script>
+        <Script
+          strategy="lazyOnload"
+          id={"accessiblity"}
+          src={
+            "https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna-accessibility.umd.js"
+          }
+        ></Script>
       </body>
     </html>
   );

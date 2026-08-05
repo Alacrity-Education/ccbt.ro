@@ -127,6 +127,7 @@
   --font-base: var(--font-montserrat);
   --font-barlow: var(--font-barlow-sans);
   --font-barlow-cond: var(--font-barlow-condensed);
+  --font-barlow-semi: var(--font-barlow-semi-condensed);
 }
 
 /* ---------------------------------------------------------------------------
