@@ -125,6 +125,7 @@
 
 @theme inline {
   --font-base: var(--font-montserrat);
+  --font-barlow: var(--font-barlow-sans);
 }
 
 
