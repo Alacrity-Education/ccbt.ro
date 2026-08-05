@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { cn } from "@/utilities/ui";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
-import { Montserrat } from "next/font/google";
+import { Barlow, Montserrat } from "next/font/google";
 import React from "react";
 
 import { AdminBar } from "@/components/AdminBar";
@@ -24,6 +24,12 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
+const barlow = Barlow({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "600"],
+  variable: "--font-barlow-sans",
+});
+
 export default async function RootLayout({
   children,
 }: {
@@ -36,6 +42,7 @@ export default async function RootLayout({
       className={cn(
         GeistSans.variable,
         montserrat.variable,
+        barlow.variable,
         GeistMono.variable,
       )}
       lang="en"

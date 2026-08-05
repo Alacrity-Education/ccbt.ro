@@ -1,15 +1,74 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import type { Header as HeaderType } from "@/payload-types";
 
 import { CMSLink } from "@/components/Link";
 import { MenuIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { FiChevronRight } from "react-icons/fi";
+
+/** Mirrors the href CMSLink builds, so we can tell which item is the current page. */
+const resolveHref = (link: any): string | null => {
+  if (!link) return null;
+
+  if (
+    link.type === "reference" &&
+    typeof link.reference?.value === "object" &&
+    link.reference.value?.slug
+  ) {
+    const prefix =
+      link.reference.relationTo !== "pages"
+        ? `/${link.reference.relationTo}`
+        : "";
+    return `${prefix}/${link.reference.value.slug}`;
+  }
+
+  return link.url ?? null;
+};
+
+/** The "home" page is served from "/", so both spellings must compare equal. */
+const normalizePath = (value: string) => {
+  const trimmed = value.length > 1 ? value.replace(/\/+$/, "") : value;
+  return trimmed === "/home" ? "/" : trimmed;
+};
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || [];
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname();
+
+  /** True when a nav link points at the page we're currently on. */
+  const isCurrentPage = (link: any) => {
+    const href = resolveHref(link);
+    return Boolean(
+      href && pathname && normalizePath(href) === normalizePath(pathname),
+    );
+  };
+
+  /* Close the sidebar whenever we navigate away. */
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
+  /* Lock the page behind the sidebar and allow Escape to dismiss it. */
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsSidebarOpen(false);
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isSidebarOpen]);
 
   return (
     <nav className="flex items-center gap-3">
@@ -18,7 +77,10 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         const { itemType, link, subItems } = item as any;
         if (itemType === "parent") {
           return (
-            <div key={i} className="dropdown dropdown-end dropdown-hover group hidden lg:block">
+            <div
+              key={i}
+              className="dropdown dropdown-end dropdown-hover group hidden lg:block"
+            >
               <div
                 tabIndex={0}
                 role="button"
@@ -26,10 +88,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               >
                 <FiChevronRight
                   aria-hidden
-                  className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90 group-focus-within:rotate-90"
+                  className="h-4 w-4 transition-transform duration-200 group-focus-within:rotate-90 group-hover:rotate-90"
                 />
                 {link?.label || "Menu"}
-       
               </div>
               <ul
                 tabIndex={0}
@@ -37,7 +98,11 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               >
                 {(subItems || []).map((sub: any, idx: number) => (
                   <li key={idx}>
-                    <CMSLink {...sub.link} appearance="inline" className={"text-sm text-primary"} />
+                    <CMSLink
+                      {...sub.link}
+                      appearance="inline"
+                      className={"text-primary text-sm"}
+                    />
                   </li>
                 ))}
               </ul>
@@ -49,43 +114,127 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={i}
             {...link}
             appearance="inline"
-            className="text-primary! hover:text-secondary! hidden lg:inline-flex "
+            className="text-primary! hover:text-secondary! hidden lg:inline-flex"
           />
         );
       })}
 
-      {/* Mobile menu */}
-      <details className="dropdown dropdown-end lg:hidden">
-        <summary className="btn btn-primary  m-1">
-          <MenuIcon className="h-full" />
-        </summary>
-        <ul className="menu dropdown-content rounded-box bg-base-100 z-1 mt-3 w-52 p-1 shadow-sm ">
-          {navItems.map((item, i) => {
-            const { itemType, link, subItems } = item as any;
-            if (itemType === "parent") {
+      {/* Mobile trigger */}
+      <button
+        type="button"
+        aria-label="Deschide meniul"
+        aria-expanded={isSidebarOpen}
+        aria-controls="mobile-sidebar"
+        className="btn btn-primary m-1 lg:hidden"
+        onClick={() => setIsSidebarOpen(true)}
+      >
+        <MenuIcon className="h-full" />
+      </button>
+
+      {/* Mobile sidebar */}
+      <div
+        aria-hidden={!isSidebarOpen}
+        className={`fixed inset-0 z-50 lg:hidden ${isSidebarOpen ? "" : "pointer-events-none"}`}
+      >
+        {/* Backdrop — frosted glass over the page behind the sidebar */}
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className={`absolute inset-0 bg-white/10 backdrop-blur-md transition-opacity duration-300 ${
+            isSidebarOpen ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        {/* Close button — sits on the blurred area, top right of the screen */}
+        <button
+          type="button"
+          aria-label="Închide meniul"
+          onClick={() => setIsSidebarOpen(false)}
+          className={`absolute top-5 right-5 flex h-12 w-12 items-center justify-center rounded-full border-3 border-[#5F0058] bg-[#F5E8FF] transition-opacity duration-300 ${
+            isSidebarOpen ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img alt="" src="/sidebar-close.svg" className="h-6 w-auto" />
+        </button>
+
+        {/* Panel */}
+        <aside
+          id="mobile-sidebar"
+          className={`absolute inset-y-0 left-0 flex w-60 max-w-[80vw] flex-col overflow-x-hidden overflow-y-auto border-r-[9.5px] border-[#5F0058] bg-[#F5E8FF] shadow-xl transition-transform duration-300 ease-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* Brand: mark on its own row, wordmark stacked underneath. Both are
+              crops of logo.svg, so they keep the brand colors and typeface. */}
+          <div className="shrink-0 px-4 pt-6 pb-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img alt="" src="/logo-mark.svg" className="ml-6 h-20 w-auto" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="Centrul Cultural Botoșani"
+              src="/logo-wordmark.svg"
+              className="mx-auto mt-4 block w-40"
+            />
+          </div>
+
+          {/* px-4 here + pl-6 on each row lines the labels up with the logo mark */}
+          <ul className="menu w-full shrink-0 gap-1 px-4 py-0">
+            {navItems.map((item, i) => {
+              const { itemType, link, subItems } = item as any;
+              if (itemType === "parent") {
+                return (
+                  <li key={i}>
+                    <details>
+                      <summary className="font-barlow justify-start pl-6 text-left text-[22px] font-semibold text-black">
+                        {link?.label || "Menu"}
+                      </summary>
+                      <ul className="p-1">
+                        {(subItems || []).map((sub: any, idx: number) => (
+                          <li key={idx} onClick={() => setIsSidebarOpen(false)}>
+                            <CMSLink
+                              {...sub.link}
+                              appearance="inline"
+                              className={`font-barlow w-full justify-start pl-6 text-left text-[18px] font-semibold ${
+                                isCurrentPage(sub.link)
+                                  ? "text-[#E84935]!"
+                                  : "text-black!"
+                              }`}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </li>
+                );
+              }
               return (
-                <li key={i}>
-                  <details>
-                    <summary className={"text-base-content"}>{link?.label || "Menu"}</summary>
-                    <ul className="bg-base-100 rounded-t-none p-2">
-                      {(subItems || []).map((sub: any, idx: number) => (
-                        <li key={idx}>
-                          <CMSLink {...sub.link} appearance="inline" className={"text-primary text-sm"} />
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
+                <li key={i} onClick={() => setIsSidebarOpen(false)}>
+                  <CMSLink
+                    {...link}
+                    appearance="inline"
+                    className={`font-barlow w-full justify-start pl-6 text-left text-[22px] font-semibold ${
+                      isCurrentPage(link) ? "text-[#E84935]!" : "text-black!"
+                    }`}
+                  />
                 </li>
               );
-            }
-            return (
-              <li key={i}>
-                <CMSLink {...link} appearance={"inline"} className={"text-primary text-sm"} />
-              </li>
-            );
-          })}
-        </ul>
-      </details>
+            })}
+          </ul>
+
+          {/* Decorative chevron column, clipped where it runs off the screen */}
+          <div
+            aria-hidden
+            className="pointer-events-none relative mt-auto min-h-40 flex-1 overflow-hidden"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt=""
+              src="/sidebar-decor.svg"
+              className="absolute top-10 left-1/2 w-2/5 -translate-x-1/2"
+            />
+          </div>
+        </aside>
+      </div>
     </nav>
   );
 };
