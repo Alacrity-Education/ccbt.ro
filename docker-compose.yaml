@@ -1,8 +1,3 @@
-# Switching databases: run `docker compose down` BEFORE editing COMPOSE_PROFILES.
-# down only touches services in the currently enabled profiles, so flipping the
-# value first leaves the old stack running and port 3000 stays taken. If that has
-# already happened: docker compose --profile postgres --profile mongo down
-
 x-app: &app
   build:
     context: .
@@ -22,29 +17,17 @@ x-app: &app
   restart: unless-stopped
 
 services:
-  app-postgres:
+  app:
     <<: *app
-    container_name: ccbt-app-postgres
-    profiles: ["postgres"]
+    container_name: ccbt-app
     environment:
       DATABASE_URI: postgresql://payload:payload@postgres:5432/ccbt
     depends_on:
       postgres:
         condition: service_healthy
 
-  app-mongo:
-    <<: *app
-    container_name: ccbt-app-mongo
-    profiles: ["mongo"]
-    environment:
-      DATABASE_URI: mongodb://mongo:27017/ccbt
-    depends_on:
-      mongo:
-        condition: service_healthy
-
   postgres:
     container_name: ccbt-db-postgres
-    profiles: ["postgres"]
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: payload
@@ -60,23 +43,7 @@ services:
       timeout: 5s
       retries: 10
 
-  mongo:
-    container_name: ccbt-db-mongo
-    profiles: ["mongo"]
-    image: mongo:7
-    command: ["--storageEngine=wiredTiger"]
-    ports:
-      - "${MONGO_PORT:-27017}:27017"
-    volumes:
-      - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
 volumes:
   postgres_data:
-  mongo_data:
   node_modules:
   next_cache:

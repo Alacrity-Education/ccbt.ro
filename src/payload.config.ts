@@ -1,6 +1,5 @@
 // storage-adapter-import-placeholder
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { mongooseAdapter } from "@payloadcms/db-mongodb";
 
 import sharp from "sharp"; // sharp-import
 import path from "path";
@@ -23,9 +22,7 @@ const dirname = path.dirname(filename);
 
 const databaseURI = process.env.DATABASE_URI || "";
 
-const db = databaseURI.startsWith("mongodb")
-  ? mongooseAdapter({ url: databaseURI })
-  : postgresAdapter({ pool: { connectionString: databaseURI } });
+const db = postgresAdapter({ pool: { connectionString: databaseURI } });
 
 export default buildConfig({
   admin: {
