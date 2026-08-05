@@ -71,8 +71,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   }, [isSidebarOpen]);
 
   return (
-    <nav className="flex items-center gap-3">
-      {/* Desktop nav with submenu support */}
+    <nav className="flex items-center gap-5">
+      {/* Desktop nav with submenu support. Type styling mirrors the mobile
+          sidebar rows, only in brand purple instead of black. */}
       {navItems.map((item, i) => {
         const { itemType, link, subItems } = item as any;
         if (itemType === "parent") {
@@ -84,24 +85,28 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               <div
                 tabIndex={0}
                 role="button"
-                className="text-primary flex items-center gap-1 hover:cursor-pointer"
+                className="font-barlow text-primary flex items-center gap-1 text-[22px] font-semibold hover:cursor-pointer"
               >
                 <FiChevronRight
                   aria-hidden
-                  className="h-4 w-4 transition-transform duration-200 group-focus-within:rotate-90 group-hover:rotate-90"
+                  className="h-5 w-5 transition-transform duration-200 group-focus-within:rotate-90 group-hover:rotate-90"
                 />
                 {link?.label || "Menu"}
               </div>
               <ul
                 tabIndex={0}
-                className="menu dropdown-content rounded-box bg-base-100 z-10 mt-3 w-52 p-1 shadow-sm before:absolute before:inset-x-0 before:-top-3 before:h-3 before:content-['']"
+                className="menu dropdown-content rounded-box bg-base-100 z-10 mt-3 w-60 p-1 shadow-sm before:absolute before:inset-x-0 before:-top-3 before:h-3 before:content-['']"
               >
                 {(subItems || []).map((sub: any, idx: number) => (
                   <li key={idx}>
                     <CMSLink
                       {...sub.link}
                       appearance="inline"
-                      className={"text-primary text-sm"}
+                      className={`font-barlow w-full justify-start text-left text-[18px] font-semibold ${
+                        isCurrentPage(sub.link)
+                          ? "text-[#E84935]!"
+                          : "text-primary!"
+                      }`}
                     />
                   </li>
                 ))}
@@ -114,7 +119,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             key={i}
             {...link}
             appearance="inline"
-            className="text-primary! hover:text-secondary! hidden lg:inline-flex"
+            className={`font-barlow hidden text-[22px] font-semibold lg:inline-flex ${
+              isCurrentPage(link) ? "text-[#E84935]!" : "text-primary!"
+            }`}
           />
         );
       })}
@@ -219,6 +226,20 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 </li>
               );
             })}
+
+            {/* Invisible filler rows so the list always occupies at least six
+                rows' worth of height. That pins the decorative chevrons at the
+                position they'd sit at with six nav items: fewer items can no
+                longer pull them upwards, more items still push them down. */}
+            {Array.from({ length: Math.max(0, 6 - navItems.length) }).map(
+              (_, i) => (
+                <li key={`filler-${i}`} aria-hidden className="invisible">
+                  <span className="font-barlow pl-6 text-[22px] font-semibold">
+                    &nbsp;
+                  </span>
+                </li>
+              ),
+            )}
           </ul>
 
           {/* Decorative chevron column, clipped where it runs off the screen */}
