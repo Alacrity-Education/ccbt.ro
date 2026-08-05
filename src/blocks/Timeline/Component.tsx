@@ -7,6 +7,7 @@ import type { TimelineBlock as TimelineBlockProps } from "@/payload-types";
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/utilities/ui";
 
 type Entry = NonNullable<TimelineBlockProps["entries"]>[number];
 
@@ -162,6 +163,82 @@ const RailCap: React.FC<{
           </filter>
         ),
       )}
+    </defs>
+  </svg>
+);
+
+// Mobile header rail: the two purple bars with the coral pivot standing on them.
+// Its paths run from -7 to 1608 across a 1602 viewBox, so the bars bleed off both
+// ends however wide it is drawn — it is meant to go edge to edge.
+const TopRail: React.FC<{ className?: string }> = ({ className }) => (
+  <svg
+    className={className}
+    viewBox="0 0 1602 322"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden
+  >
+    <path
+      d="M1589.84 166.798H1554.05H-7V101.552H1554.05H1589.84H1608V166.798H1589.84Z"
+      fill="#5F0058"
+    />
+    <g filter="url(#tl_toprail_shadow)">
+      <path
+        d="M1581.46 65.2412H1547.02H1529.55H-7V0.0001297H1529.55H1547.02H1581.46H1598.94V65.2412H1581.46Z"
+        fill="#5F0058"
+      />
+    </g>
+    <g filter="url(#tl_toprail_shadow)">
+      <path
+        d="M459.545 0.000198364V25.6259V76.1007V101.695H384.039V76.1007V25.6259V0.000198364H459.545Z"
+        fill="#E84935"
+      />
+      <path
+        d="M342.506 62.3295V143.648V244.163V265.72H267V244.163V143.648V62.3295H342.506Z"
+        fill="#E84935"
+        stroke="#E84935"
+        strokeWidth="0.2"
+        strokeMiterlimit="10"
+      />
+      <path
+        d="M459 166V203.294V276.751V314H383V276.751V203.294V166H459Z"
+        fill="#E84935"
+      />
+      <path
+        d="M576.571 62.3295V143.648V244.163V265.72H497.289V244.163V143.648V62.3295H576.571Z"
+        fill="#E84935"
+        stroke="#E84935"
+        strokeWidth="0.2"
+        strokeMiterlimit="10"
+      />
+    </g>
+    <defs>
+      <filter
+        id="tl_toprail_shadow"
+        x="-40"
+        y="-40"
+        width="1700"
+        height="420"
+        filterUnits="userSpaceOnUse"
+        colorInterpolationFilters="sRGB"
+      >
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dy="4" />
+        <feGaussianBlur stdDeviation="2" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+        />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="fx" />
+        <feBlend mode="normal" in="SourceGraphic" in2="fx" result="shape" />
+      </filter>
     </defs>
   </svg>
 );
@@ -322,13 +399,14 @@ const TimelineEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
 const StackedEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
   const hasHref = entry.withLink && (entry.link?.url || entry.link?.reference);
   return (
-    <div className="font-barlow-semi pb-9">
-      <p className="text-secondary mb-1 text-lg font-bold tracking-wide uppercase">
+    <div className="font-barlow-semi pb-9 font-bold">
+      {/* The entry's title. 72px — four times the 18px it used to be. */}
+      <p className="text-primary mb-2 text-7xl leading-[0.9] font-bold">
         {entry.date}
       </p>
       {entry.content && (
         <RichText
-          className="[&_h3]:text-primary [&_h4]:text-primary text-base-content [&_h3]:mt-2 [&_h3]:mb-2 [&_h3]:text-5xl [&_h3]:leading-[0.95] [&_h3]:font-bold [&_h4]:mt-2 [&_h4]:mb-2 [&_h4]:text-3xl [&_h4]:leading-tight [&_h4]:font-bold [&_p]:text-lg/snug [&_p]:font-medium"
+          className="[&_h3]:text-primary [&_h4]:text-primary text-base-content [&_h3]:mt-2 [&_h3]:mb-2 [&_h3]:text-5xl [&_h3]:leading-[0.95] [&_h3]:font-bold [&_h4]:mt-2 [&_h4]:mb-2 [&_h4]:text-4xl [&_h4]:leading-tight [&_h4]:font-bold [&_p]:text-[27px]/snug [&_p]:font-semibold"
           data={entry.content}
           enableGutter={false}
         />
@@ -340,29 +418,43 @@ const StackedEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
   );
 };
 
-// Prev / next controls, shared by both layouts.
+// Prev / next controls, shared by both layouts. `size` scales the whole control;
+// mobile runs them at 1.2x, desktop keeps the original 48px.
 const NudgeControls: React.FC<{
   className?: string;
+  iconClassName?: string;
+  buttonClassName?: string;
   onNudge: (dir: -1 | 1) => void;
-}> = ({ className, onNudge }) => (
+}> = ({
+  className,
+  iconClassName = "h-6 w-6",
+  buttonClassName = "h-12 w-12",
+  onNudge,
+}) => (
   <div className={className}>
     <Button
       variant="secondary"
       size="icon"
       onClick={() => onNudge(-1)}
       aria-label="Înapoi"
-      className="h-12 w-12 rounded-full shadow-lg transition-transform hover:-translate-y-0.5"
+      className={cn(
+        "rounded-full shadow-lg transition-transform hover:-translate-y-0.5",
+        buttonClassName,
+      )}
     >
-      <FiChevronLeft className="h-6 w-6" />
+      <FiChevronLeft className={iconClassName} />
     </Button>
     <Button
       variant="secondary"
       size="icon"
       onClick={() => onNudge(1)}
       aria-label="Înainte"
-      className="h-12 w-12 rounded-full shadow-lg transition-transform hover:-translate-y-0.5"
+      className={cn(
+        "rounded-full shadow-lg transition-transform hover:-translate-y-0.5",
+        buttonClassName,
+      )}
     >
-      <FiChevronRight className="h-6 w-6" />
+      <FiChevronRight className={iconClassName} />
     </Button>
   </div>
 );
@@ -430,17 +522,22 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
           box — nothing can be painted in it. So the 64px is taken into the padding
           instead and given back with `-mb-16`: same rhythm, but the rail now runs
           through that gap too and is clipped at the far edge of it. */}
-      <div className="relative -mb-16 w-full overflow-hidden pt-10 pb-36 md:hidden">
+      <div className="relative -mb-16 w-full overflow-hidden pb-36 md:hidden">
+        {/* Topmost thing in the block, edge to edge — no container padding. */}
+        <TopRail className="block h-auto w-full" />
+
         {/* Pinned bottom-right, height taken from the artwork's own ratio: the foot
             lands on the block's bottom edge and the arrowhead runs off the right. */}
+        {/* Scaled down on narrow phones so the copy keeps a usable measure — the
+            artwork's height follows its width, so this shrinks it whole. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-0 bottom-0 w-[132px] sm:w-[148px]"
+          className="pointer-events-none absolute right-0 bottom-0 w-[84px] min-[400px]:w-[104px] min-[520px]:w-[124px] sm:w-[140px]"
         >
           <VerticalRail className="h-auto w-full" />
         </div>
 
-        <div className="relative flex items-start">
+        <div className="relative mt-10 flex items-start">
           <div className="min-w-0 flex-1 pr-4 pl-6">
             {/* The window onto the stack: you see as many whole entries as fit, the
                 buttons bring the next ones in. overflow-hidden (not auto) so the
@@ -457,17 +554,23 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
               </div>
             </div>
 
+            {/* 1.2x the 48px default, and capped in width so the pair sits closer. */}
             <NudgeControls
-              className="mt-2 flex items-center justify-between"
+              className="mt-2 flex max-w-[240px] items-center justify-between"
+              buttonClassName="h-[58px] w-[58px]"
+              iconClassName="h-7 w-7"
               onNudge={page}
             />
           </div>
 
           {/* Reserves the rail's lane — the rail itself is out of flow, behind this
-              row — plus 32px of clearance so the copy never touches the artwork.
-              (The rail is right-anchored, so widening its lane is what moves the
-              copy off it; a margin on the rail's own box would do nothing.) */}
-          <div aria-hidden className="w-[164px] shrink-0 sm:w-[180px]" />
+              row — plus clearance so the copy never touches the artwork. Tracks the
+              rail's widths above; the rail is right-anchored, so widening its lane
+              is what moves the copy off it. */}
+          <div
+            aria-hidden
+            className="w-[104px] shrink-0 min-[400px]:w-[128px] min-[520px]:w-[152px] sm:w-[172px]"
+          />
         </div>
       </div>
 
