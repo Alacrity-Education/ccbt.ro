@@ -13,7 +13,6 @@ import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
 
 import { fields } from "./fields";
 import { getClientSideURL } from "@/utilities/getURL";
-import { SectionTitle } from "@/components/SectionTitle";
 
 export type FormBlockType = {
   blockName?: string;
@@ -135,8 +134,12 @@ export const FormBlock: React.FC<
     <div className="container mx-auto border-0 lg:max-w-3xl">
       {showTitle && formTitle && !hasSubmitted && (
         // Deliberately smaller than a section heading: this sits inside the form
-        // card, not above a page section.
-        <SectionTitle title={formTitle} className="mb-4 text-center text-lg md:text-xl" />
+        // card, not above a page section. It also comes from the related form
+        // document rather than the block, which is why it survived the removal
+        // of the blocks' own title fields.
+        <h2 className="text-primary mb-4 text-center text-lg font-semibold md:text-xl">
+          {formTitle}
+        </h2>
       )}
       {enableIntro && introContent && !hasSubmitted && (
         <RichText

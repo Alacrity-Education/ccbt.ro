@@ -12,11 +12,6 @@ export const CardBlock: Block = {
   },
   fields: [
     {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
-    {
       name: "cards",
       type: "array",
       label: "Cards",

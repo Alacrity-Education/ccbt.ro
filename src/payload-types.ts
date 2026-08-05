@@ -15,7 +15,7 @@ export type Slides =
       /**
        * Gradient color for this slide.
        */
-      color?: ('purple' | 'green' | 'coral' | 'cyan') | null;
+      color?: ('purple' | 'coral' | 'cyan') | null;
       media?: (number | null) | Media;
       title?: string | null;
       subtitle?: string | null;
@@ -201,7 +201,7 @@ export interface Page {
     /**
      * Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact).
      */
-    bgColor?: ('base' | 'purple' | 'green' | 'coral' | 'cyan') | null;
+    bgColor?: ('base' | 'purple' | 'coral' | 'cyan') | null;
     title?: string | null;
     subtitle?: string | null;
     body?: string | null;
@@ -510,7 +510,7 @@ export interface User {
 export interface CallToActionBlock {
   title?: string | null;
   /**
-   * Colored line shown under the title (Highlight variants).
+   * Colored line shown under the title.
    */
   subtitle?: string | null;
   richText?: {
@@ -566,7 +566,7 @@ export interface CallToActionBlock {
     | {
         title: string;
         body?: string | null;
-        color: 'coral' | 'purple' | 'cyan' | 'green';
+        color: 'purple' | 'coral' | 'cyan';
         withLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -768,7 +768,6 @@ export interface Form {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
-  title?: string | null;
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -794,8 +793,8 @@ export interface ContentBlock {
          */
         decorator?: {
           enabled?: boolean | null;
-          verticalColor?: ('coral' | 'purple' | 'cyan' | 'green') | null;
-          horizontalColor?: ('coral' | 'purple' | 'cyan' | 'green') | null;
+          verticalColor?: ('purple' | 'coral' | 'cyan') | null;
+          horizontalColor?: ('purple' | 'coral' | 'cyan') | null;
         };
         enableLink?: boolean | null;
         link?: {
@@ -839,11 +838,9 @@ export interface MediaBlock {
  * via the `definition` "ArchiveBlock".
  */
 export interface ArchiveBlock {
-  title?: string | null;
   /**
-   * Small label above the title (Text variant).
+   * Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them.
    */
-  eyebrow?: string | null;
   introContent?: {
     root: {
       type: string;
@@ -927,7 +924,6 @@ export interface FormBlock {
  * via the `definition` "CardBlock".
  */
 export interface CardBlock {
-  title?: string | null;
   cards?:
     | {
         title: string;
@@ -946,7 +942,7 @@ export interface CardBlock {
           };
           [k: string]: unknown;
         } | null;
-        color: 'coral' | 'purple' | 'cyan' | 'green';
+        color: 'purple' | 'coral' | 'cyan';
         orientation: 'vertical' | 'horizontal';
         /**
          * Enable to add a link to the card
@@ -984,7 +980,6 @@ export interface CardBlock {
  * via the `definition` "CarouselLogoBlock".
  */
 export interface CarouselLogoBlock {
-  title?: string | null;
   items?:
     | {
         title: string;
@@ -1002,7 +997,6 @@ export interface CarouselLogoBlock {
  * via the `definition` "ImageContentBlock".
  */
 export interface ImageContentBlock {
-  title?: string | null;
   /**
    * Number of columns at lg breakpoint (1-4)
    */
@@ -1070,7 +1064,6 @@ export interface ImageContentBlock {
  * via the `definition` "StaticMapBlock".
  */
 export interface StaticMapBlock {
-  title?: string | null;
   variant?: ('default' | 'mono' | 'mono-black') | null;
   initialView: {
     latitude: number;
@@ -1096,12 +1089,8 @@ export interface StaticMapBlock {
  */
 export interface DividerBlock {
   pattern: 'a' | 'b' | 'c' | 'd';
-  primaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
-  secondaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
-  /**
-   * Patterns A and C are drawn in two colours, so this slot does nothing there.
-   */
-  tertiaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green' | 'pink' | 'amber' | 'white' | 'ink') | null;
+  primaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  secondaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'divider';
@@ -1111,7 +1100,6 @@ export interface DividerBlock {
  * via the `definition` "TimelineBlock".
  */
 export interface TimelineBlock {
-  title?: string | null;
   entries?:
     | {
         /**
@@ -1570,7 +1558,6 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
-  title?: T;
   columns?:
     | T
     | {
@@ -1615,8 +1602,6 @@ export interface MediaBlockSelect<T extends boolean = true> {
  * via the `definition` "ArchiveBlock_select".
  */
 export interface ArchiveBlockSelect<T extends boolean = true> {
-  title?: T;
-  eyebrow?: T;
   introContent?: T;
   style?: T;
   link?:
@@ -1661,7 +1646,6 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CardBlock_select".
  */
 export interface CardBlockSelect<T extends boolean = true> {
-  title?: T;
   cards?:
     | T
     | {
@@ -1691,7 +1675,6 @@ export interface CardBlockSelect<T extends boolean = true> {
  * via the `definition` "CarouselLogoBlock_select".
  */
 export interface CarouselLogoBlockSelect<T extends boolean = true> {
-  title?: T;
   items?:
     | T
     | {
@@ -1708,7 +1691,6 @@ export interface CarouselLogoBlockSelect<T extends boolean = true> {
  * via the `definition` "ImageContentBlock_select".
  */
 export interface ImageContentBlockSelect<T extends boolean = true> {
-  title?: T;
   colsLg?: T;
   rowsLg?: T;
   cells?:
@@ -1743,7 +1725,6 @@ export interface ImageContentBlockSelect<T extends boolean = true> {
  * via the `definition` "StaticMapBlock_select".
  */
 export interface StaticMapBlockSelect<T extends boolean = true> {
-  title?: T;
   variant?: T;
   initialView?:
     | T
@@ -1772,7 +1753,6 @@ export interface DividerBlockSelect<T extends boolean = true> {
   pattern?: T;
   primaryColor?: T;
   secondaryColor?: T;
-  tertiaryColor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1781,7 +1761,6 @@ export interface DividerBlockSelect<T extends boolean = true> {
  * via the `definition` "TimelineBlock_select".
  */
 export interface TimelineBlockSelect<T extends boolean = true> {
-  title?: T;
   entries?:
     | T
     | {

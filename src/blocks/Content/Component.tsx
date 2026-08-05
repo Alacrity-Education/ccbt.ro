@@ -4,7 +4,6 @@ import RichText from "@/components/RichText";
 import type { ContentBlock as ContentBlockProps } from "@/payload-types";
 import { CMSLink } from "../../components/Link";
 import { DecoratedMedia } from "@/components/Media/DecoratedMedia";
-import { SectionTitle } from "@/components/SectionTitle";
 
 type ColumnSize = NonNullable<
   NonNullable<ContentBlockProps["columns"]>[number]["size"]
@@ -18,11 +17,10 @@ const COL_SPAN: Record<ColumnSize, string> = {
 };
 
 export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
-  const { columns, title } = props;
+  const { columns } = props;
 
   return (
     <div className="container mx-auto w-full">
-      <SectionTitle title={title} className="py-10 text-center" />
       <div className="grid grid-cols-4 gap-x-8 gap-y-8 md:grid-cols-12 lg:gap-x-16">
         {columns &&
           columns.length > 0 &&
@@ -41,7 +39,11 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                       <DecoratedMedia resource={media} decorator={decorator} />
                     )
                   : richText && (
-                      <RichText data={richText} enableGutter={false} />
+                      <RichText
+                        data={richText}
+                        preset="section"
+                        enableGutter={false}
+                      />
                     )}
                 {enableLink && (
                   <div className="mt-6">

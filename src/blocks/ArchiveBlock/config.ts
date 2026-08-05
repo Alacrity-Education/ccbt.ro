@@ -8,24 +8,14 @@ export const Archive: Block = {
   interfaceName: "ArchiveBlock",
   fields: [
     {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
-    {
-      name: "eyebrow",
-      type: "text",
-      label: "Eyebrow",
-      admin: {
-        description: "Small label above the title (Text variant).",
-        condition: (_, siblingData) => siblingData.style === "text",
-      },
-    },
-    {
       name: "introContent",
       type: "richText",
-      editor: richTextEditor(['h1', 'h2', 'h3', 'h4']),
+      editor: richTextEditor(["h2", "h3"]),
       label: "Intro Content",
+      admin: {
+        description:
+          "Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them.",
+      },
     },
     {
       name: "style",

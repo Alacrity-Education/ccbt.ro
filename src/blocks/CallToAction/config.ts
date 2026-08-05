@@ -15,17 +15,22 @@ export const CallToAction: Block = {
   slug: "cta",
   interfaceName: "CallToActionBlock",
   fields: [
+    // Highlight draws its own heading and lays out around it. The other variants
+    // have no heading of their own — put a Content block above them instead.
     {
       name: "title",
       type: "text",
-      label: "Block Title",
+      label: "Title",
+      admin: {
+        condition: (_, sibling) => isHighlight(sibling?.variant),
+      },
     },
     {
       name: "subtitle",
       type: "text",
       label: "Subtitle",
       admin: {
-        description: "Colored line shown under the title (Highlight variants).",
+        description: "Colored line shown under the title.",
         condition: (_, sibling) => isHighlight(sibling?.variant),
       },
     },

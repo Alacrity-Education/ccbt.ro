@@ -6,7 +6,6 @@ import type { TimelineBlock as TimelineBlockProps } from "@/payload-types";
 
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
-import { SectionTitle } from "@/components/SectionTitle";
 import { cn } from "@/utilities/ui";
 
 type Entry = NonNullable<TimelineBlockProps["entries"]>[number];
@@ -124,7 +123,7 @@ const TimelineEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
   );
 };
 
-export const TimelineBlock: React.FC<TimelineBlockProps> = ({ title, entries }) => {
+export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Start scrolled to the end so the arrow + latest entries are shown first;
@@ -142,12 +141,6 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ title, entries }) 
 
   return (
     <div className="w-full pt-12 md:pt-16">
-      {title && (
-        <div className="container mx-auto">
-          <SectionTitle title={title} className="mb-8 text-center" />
-        </div>
-      )}
-
       {/* Full-bleed scroll area — the rail runs edge to edge, not capped to the container. */}
       <div
         ref={scrollRef}

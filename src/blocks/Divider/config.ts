@@ -39,19 +39,5 @@ export const Divider: Block = {
       defaultValue: "default",
       options: colorOptions,
     },
-    {
-      name: "tertiaryColor",
-      type: "select",
-      label: "Tertiary color",
-      defaultValue: "default",
-      admin: {
-        description:
-          "Patterns A and C are drawn in two colours, so this slot does nothing there.",
-        // Mirrors the `roles` maps in Component.tsx — only B and D declare a c3.
-        condition: (_, siblingData) =>
-          siblingData?.pattern === "b" || siblingData?.pattern === "d",
-      },
-      options: colorOptions,
-    },
   ],
 };

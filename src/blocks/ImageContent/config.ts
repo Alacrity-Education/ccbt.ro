@@ -11,11 +11,6 @@ export const ImageContentBlock: Block = {
     singular: "Image Content Block",
   },
   fields: [
-    {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
     // Optional grid controls for lg screens
     {
       name: "colsLg",

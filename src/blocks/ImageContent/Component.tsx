@@ -4,7 +4,6 @@ import RichText from "@/components/RichText";
 import { cn } from "@/utilities/ui";
 import { ImageContentBlock as ImageContentBlockProps } from "@/payload-types";
 import { CMSLink } from "@/components/Link";
-import { SectionTitle } from "@/components/SectionTitle";
 
 // Written out in full so the compiler can find them, and scoped to `lg` because
 // that is where the grid gains rows — below it every cell is one row of one column,
@@ -17,13 +16,12 @@ const ROW_SPAN: Record<number, string> = {
 };
 
 export const ImageContentBlock: React.FC<ImageContentBlockProps> = (props) => {
-  const { title, cells, colsLg = 2, rowsLg = 2 } = props || {};
+  const { cells, colsLg = 2, rowsLg = 2 } = props || {};
 
   if (!cells || !Array.isArray(cells) || cells.length === 0) return null;
 
   return (
     <div className="container mx-auto w-full">
-      <SectionTitle title={title} className="py-10 text-center" />
       <div
         className={cn(
           "grid grid-cols-1 gap-4 lg:gap-12",

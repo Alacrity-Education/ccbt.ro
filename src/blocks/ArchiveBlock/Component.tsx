@@ -14,6 +14,4 @@ export const ArchiveBlock = createVariantBlock<
     cards: CardsArchiveBlock,
     text: TextArchiveBlock,
   },
-  // The Text variant renders its own heading.
-  selfTitled: ["text"],
 });

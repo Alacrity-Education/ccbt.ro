@@ -48,7 +48,7 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
   const centered = !showMotif;
 
   return (
-    <section className="relative overflow-hidden bg-base-200">
+    <section className="relative overflow-hidden bg-base-200 -mb-16">
       {/* Woven-ribbon motif. It keeps its natural length — the negative top offset and
           min-height let the artwork run at full scale, so the tails are always long
           enough — while overflow-hidden on the section clips it to the CTA's own bounds.

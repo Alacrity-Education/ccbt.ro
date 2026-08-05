@@ -5,11 +5,6 @@ export const CarouselLogoBlock: Block = {
   interfaceName: 'CarouselLogoBlock',
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      label: 'Section Title',
-    },
-    {
       name: 'items',
       type: 'array',
       label: 'Logos to be displayed',

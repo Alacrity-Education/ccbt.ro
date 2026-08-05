@@ -15,6 +15,4 @@ export const CallToActionBlock = createVariantBlock<CTABlockProps, "variant">({
     secondary: SecondaryCTA,
     highlight: HighlightCTA,
   },
-  // The Highlight variant renders its own heading.
-  selfTitled: ["highlight"],
 });

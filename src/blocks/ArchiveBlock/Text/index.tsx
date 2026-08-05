@@ -16,8 +16,6 @@ export const TextArchiveBlock: React.FC<
 > = async (props) => {
   const {
     id,
-    eyebrow,
-    title,
     introContent,
     link,
     categories,
@@ -57,22 +55,13 @@ export const TextArchiveBlock: React.FC<
   return (
     <div className="container mx-auto" id={`block-${id}`}>
       <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-        {/* Intro */}
+        {/* Intro — eyebrow, heading and body all come from introContent; the
+            `display` preset maps h3/h2/paragraph onto them. */}
         <div className="max-w-xl">
-          {eyebrow && (
-            <p className="text-secondary mb-4 text-sm font-semibold tracking-[0.2em] uppercase md:text-base">
-              {eyebrow}
-            </p>
-          )}
-          {title && (
-            <h2 className="text-primary mb-6 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
-              {title}
-            </h2>
-          )}
           {introContent && (
             <RichText
-              className="text-base-content/80 mb-8 max-w-lg text-start! pl-0! ml-0!"
               data={introContent}
+              preset="display"
               enableGutter={false}
             />
           )}

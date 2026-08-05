@@ -114,7 +114,10 @@ const SVG_D = `<svg width="1602" height="107" viewBox="0 0 1602 107" fill="none"
 <path d="M297.262 19.3765V29.2075V48.5842V87.6231V96.0536V107H316.61V96.0536V87.6231V48.5842V29.2075V19.3765H297.262Z" fill="#FB3524"/>
 </svg>`;
 
-type Roles = { c1: string; c2: string; c3?: string };
+// Two recolorable slots. Patterns B and D contain further hexes (green, pink,
+// amber) that are deliberately not listed here — they stay as the artwork drew
+// them, the same way pattern D's amber always has.
+type Roles = { c1: string; c2: string };
 
 type Pattern = {
   svg: string;
@@ -142,7 +145,7 @@ const PATTERNS: Record<string, Pattern> = {
   },
   b: {
     svg: SVG_B,
-    roles: { c1: "#FB3524", c2: "#5F0058", c3: "#009E5C" },
+    roles: { c1: "#FB3524", c2: "#5F0058" },
     size: { w: 1602, h: 74 },
     ornament: [1023, 1126],
     mobileWidth: 580,
@@ -156,7 +159,7 @@ const PATTERNS: Record<string, Pattern> = {
   },
   d: {
     svg: SVG_D,
-    roles: { c1: "#5ED9FC", c2: "#FB3524", c3: "#F6C4DA" },
+    roles: { c1: "#5ED9FC", c2: "#FB3524" },
     size: { w: 1602, h: 107 },
     ornament: [0, 317],
     mobileWidth: 700,
@@ -185,7 +188,6 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
   pattern,
   primaryColor,
   secondaryColor,
-  tertiaryColor,
 }) => {
   const key = pattern ?? "a";
   const def = PATTERNS[key] ?? PATTERNS.a;
@@ -193,7 +195,6 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
   const chosen: Record<keyof Roles, string | null | undefined> = {
     c1: primaryColor,
     c2: secondaryColor,
-    c3: tertiaryColor,
   };
   const roleKeys = Object.keys(def.roles) as (keyof Roles)[];
 
@@ -201,11 +202,9 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
   // up by a later slot's replacement.
   let svg = def.svg;
   roleKeys.forEach((role) => {
-    svg = svg.split(def.roles[role] as string).join(`__DV_${role}__`);
+    svg = svg.split(def.roles[role]).join(`__DV_${role}__`);
   });
-  const hexes = roleKeys.map((role) =>
-    resolve(chosen[role], def.roles[role] as string),
-  );
+  const hexes = roleKeys.map((role) => resolve(chosen[role], def.roles[role]));
   roleKeys.forEach((role, i) => {
     svg = svg.split(`__DV_${role}__`).join(hexes[i] as string);
   });

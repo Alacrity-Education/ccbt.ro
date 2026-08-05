@@ -88,8 +88,19 @@ export const BRAND: Record<BrandColor, BrandEntry> = {
 export const brandOptions = (names: readonly BrandColor[]) =>
   names.map((name) => ({ label: BRAND[name].label, value: name }))
 
-/** The four-color set offered by cards, decorators and other solid surfaces. */
-export const SURFACE_COLORS = ['coral', 'purple', 'cyan', 'green'] as const
+/**
+ * The brand's three tokens — primary, secondary, accent. Every color select in
+ * the admin is built from this set, so an editor is never offered a shade the
+ * design system does not own.
+ *
+ * The rest of BRAND stays defined: those entries are still the source hexes for
+ * the divider artwork, and `entry()` falls back by name, so a page that saved a
+ * retired color before this narrowing keeps rendering it.
+ */
+export const BRAND_COLORS = ['purple', 'coral', 'cyan'] as const
+
+/** Cards, decorators and other solid surfaces. */
+export const SURFACE_COLORS = BRAND_COLORS
 export type SurfaceColor = (typeof SURFACE_COLORS)[number]
 
 /**
@@ -97,23 +108,17 @@ export type SurfaceColor = (typeof SURFACE_COLORS)[number]
  * neutral page base is not a valid surface for them — RenderHero falls back to
  * purple when it is chosen anyway.
  */
-export const GRADIENT_COLORS = ['purple', 'green', 'coral', 'cyan'] as const
+export const GRADIENT_COLORS = BRAND_COLORS
 
 /** Hero backgrounds, which additionally allow the neutral page base. */
 export const HERO_COLORS = ['base', ...GRADIENT_COLORS] as const
 export type HeroSurfaceColor = (typeof HERO_COLORS)[number]
 
-/** The wider set the divider artwork can be recolored to. */
-export const DIVIDER_COLORS = [
-  'purple',
-  'coral',
-  'cyan',
-  'green',
-  'pink',
-  'amber',
-  'white',
-  'ink',
-] as const
+/**
+ * The divider keeps green as a fourth choice: patterns A and C are drawn in it,
+ * so dropping it would leave no way to restate the artwork's own color.
+ */
+export const DIVIDER_COLORS = [...BRAND_COLORS, 'green'] as const
 
 const entry = (name: string | null | undefined, fallback: BrandColor) =>
   BRAND[name as BrandColor] ?? BRAND[fallback]

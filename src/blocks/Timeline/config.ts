@@ -10,11 +10,6 @@ export const Timeline: Block = {
   labels: { singular: "Timeline", plural: "Timelines" },
   fields: [
     {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
-    {
       name: "entries",
       type: "array",
       label: "Entries",
