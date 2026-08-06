@@ -4,6 +4,7 @@ import type { Media, Page, Post, Config } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { SITE_NAME } from './siteMeta'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -26,9 +27,7 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Memorialul Ipotești - Centrul Național de Studii Mihai Eminescu'
-    : 'Memorialul Ipotești - Centrul Național de Studii Mihai Eminescu'
+  const title = doc?.meta?.title ? `${doc.meta.title} — ${SITE_NAME}` : SITE_NAME
 
   return {
     description: doc?.meta?.description,

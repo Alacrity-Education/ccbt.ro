@@ -78,7 +78,20 @@ export const hero: Field = {
       type: 'upload',
       relationTo: 'media',
       required: false,
+      label: 'Image — desktop',
       admin: {
+        condition: (_, { type } = {}) => WITH_MEDIA.includes(type),
+      },
+    },
+    {
+      name: 'mediaMobile',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      label: 'Image — mobile',
+      admin: {
+        description:
+          'Optional portrait crop for phones. A landscape image has to be scaled up hard to fill a tall screen, which is what leaves the subject cropped out. Left empty, the desktop image is used everywhere.',
         condition: (_, { type } = {}) => WITH_MEDIA.includes(type),
       },
     },
@@ -117,6 +130,18 @@ export const hero: Field = {
           type: 'upload',
           relationTo: 'media',
           required: false,
+          label: 'Image — desktop',
+        },
+        {
+          name: 'mediaMobile',
+          type: 'upload',
+          relationTo: 'media',
+          required: false,
+          label: 'Image — mobile',
+          admin: {
+            description:
+              'Optional portrait crop for phones; the desktop image is used when empty.',
+          },
         },
         { name: 'title', type: 'text' },
         { name: 'subtitle', type: 'text' },

@@ -5,12 +5,17 @@ import type { Post } from "@/payload-types";
 
 import { Media } from "@/components/Media";
 import { formatAuthors } from "@/utilities/formatAuthors";
+import { resolveColor, type HeroColor } from "@/heros/heroColor";
+import { HeroScrim } from "@/heros/HeroScrim";
 import {cn} from "@/utilities/ui";
 
 export const PostHero: React.FC<{
   post: Post;
 }> = ({ post }) => {
-  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle } = post;
+  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle, heroOverlayColor } = post;
+
+  // Same wash the page heroes use, so a post reads as part of the same family.
+  const { bg } = resolveColor((heroOverlayColor as HeroColor) ?? "purple");
 
   const hasAuthors =
     populatedAuthors &&
@@ -101,8 +106,7 @@ export const PostHero: React.FC<{
           />
         )}
 
-        {/* Gradient Overlay */}
-        <div className="pointer-events-none absolute bottom-0 left-0 h-1/2 w-full bg-linear-to-t from-black to-transparent" />
+        <HeroScrim color={bg} />
       </div>
     </div>
   );

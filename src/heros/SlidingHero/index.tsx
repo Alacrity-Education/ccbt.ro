@@ -1,10 +1,10 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
 import type { Page } from "@/payload-types";
-import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
-import { resolveColor, type HeroColor } from "@/heros/Home";
+import { resolveColor, type HeroColor } from "@/heros/heroColor";
 import { HeroScrim } from "@/heros/HeroScrim";
+import { HeroBackdrop } from "@/heros/HeroBackdrop";
 
 type pageType = Page["hero"];
 
@@ -84,7 +84,13 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroColor }> = ({
             }}
           >
             <Suspense fallback={<div className={"loading-spinner"}> </div>}>
-              <Slide slide={slide} fallbackColor={color} />
+              <Slide
+                slide={slide}
+                fallbackColor={color}
+                // The first slide is what the page paints on load, so it is the
+                // LCP image and must not be deferred. The rest can wait.
+                priority={index === 0}
+              />
             </Suspense>
           </div>
         );
@@ -108,11 +114,13 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroColor }> = ({
 const Slide = ({
   slide,
   fallbackColor,
+  priority = false,
 }: {
   slide: slideType;
   fallbackColor: HeroColor;
+  priority?: boolean;
 }) => {
-  const { media, title, subtitle, cta } = slide;
+  const { media, mediaMobile, title, subtitle, cta } = slide;
   // Each slide sets its own gradient color; fall back to the hero-level color.
   const { bg, dark } = resolveColor(
     (slide.color as HeroColor) ?? fallbackColor,
@@ -120,10 +128,12 @@ const Slide = ({
 
   return (
     <div
-      className={`relative flex h-full items-center overflow-hidden ${dark ? "text-white" : "text-base-content"}`}
+      // Low in the frame, matching the home hero. The bottom padding also clears
+      // the slide indicators, which are pinned at bottom-10 / sm:bottom-14.
+      className={`relative flex h-full items-end overflow-hidden ${dark ? "text-white" : "text-base-content"}`}
       data-theme={dark ? "dark" : undefined}
     >
-      <div className="font-base relative z-20 container mx-auto py-16">
+      <div className="font-base relative z-20 container mx-auto pt-24 pb-24 sm:pb-28">
         <div className="max-w-4xl md:text-start">
           {title && (
             <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95]">
@@ -153,17 +163,19 @@ const Slide = ({
         </div>
       </div>
 
+      {/* Static, and no longer drifting — see the note in heros/Home. The slide
+          already moves; the image panning inside it as well was what made the
+          edges show. */}
+      {/* Scrim after the image — see the note in heros/Home. */}
       <div className="absolute inset-0 z-0 select-none">
+        <HeroBackdrop
+          desktop={media}
+          mobile={mediaMobile}
+          priority={priority}
+          className="absolute inset-0 h-full w-full"
+          imgClassName="object-center"
+        />
         <HeroScrim color={bg} />
-
-        {media && (
-          <Media
-            fill
-            resource={media}
-            pictureClassName="absolute inset-0 h-full w-full"
-            imgClassName="object-cover object-center z-0 animate-ken-burns sm:animate-none"
-          />
-        )}
       </div>
     </div>
   );

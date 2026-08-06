@@ -2,14 +2,14 @@
 import React from "react";
 
 import type { Page } from "@/payload-types";
-import { Media } from "@/components/Media";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
-import { BRAND, type HeroSurfaceColor } from "@/utilities/brand";
 import { HeroScrim } from "@/heros/HeroScrim";
+import { HeroBackdrop } from "@/heros/HeroBackdrop";
+import { resolveColor, type HeroColor } from "@/heros/heroColor";
 
 export type HeroImpact = "high" | "medium" | "low";
-export type HeroColor = HeroSurfaceColor;
+export type { HeroColor };
 
 type HeroProps = Page["hero"] & {
   impact: HeroImpact;
@@ -21,13 +21,13 @@ type HeroContent = {
   subtitle?: string | null;
   body?: string | null;
   media?: any;
+  mediaMobile?: any;
   ctaLink?: any;
 };
 
-export function resolveColor(color: HeroColor) {
-  const entry = BRAND[color] ?? BRAND.base;
-  return { bg: entry.cssVar ?? entry.hex, dark: entry.dark };
-}
+// Re-exported so existing importers keep working; it lives in heros/heroColor
+// because this file is a client module and the server heroes need to call it.
+export { resolveColor };
 
 /** CTA button that stays legible on any surface. */
 const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({
@@ -43,7 +43,7 @@ const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({
 
 export const Hero: React.FC<HeroProps> = (props) => {
   const { impact, color } = props;
-  const { title, subtitle, body, media, ctaLink } =
+  const { title, subtitle, body, media, mediaMobile, ctaLink } =
     props as unknown as HeroContent;
 
   const { bg, dark } = resolveColor(color);
@@ -55,12 +55,14 @@ export const Hero: React.FC<HeroProps> = (props) => {
     return (
       <section
         className={cn(
-          "relative flex min-h-[80svh] items-center overflow-hidden",
+          // Copy sits low in the frame rather than centred, which puts it where
+          // the scrim is densest and leaves the top of the image uncovered.
+          "relative flex min-h-[80svh] items-end overflow-hidden",
           dark ? "text-white" : "text-base-content",
         )}
         data-theme={dark ? "dark" : undefined}
       >
-        <div className="font-base relative z-20 container mx-auto py-16">
+        <div className="font-base relative z-20 container mx-auto pt-24 pb-14 sm:pb-16">
           <div className="max-w-4xl md:text-start">
             {title && (
               <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95] lg:max-w-1/2 lg:text-7xl xl:text-7xl">
@@ -86,17 +88,22 @@ export const Hero: React.FC<HeroProps> = (props) => {
           </div>
         </div>
 
+        {/* Static. This used to drift under `animate-ken-burns`, which paired a
+            15% translate with a 1.05 scale — the image only overhangs the frame
+            by 2.5% a side at that scale, so the pan walked a bare edge into view.
+            It was also `sm:animate-none`, so phones were the only place it ran. */}
+        {/* Scrim after the image, not before: both sit at stacking level 0, so
+            painting order is what decides, and an image that came second would
+            cover the wash. Ordering keeps that true whatever the z-indexes are. */}
         <div className="absolute inset-0 z-0 select-none">
+          <HeroBackdrop
+            desktop={media}
+            mobile={mediaMobile}
+            priority
+            className="absolute inset-0 h-full w-full"
+            imgClassName="object-center"
+          />
           <HeroScrim color={bg} />
-          {media && (
-            <Media
-              fill
-              priority
-              resource={media}
-              pictureClassName="absolute inset-0 h-full w-full"
-              imgClassName="object-cover object-center z-0 animate-ken-burns sm:animate-none"
-            />
-          )}
         </div>
       </section>
     );
@@ -133,13 +140,13 @@ export const Hero: React.FC<HeroProps> = (props) => {
             <HeroCta ctaLink={ctaLink} dark={dark} />
           </div>
 
-          {media && (
+          {(media || mediaMobile) && (
             <div className="rounded-box relative aspect-4/3 w-full overflow-hidden">
-              <Media
-                fill
-                resource={media}
-                pictureClassName="absolute inset-0 h-full w-full"
-                imgClassName="object-cover"
+              <HeroBackdrop
+                desktop={media}
+                mobile={mediaMobile}
+                className="absolute inset-0 h-full w-full"
+                sizes="(max-width: 767px) 100vw, 50vw"
               />
             </div>
           )}

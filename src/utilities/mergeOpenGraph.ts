@@ -1,16 +1,19 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from './getURL'
+import { SITE_DESCRIPTION, SITE_NAME } from './siteMeta'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'An open-source website built with Payload and Next.js.',
+  description: SITE_DESCRIPTION,
+  // The starter pointed at `/website-template-OG.webp`, which was never in
+  // `public/` here — every share card fell back to a broken image.
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${getServerSideURL()}/logo.svg`,
     },
   ],
-  siteName: 'Payload Website Template',
-  title: 'Payload Website Template',
+  siteName: SITE_NAME,
+  title: SITE_NAME,
 }
 
 export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {
