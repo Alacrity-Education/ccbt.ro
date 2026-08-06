@@ -17,6 +17,10 @@ export type Slides =
        */
       color?: ('purple' | 'coral' | 'cyan') | null;
       media?: (number | null) | Media;
+      /**
+       * Optional portrait crop for phones; the desktop image is used when empty.
+       */
+      mediaMobile?: (number | null) | Media;
       title?: string | null;
       subtitle?: string | null;
       cta?: {
@@ -227,6 +231,10 @@ export interface Page {
         ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
     };
     media?: (number | null) | Media;
+    /**
+     * Optional portrait crop for phones. A landscape image has to be scaled up hard to fill a tall screen, which is what leaves the subject cropped out. Left empty, the desktop image is used everywhere.
+     */
+    mediaMobile?: (number | null) | Media;
     timeout?: number | null;
     slides?: Slides;
     richText?: {
@@ -258,6 +266,7 @@ export interface Page {
         | StaticMapBlock
         | DividerBlock
         | TimelineBlock
+        | TeamBlock
       )[]
     | null;
   meta?: {
@@ -314,7 +323,11 @@ export interface Post {
     description?: string | null;
   };
   /**
-   * Purple strip + woven ribbon between the hero and the article. On by default; switch off to hide it for this post.
+   * The wash over the hero image that keeps the title legible.
+   */
+  heroOverlayColor?: ('base' | 'purple' | 'coral' | 'cyan') | null;
+  /**
+   * Purple strip between the hero and the article, plus the woven ribbon running down beside it. On by default; switch off to hide it for this post.
    */
   showMotif?: boolean | null;
   isEvent?: boolean | null;
@@ -842,7 +855,7 @@ export interface MediaBlock {
  */
 export interface ArchiveBlock {
   /**
-   * Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them.
+   * Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them. Add a Button block for the call to action.
    */
   introContent?: {
     root: {
@@ -860,21 +873,6 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   style?: ('text' | 'cards') | null;
-  link?: {
-    type?: ('reference' | 'custom') | null;
-    newTab?: boolean | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-    label?: string | null;
-  };
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
   categories?: (number | Category)[] | null;
@@ -1146,6 +1144,52 @@ export interface TimelineBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock".
+ */
+export interface TeamBlock {
+  departments?:
+    | {
+        name: string;
+        /**
+         * Colours the department's label and all of its cards.
+         */
+        color: 'purple' | 'coral';
+        members?:
+          | {
+              name: string;
+              role?: string | null;
+              photo?: (number | null) | Media;
+              /**
+               * Makes the card clickable and shows the arrow next to the role.
+               */
+              withLink?: boolean | null;
+              link?: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'team';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1444,6 +1488,7 @@ export interface PagesSelect<T extends boolean = true> {
               appearance?: T;
             };
         media?: T;
+        mediaMobile?: T;
         timeout?: T;
         slides?: T | SlidesSelect<T>;
         richText?: T;
@@ -1462,6 +1507,7 @@ export interface PagesSelect<T extends boolean = true> {
         staticMap?: T | StaticMapBlockSelect<T>;
         divider?: T | DividerBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
+        team?: T | TeamBlockSelect<T>;
       };
   meta?:
     | T
@@ -1484,6 +1530,7 @@ export interface PagesSelect<T extends boolean = true> {
 export interface SlidesSelect<T extends boolean = true> {
   color?: T;
   media?: T;
+  mediaMobile?: T;
   title?: T;
   subtitle?: T;
   cta?:
@@ -1607,15 +1654,6 @@ export interface MediaBlockSelect<T extends boolean = true> {
 export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   style?: T;
-  link?:
-    | T
-    | {
-        type?: T;
-        newTab?: T;
-        reference?: T;
-        url?: T;
-        label?: T;
-      };
   populateBy?: T;
   relationTo?: T;
   categories?: T;
@@ -1786,6 +1824,39 @@ export interface TimelineBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamBlock_select".
+ */
+export interface TeamBlockSelect<T extends boolean = true> {
+  departments?:
+    | T
+    | {
+        name?: T;
+        color?: T;
+        members?:
+          | T
+          | {
+              name?: T;
+              role?: T;
+              photo?: T;
+              withLink?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -1803,6 +1874,7 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  heroOverlayColor?: T;
   showMotif?: T;
   isEvent?: T;
   eventDate?: T;
@@ -2427,6 +2499,30 @@ export interface TaskSchedulePublish {
     user?: (number | null) | User;
   };
   output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ButtonBlock".
+ */
+export interface ButtonBlock {
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'button';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

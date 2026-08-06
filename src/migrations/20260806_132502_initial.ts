@@ -2,81 +2,89 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   CREATE TYPE "public"."enum_pages_hero_slides_color" AS ENUM('purple', 'green', 'coral', 'cyan');
+   CREATE TYPE "public"."enum_pages_hero_slides_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_pages_hero_slides_cta_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_hero_slides_cta_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum_pages_hero_slides_cta_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum_pages_blocks_cta_links_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_blocks_cta_links_link_appearance" AS ENUM('outline', 'secondary', 'default');
-  CREATE TYPE "public"."enum_pages_blocks_cta_cards_color" AS ENUM('coral', 'purple', 'cyan', 'green');
+  CREATE TYPE "public"."enum_pages_blocks_cta_links_link_appearance" AS ENUM('brand', 'outline', 'secondary', 'default');
+  CREATE TYPE "public"."enum_pages_blocks_cta_cards_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_pages_blocks_cta_cards_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_blocks_cta_variant" AS ENUM('primary', 'secondary', 'background', 'highlightLeft', 'highlightCentered');
+  CREATE TYPE "public"."enum_pages_blocks_cta_variant" AS ENUM('primary', 'secondary', 'background', 'highlight');
   CREATE TYPE "public"."enum_pages_blocks_cta_cta_type" AS ENUM('links', 'modal');
   CREATE TYPE "public"."enum_pages_blocks_content_columns_size" AS ENUM('oneThird', 'half', 'twoThirds', 'full');
+  CREATE TYPE "public"."enum_pages_blocks_content_columns_type" AS ENUM('text', 'media');
+  CREATE TYPE "public"."enum_pages_blocks_content_columns_decorator_vertical_color" AS ENUM('purple', 'coral', 'cyan');
+  CREATE TYPE "public"."enum_pages_blocks_content_columns_decorator_horizontal_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_pages_blocks_content_columns_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_blocks_content_columns_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum_pages_blocks_content_columns_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum_pages_blocks_archive_style" AS ENUM('text', 'cards');
-  CREATE TYPE "public"."enum_pages_blocks_archive_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_blocks_archive_populate_by" AS ENUM('collection', 'selection');
   CREATE TYPE "public"."enum_pages_blocks_archive_relation_to" AS ENUM('posts');
   CREATE TYPE "public"."enum_pages_blocks_archive_long_card_styles_card1" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum_pages_blocks_archive_long_card_styles_card2" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum_pages_blocks_archive_long_card_styles_card3" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum_pages_blocks_archive_long_card_styles_card4" AS ENUM('primary', 'secondary', 'starry', 'transparent');
-  CREATE TYPE "public"."enum_pages_blocks_card_block_cards_color" AS ENUM('coral', 'purple', 'cyan', 'green');
+  CREATE TYPE "public"."enum_pages_blocks_card_block_cards_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_pages_blocks_card_block_cards_orientation" AS ENUM('vertical', 'horizontal');
   CREATE TYPE "public"."enum_pages_blocks_card_block_cards_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_pages_blocks_image_content_cells_links_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_blocks_image_content_cells_links_link_appearance" AS ENUM('default', 'secondary');
+  CREATE TYPE "public"."enum_pages_blocks_image_content_cells_links_link_appearance" AS ENUM('brand', 'default', 'secondary');
   CREATE TYPE "public"."enum_pages_blocks_image_content_cells_type" AS ENUM('text', 'media');
   CREATE TYPE "public"."enum_pages_blocks_static_map_variant" AS ENUM('default', 'mono', 'mono-black');
   CREATE TYPE "public"."enum_pages_blocks_divider_pattern" AS ENUM('a', 'b', 'c', 'd');
-  CREATE TYPE "public"."enum_pages_blocks_divider_primary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
-  CREATE TYPE "public"."enum_pages_blocks_divider_secondary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
-  CREATE TYPE "public"."enum_pages_blocks_divider_tertiary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
+  CREATE TYPE "public"."enum_pages_blocks_divider_primary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green');
+  CREATE TYPE "public"."enum_pages_blocks_divider_secondary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green');
   CREATE TYPE "public"."enum_pages_blocks_timeline_entries_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum_pages_blocks_team_departments_members_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum_pages_blocks_team_departments_color" AS ENUM('purple', 'coral');
   CREATE TYPE "public"."enum_pages_hero_type" AS ENUM('none', 'homeHero', 'highImpactHero', 'lowImpact', 'slidingHero');
-  CREATE TYPE "public"."enum_pages_hero_bg_color" AS ENUM('base', 'purple', 'green', 'coral', 'cyan');
+  CREATE TYPE "public"."enum_pages_hero_bg_color" AS ENUM('base', 'purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_pages_hero_cta_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum_pages_hero_cta_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum_pages_hero_cta_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum_pages_status" AS ENUM('draft', 'published');
-  CREATE TYPE "public"."enum__pages_v_version_hero_slides_color" AS ENUM('purple', 'green', 'coral', 'cyan');
+  CREATE TYPE "public"."enum__pages_v_version_hero_slides_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__pages_v_version_hero_slides_cta_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_version_hero_slides_cta_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum__pages_v_version_hero_slides_cta_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum__pages_v_blocks_cta_links_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_blocks_cta_links_link_appearance" AS ENUM('outline', 'secondary', 'default');
-  CREATE TYPE "public"."enum__pages_v_blocks_cta_cards_color" AS ENUM('coral', 'purple', 'cyan', 'green');
+  CREATE TYPE "public"."enum__pages_v_blocks_cta_links_link_appearance" AS ENUM('brand', 'outline', 'secondary', 'default');
+  CREATE TYPE "public"."enum__pages_v_blocks_cta_cards_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__pages_v_blocks_cta_cards_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_blocks_cta_variant" AS ENUM('primary', 'secondary', 'background', 'highlightLeft', 'highlightCentered');
+  CREATE TYPE "public"."enum__pages_v_blocks_cta_variant" AS ENUM('primary', 'secondary', 'background', 'highlight');
   CREATE TYPE "public"."enum__pages_v_blocks_cta_cta_type" AS ENUM('links', 'modal');
   CREATE TYPE "public"."enum__pages_v_blocks_content_columns_size" AS ENUM('oneThird', 'half', 'twoThirds', 'full');
+  CREATE TYPE "public"."enum__pages_v_blocks_content_columns_type" AS ENUM('text', 'media');
+  CREATE TYPE "public"."enum__pages_v_blocks_content_columns_decorator_vertical_color" AS ENUM('purple', 'coral', 'cyan');
+  CREATE TYPE "public"."enum__pages_v_blocks_content_columns_decorator_horizontal_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__pages_v_blocks_content_columns_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_blocks_content_columns_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum__pages_v_blocks_content_columns_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_style" AS ENUM('text', 'cards');
-  CREATE TYPE "public"."enum__pages_v_blocks_archive_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_populate_by" AS ENUM('collection', 'selection');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_relation_to" AS ENUM('posts');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_long_card_styles_card1" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_long_card_styles_card2" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_long_card_styles_card3" AS ENUM('primary', 'secondary', 'starry', 'transparent');
   CREATE TYPE "public"."enum__pages_v_blocks_archive_long_card_styles_card4" AS ENUM('primary', 'secondary', 'starry', 'transparent');
-  CREATE TYPE "public"."enum__pages_v_blocks_card_block_cards_color" AS ENUM('coral', 'purple', 'cyan', 'green');
+  CREATE TYPE "public"."enum__pages_v_blocks_card_block_cards_color" AS ENUM('purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__pages_v_blocks_card_block_cards_orientation" AS ENUM('vertical', 'horizontal');
   CREATE TYPE "public"."enum__pages_v_blocks_card_block_cards_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum__pages_v_blocks_image_content_cells_links_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_blocks_image_content_cells_links_link_appearance" AS ENUM('default', 'secondary');
+  CREATE TYPE "public"."enum__pages_v_blocks_image_content_cells_links_link_appearance" AS ENUM('brand', 'default', 'secondary');
   CREATE TYPE "public"."enum__pages_v_blocks_image_content_cells_type" AS ENUM('text', 'media');
   CREATE TYPE "public"."enum__pages_v_blocks_static_map_variant" AS ENUM('default', 'mono', 'mono-black');
   CREATE TYPE "public"."enum__pages_v_blocks_divider_pattern" AS ENUM('a', 'b', 'c', 'd');
-  CREATE TYPE "public"."enum__pages_v_blocks_divider_primary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
-  CREATE TYPE "public"."enum__pages_v_blocks_divider_secondary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
-  CREATE TYPE "public"."enum__pages_v_blocks_divider_tertiary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green', 'pink', 'amber', 'white', 'ink');
+  CREATE TYPE "public"."enum__pages_v_blocks_divider_primary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green');
+  CREATE TYPE "public"."enum__pages_v_blocks_divider_secondary_color" AS ENUM('default', 'purple', 'coral', 'cyan', 'green');
   CREATE TYPE "public"."enum__pages_v_blocks_timeline_entries_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum__pages_v_blocks_team_departments_members_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum__pages_v_blocks_team_departments_color" AS ENUM('purple', 'coral');
   CREATE TYPE "public"."enum__pages_v_version_hero_type" AS ENUM('none', 'homeHero', 'highImpactHero', 'lowImpact', 'slidingHero');
-  CREATE TYPE "public"."enum__pages_v_version_hero_bg_color" AS ENUM('base', 'purple', 'green', 'coral', 'cyan');
+  CREATE TYPE "public"."enum__pages_v_version_hero_bg_color" AS ENUM('base', 'purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__pages_v_version_hero_cta_link_type" AS ENUM('reference', 'custom');
-  CREATE TYPE "public"."enum__pages_v_version_hero_cta_link_appearance" AS ENUM('default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
+  CREATE TYPE "public"."enum__pages_v_version_hero_cta_link_appearance" AS ENUM('brand', 'default', 'primary', 'secondary', 'accent', 'neutral', 'success', 'outline');
   CREATE TYPE "public"."enum__pages_v_version_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_posts_hero_overlay_color" AS ENUM('base', 'purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum_posts_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum__posts_v_version_hero_overlay_color" AS ENUM('base', 'purple', 'coral', 'cyan');
   CREATE TYPE "public"."enum__posts_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_redirects_to_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_forms_confirmation_type" AS ENUM('message', 'redirect');
@@ -94,6 +102,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" varchar PRIMARY KEY NOT NULL,
   	"color" "enum_pages_hero_slides_color" DEFAULT 'purple',
   	"media_id" integer,
+  	"media_mobile_id" integer,
   	"title" varchar,
   	"subtitle" varchar,
   	"cta_enable" boolean DEFAULT false,
@@ -101,7 +110,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"cta_link_new_tab" boolean,
   	"cta_link_url" varchar DEFAULT '#',
   	"cta_link_label" varchar,
-  	"cta_link_appearance" "enum_pages_hero_slides_cta_link_appearance" DEFAULT 'default'
+  	"cta_link_appearance" "enum_pages_hero_slides_cta_link_appearance" DEFAULT 'brand'
   );
   
   CREATE TABLE "pages_blocks_cta_links" (
@@ -112,7 +121,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum_pages_blocks_cta_links_link_appearance" DEFAULT 'outline'
+  	"link_appearance" "enum_pages_blocks_cta_links_link_appearance" DEFAULT 'brand'
   );
   
   CREATE TABLE "pages_blocks_cta_cards" (
@@ -154,13 +163,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" varchar NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
   	"size" "enum_pages_blocks_content_columns_size" DEFAULT 'oneThird',
+  	"type" "enum_pages_blocks_content_columns_type" DEFAULT 'text',
   	"rich_text" jsonb,
+  	"media_id" integer,
+  	"decorator_enabled" boolean DEFAULT false,
+  	"decorator_vertical_color" "enum_pages_blocks_content_columns_decorator_vertical_color" DEFAULT 'coral',
+  	"decorator_horizontal_color" "enum_pages_blocks_content_columns_decorator_horizontal_color" DEFAULT 'purple',
   	"enable_link" boolean,
   	"link_type" "enum_pages_blocks_content_columns_link_type" DEFAULT 'reference',
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum_pages_blocks_content_columns_link_appearance" DEFAULT 'default'
+  	"link_appearance" "enum_pages_blocks_content_columns_link_appearance" DEFAULT 'brand'
   );
   
   CREATE TABLE "pages_blocks_content" (
@@ -168,7 +182,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"block_name" varchar
   );
   
@@ -186,14 +199,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
-  	"eyebrow" varchar,
   	"intro_content" jsonb,
   	"style" "enum_pages_blocks_archive_style" DEFAULT 'text',
-  	"link_type" "enum_pages_blocks_archive_link_type" DEFAULT 'reference',
-  	"link_new_tab" boolean,
-  	"link_url" varchar DEFAULT '#',
-  	"link_label" varchar,
   	"populate_by" "enum_pages_blocks_archive_populate_by" DEFAULT 'collection',
   	"relation_to" "enum_pages_blocks_archive_relation_to" DEFAULT 'posts',
   	"limit" numeric DEFAULT 10,
@@ -238,7 +245,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"block_name" varchar
   );
   
@@ -256,7 +262,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"block_name" varchar
   );
   
@@ -268,7 +273,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum_pages_blocks_image_content_cells_links_link_appearance" DEFAULT 'default'
+  	"link_appearance" "enum_pages_blocks_image_content_cells_links_link_appearance" DEFAULT 'brand'
   );
   
   CREATE TABLE "pages_blocks_image_content_cells" (
@@ -286,7 +291,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"cols_lg" numeric DEFAULT 2,
   	"rows_lg" numeric DEFAULT 2,
   	"block_name" varchar
@@ -307,7 +311,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"variant" "enum_pages_blocks_static_map_variant" DEFAULT 'default',
   	"initial_view_latitude" numeric,
   	"initial_view_longitude" numeric,
@@ -323,7 +326,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"pattern" "enum_pages_blocks_divider_pattern" DEFAULT 'a',
   	"primary_color" "enum_pages_blocks_divider_primary_color" DEFAULT 'default',
   	"secondary_color" "enum_pages_blocks_divider_secondary_color" DEFAULT 'default',
-  	"tertiary_color" "enum_pages_blocks_divider_tertiary_color" DEFAULT 'default',
   	"block_name" varchar
   );
   
@@ -345,7 +347,36 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"title" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_team_departments_members" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"role" varchar,
+  	"photo_id" integer,
+  	"with_link" boolean DEFAULT false,
+  	"link_type" "enum_pages_blocks_team_departments_members_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar DEFAULT '#',
+  	"link_label" varchar
+  );
+  
+  CREATE TABLE "pages_blocks_team_departments" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"color" "enum_pages_blocks_team_departments_color" DEFAULT 'coral'
+  );
+  
+  CREATE TABLE "pages_blocks_team" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
   	"block_name" varchar
   );
   
@@ -361,8 +392,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"hero_cta_link_new_tab" boolean,
   	"hero_cta_link_url" varchar DEFAULT '#',
   	"hero_cta_link_label" varchar,
-  	"hero_cta_link_appearance" "enum_pages_hero_cta_link_appearance" DEFAULT 'default',
+  	"hero_cta_link_appearance" "enum_pages_hero_cta_link_appearance" DEFAULT 'brand',
   	"hero_media_id" integer,
+  	"hero_media_mobile_id" integer,
   	"hero_timeout" numeric DEFAULT 6000,
   	"hero_rich_text" jsonb,
   	"meta_title" varchar,
@@ -392,6 +424,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"color" "enum__pages_v_version_hero_slides_color" DEFAULT 'purple',
   	"media_id" integer,
+  	"media_mobile_id" integer,
   	"title" varchar,
   	"subtitle" varchar,
   	"cta_enable" boolean DEFAULT false,
@@ -399,7 +432,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"cta_link_new_tab" boolean,
   	"cta_link_url" varchar DEFAULT '#',
   	"cta_link_label" varchar,
-  	"cta_link_appearance" "enum__pages_v_version_hero_slides_cta_link_appearance" DEFAULT 'default',
+  	"cta_link_appearance" "enum__pages_v_version_hero_slides_cta_link_appearance" DEFAULT 'brand',
   	"_uuid" varchar
   );
   
@@ -411,7 +444,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum__pages_v_blocks_cta_links_link_appearance" DEFAULT 'outline',
+  	"link_appearance" "enum__pages_v_blocks_cta_links_link_appearance" DEFAULT 'brand',
   	"_uuid" varchar
   );
   
@@ -456,13 +489,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"size" "enum__pages_v_blocks_content_columns_size" DEFAULT 'oneThird',
+  	"type" "enum__pages_v_blocks_content_columns_type" DEFAULT 'text',
   	"rich_text" jsonb,
+  	"media_id" integer,
+  	"decorator_enabled" boolean DEFAULT false,
+  	"decorator_vertical_color" "enum__pages_v_blocks_content_columns_decorator_vertical_color" DEFAULT 'coral',
+  	"decorator_horizontal_color" "enum__pages_v_blocks_content_columns_decorator_horizontal_color" DEFAULT 'purple',
   	"enable_link" boolean,
   	"link_type" "enum__pages_v_blocks_content_columns_link_type" DEFAULT 'reference',
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum__pages_v_blocks_content_columns_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum__pages_v_blocks_content_columns_link_appearance" DEFAULT 'brand',
   	"_uuid" varchar
   );
   
@@ -471,7 +509,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -491,14 +528,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
-  	"eyebrow" varchar,
   	"intro_content" jsonb,
   	"style" "enum__pages_v_blocks_archive_style" DEFAULT 'text',
-  	"link_type" "enum__pages_v_blocks_archive_link_type" DEFAULT 'reference',
-  	"link_new_tab" boolean,
-  	"link_url" varchar DEFAULT '#',
-  	"link_label" varchar,
   	"populate_by" "enum__pages_v_blocks_archive_populate_by" DEFAULT 'collection',
   	"relation_to" "enum__pages_v_blocks_archive_relation_to" DEFAULT 'posts',
   	"limit" numeric DEFAULT 10,
@@ -546,7 +577,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -566,7 +596,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -579,7 +608,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"link_new_tab" boolean,
   	"link_url" varchar DEFAULT '#',
   	"link_label" varchar,
-  	"link_appearance" "enum__pages_v_blocks_image_content_cells_links_link_appearance" DEFAULT 'default',
+  	"link_appearance" "enum__pages_v_blocks_image_content_cells_links_link_appearance" DEFAULT 'brand',
   	"_uuid" varchar
   );
   
@@ -599,7 +628,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"cols_lg" numeric DEFAULT 2,
   	"rows_lg" numeric DEFAULT 2,
   	"_uuid" varchar,
@@ -622,7 +650,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
   	"variant" "enum__pages_v_blocks_static_map_variant" DEFAULT 'default',
   	"initial_view_latitude" numeric,
   	"initial_view_longitude" numeric,
@@ -639,7 +666,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"pattern" "enum__pages_v_blocks_divider_pattern" DEFAULT 'a',
   	"primary_color" "enum__pages_v_blocks_divider_primary_color" DEFAULT 'default',
   	"secondary_color" "enum__pages_v_blocks_divider_secondary_color" DEFAULT 'default',
-  	"tertiary_color" "enum__pages_v_blocks_divider_tertiary_color" DEFAULT 'default',
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -663,7 +689,39 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_parent_id" integer NOT NULL,
   	"_path" text NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_team_departments_members" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"role" varchar,
+  	"photo_id" integer,
+  	"with_link" boolean DEFAULT false,
+  	"link_type" "enum__pages_v_blocks_team_departments_members_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar DEFAULT '#',
+  	"link_label" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_team_departments" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"color" "enum__pages_v_blocks_team_departments_color" DEFAULT 'coral',
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE "_pages_v_blocks_team" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
   	"_uuid" varchar,
   	"block_name" varchar
   );
@@ -681,8 +739,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"version_hero_cta_link_new_tab" boolean,
   	"version_hero_cta_link_url" varchar DEFAULT '#',
   	"version_hero_cta_link_label" varchar,
-  	"version_hero_cta_link_appearance" "enum__pages_v_version_hero_cta_link_appearance" DEFAULT 'default',
+  	"version_hero_cta_link_appearance" "enum__pages_v_version_hero_cta_link_appearance" DEFAULT 'brand',
   	"version_hero_media_id" integer,
+  	"version_hero_media_mobile_id" integer,
   	"version_hero_timeout" numeric DEFAULT 6000,
   	"version_hero_rich_text" jsonb,
   	"version_meta_title" varchar,
@@ -727,6 +786,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"meta_title" varchar,
   	"meta_image_id" integer,
   	"meta_description" varchar,
+  	"hero_overlay_color" "enum_posts_hero_overlay_color" DEFAULT 'purple',
+  	"show_motif" boolean DEFAULT true,
   	"is_event" boolean DEFAULT false,
   	"event_date" timestamp(3) with time zone,
   	"published_at" timestamp(3) with time zone,
@@ -766,6 +827,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"version_meta_title" varchar,
   	"version_meta_image_id" integer,
   	"version_meta_description" varchar,
+  	"version_hero_overlay_color" "enum__posts_v_version_hero_overlay_color" DEFAULT 'purple',
+  	"version_show_motif" boolean DEFAULT true,
   	"version_is_event" boolean DEFAULT false,
   	"version_event_date" timestamp(3) with time zone,
   	"version_published_at" timestamp(3) with time zone,
@@ -1266,6 +1329,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   
   ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_media_mobile_id_media_id_fk" FOREIGN KEY ("media_mobile_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_hero_slides" ADD CONSTRAINT "pages_hero_slides_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta_links" ADD CONSTRAINT "pages_blocks_cta_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_cta"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta_cards" ADD CONSTRAINT "pages_blocks_cta_cards_background_image_id_media_id_fk" FOREIGN KEY ("background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -1273,6 +1337,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_cta" ADD CONSTRAINT "pages_blocks_cta_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta" ADD CONSTRAINT "pages_blocks_cta_form_id_forms_id_fk" FOREIGN KEY ("form_id") REFERENCES "public"."forms"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_cta" ADD CONSTRAINT "pages_blocks_cta_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_content_columns" ADD CONSTRAINT "pages_blocks_content_columns_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_blocks_content_columns" ADD CONSTRAINT "pages_blocks_content_columns_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_content"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_content" ADD CONSTRAINT "pages_blocks_content_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_media_block" ADD CONSTRAINT "pages_blocks_media_block_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -1295,13 +1360,19 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "pages_blocks_divider" ADD CONSTRAINT "pages_blocks_divider_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_timeline_entries" ADD CONSTRAINT "pages_blocks_timeline_entries_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_timeline"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_blocks_timeline" ADD CONSTRAINT "pages_blocks_timeline_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_team_departments_members" ADD CONSTRAINT "pages_blocks_team_departments_members_photo_id_media_id_fk" FOREIGN KEY ("photo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages_blocks_team_departments_members" ADD CONSTRAINT "pages_blocks_team_departments_members_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_team_departments"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_team_departments" ADD CONSTRAINT "pages_blocks_team_departments_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_team"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "pages_blocks_team" ADD CONSTRAINT "pages_blocks_team_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages" ADD CONSTRAINT "pages_hero_media_id_media_id_fk" FOREIGN KEY ("hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "pages" ADD CONSTRAINT "pages_hero_media_mobile_id_media_id_fk" FOREIGN KEY ("hero_media_mobile_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages" ADD CONSTRAINT "pages_meta_image_id_media_id_fk" FOREIGN KEY ("meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "pages_rels" ADD CONSTRAINT "pages_rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_media_mobile_id_media_id_fk" FOREIGN KEY ("media_mobile_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_version_hero_slides" ADD CONSTRAINT "_pages_v_version_hero_slides_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta_links" ADD CONSTRAINT "_pages_v_blocks_cta_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_cta"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta_cards" ADD CONSTRAINT "_pages_v_blocks_cta_cards_background_image_id_media_id_fk" FOREIGN KEY ("background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -1309,6 +1380,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_pages_v_blocks_cta" ADD CONSTRAINT "_pages_v_blocks_cta_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta" ADD CONSTRAINT "_pages_v_blocks_cta_form_id_forms_id_fk" FOREIGN KEY ("form_id") REFERENCES "public"."forms"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_cta" ADD CONSTRAINT "_pages_v_blocks_cta_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_content_columns" ADD CONSTRAINT "_pages_v_blocks_content_columns_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_content_columns" ADD CONSTRAINT "_pages_v_blocks_content_columns_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_content"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_content" ADD CONSTRAINT "_pages_v_blocks_content_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_media_block" ADD CONSTRAINT "_pages_v_blocks_media_block_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -1331,8 +1403,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_pages_v_blocks_divider" ADD CONSTRAINT "_pages_v_blocks_divider_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_timeline_entries" ADD CONSTRAINT "_pages_v_blocks_timeline_entries_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_timeline"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_blocks_timeline" ADD CONSTRAINT "_pages_v_blocks_timeline_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_team_departments_members" ADD CONSTRAINT "_pages_v_blocks_team_departments_members_photo_id_media_id_fk" FOREIGN KEY ("photo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_team_departments_members" ADD CONSTRAINT "_pages_v_blocks_team_departments_members_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_team_departments"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_team_departments" ADD CONSTRAINT "_pages_v_blocks_team_departments_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_team"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_pages_v_blocks_team" ADD CONSTRAINT "_pages_v_blocks_team_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_parent_id_pages_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."pages"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_hero_media_id_media_id_fk" FOREIGN KEY ("version_hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_hero_media_mobile_id_media_id_fk" FOREIGN KEY ("version_hero_media_mobile_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_meta_image_id_media_id_fk" FOREIGN KEY ("version_meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "_pages_v_rels" ADD CONSTRAINT "_pages_v_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
@@ -1410,6 +1487,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_hero_slides_order_idx" ON "pages_hero_slides" USING btree ("_order");
   CREATE INDEX "pages_hero_slides_parent_id_idx" ON "pages_hero_slides" USING btree ("_parent_id");
   CREATE INDEX "pages_hero_slides_media_idx" ON "pages_hero_slides" USING btree ("media_id");
+  CREATE INDEX "pages_hero_slides_media_mobile_idx" ON "pages_hero_slides" USING btree ("media_mobile_id");
   CREATE INDEX "pages_blocks_cta_links_order_idx" ON "pages_blocks_cta_links" USING btree ("_order");
   CREATE INDEX "pages_blocks_cta_links_parent_id_idx" ON "pages_blocks_cta_links" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_cta_cards_order_idx" ON "pages_blocks_cta_cards" USING btree ("_order");
@@ -1422,6 +1500,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_blocks_cta_form_idx" ON "pages_blocks_cta" USING btree ("form_id");
   CREATE INDEX "pages_blocks_content_columns_order_idx" ON "pages_blocks_content_columns" USING btree ("_order");
   CREATE INDEX "pages_blocks_content_columns_parent_id_idx" ON "pages_blocks_content_columns" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_content_columns_media_idx" ON "pages_blocks_content_columns" USING btree ("media_id");
   CREATE INDEX "pages_blocks_content_order_idx" ON "pages_blocks_content" USING btree ("_order");
   CREATE INDEX "pages_blocks_content_parent_id_idx" ON "pages_blocks_content" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_content_path_idx" ON "pages_blocks_content" USING btree ("_path");
@@ -1469,7 +1548,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "pages_blocks_timeline_order_idx" ON "pages_blocks_timeline" USING btree ("_order");
   CREATE INDEX "pages_blocks_timeline_parent_id_idx" ON "pages_blocks_timeline" USING btree ("_parent_id");
   CREATE INDEX "pages_blocks_timeline_path_idx" ON "pages_blocks_timeline" USING btree ("_path");
+  CREATE INDEX "pages_blocks_team_departments_members_order_idx" ON "pages_blocks_team_departments_members" USING btree ("_order");
+  CREATE INDEX "pages_blocks_team_departments_members_parent_id_idx" ON "pages_blocks_team_departments_members" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_team_departments_members_photo_idx" ON "pages_blocks_team_departments_members" USING btree ("photo_id");
+  CREATE INDEX "pages_blocks_team_departments_order_idx" ON "pages_blocks_team_departments" USING btree ("_order");
+  CREATE INDEX "pages_blocks_team_departments_parent_id_idx" ON "pages_blocks_team_departments" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_team_order_idx" ON "pages_blocks_team" USING btree ("_order");
+  CREATE INDEX "pages_blocks_team_parent_id_idx" ON "pages_blocks_team" USING btree ("_parent_id");
+  CREATE INDEX "pages_blocks_team_path_idx" ON "pages_blocks_team" USING btree ("_path");
   CREATE INDEX "pages_hero_hero_media_idx" ON "pages" USING btree ("hero_media_id");
+  CREATE INDEX "pages_hero_hero_media_mobile_idx" ON "pages" USING btree ("hero_media_mobile_id");
   CREATE INDEX "pages_meta_meta_image_idx" ON "pages" USING btree ("meta_image_id");
   CREATE UNIQUE INDEX "pages_slug_idx" ON "pages" USING btree ("slug");
   CREATE INDEX "pages_updated_at_idx" ON "pages" USING btree ("updated_at");
@@ -1484,6 +1572,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_version_hero_slides_order_idx" ON "_pages_v_version_hero_slides" USING btree ("_order");
   CREATE INDEX "_pages_v_version_hero_slides_parent_id_idx" ON "_pages_v_version_hero_slides" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_version_hero_slides_media_idx" ON "_pages_v_version_hero_slides" USING btree ("media_id");
+  CREATE INDEX "_pages_v_version_hero_slides_media_mobile_idx" ON "_pages_v_version_hero_slides" USING btree ("media_mobile_id");
   CREATE INDEX "_pages_v_blocks_cta_links_order_idx" ON "_pages_v_blocks_cta_links" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_cta_links_parent_id_idx" ON "_pages_v_blocks_cta_links" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_cta_cards_order_idx" ON "_pages_v_blocks_cta_cards" USING btree ("_order");
@@ -1496,6 +1585,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_blocks_cta_form_idx" ON "_pages_v_blocks_cta" USING btree ("form_id");
   CREATE INDEX "_pages_v_blocks_content_columns_order_idx" ON "_pages_v_blocks_content_columns" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_content_columns_parent_id_idx" ON "_pages_v_blocks_content_columns" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_content_columns_media_idx" ON "_pages_v_blocks_content_columns" USING btree ("media_id");
   CREATE INDEX "_pages_v_blocks_content_order_idx" ON "_pages_v_blocks_content" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_content_parent_id_idx" ON "_pages_v_blocks_content" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_content_path_idx" ON "_pages_v_blocks_content" USING btree ("_path");
@@ -1543,8 +1633,17 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_pages_v_blocks_timeline_order_idx" ON "_pages_v_blocks_timeline" USING btree ("_order");
   CREATE INDEX "_pages_v_blocks_timeline_parent_id_idx" ON "_pages_v_blocks_timeline" USING btree ("_parent_id");
   CREATE INDEX "_pages_v_blocks_timeline_path_idx" ON "_pages_v_blocks_timeline" USING btree ("_path");
+  CREATE INDEX "_pages_v_blocks_team_departments_members_order_idx" ON "_pages_v_blocks_team_departments_members" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_team_departments_members_parent_id_idx" ON "_pages_v_blocks_team_departments_members" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_team_departments_members_photo_idx" ON "_pages_v_blocks_team_departments_members" USING btree ("photo_id");
+  CREATE INDEX "_pages_v_blocks_team_departments_order_idx" ON "_pages_v_blocks_team_departments" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_team_departments_parent_id_idx" ON "_pages_v_blocks_team_departments" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_team_order_idx" ON "_pages_v_blocks_team" USING btree ("_order");
+  CREATE INDEX "_pages_v_blocks_team_parent_id_idx" ON "_pages_v_blocks_team" USING btree ("_parent_id");
+  CREATE INDEX "_pages_v_blocks_team_path_idx" ON "_pages_v_blocks_team" USING btree ("_path");
   CREATE INDEX "_pages_v_parent_idx" ON "_pages_v" USING btree ("parent_id");
   CREATE INDEX "_pages_v_version_hero_version_hero_media_idx" ON "_pages_v" USING btree ("version_hero_media_id");
+  CREATE INDEX "_pages_v_version_hero_version_hero_media_mobile_idx" ON "_pages_v" USING btree ("version_hero_media_mobile_id");
   CREATE INDEX "_pages_v_version_meta_version_meta_image_idx" ON "_pages_v" USING btree ("version_meta_image_id");
   CREATE INDEX "_pages_v_version_version_slug_idx" ON "_pages_v" USING btree ("version_slug");
   CREATE INDEX "_pages_v_version_version_updated_at_idx" ON "_pages_v" USING btree ("version_updated_at");
@@ -1761,6 +1860,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "pages_blocks_divider" CASCADE;
   DROP TABLE "pages_blocks_timeline_entries" CASCADE;
   DROP TABLE "pages_blocks_timeline" CASCADE;
+  DROP TABLE "pages_blocks_team_departments_members" CASCADE;
+  DROP TABLE "pages_blocks_team_departments" CASCADE;
+  DROP TABLE "pages_blocks_team" CASCADE;
   DROP TABLE "pages" CASCADE;
   DROP TABLE "pages_rels" CASCADE;
   DROP TABLE "_pages_v_version_hero_slides" CASCADE;
@@ -1784,6 +1886,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "_pages_v_blocks_divider" CASCADE;
   DROP TABLE "_pages_v_blocks_timeline_entries" CASCADE;
   DROP TABLE "_pages_v_blocks_timeline" CASCADE;
+  DROP TABLE "_pages_v_blocks_team_departments_members" CASCADE;
+  DROP TABLE "_pages_v_blocks_team_departments" CASCADE;
+  DROP TABLE "_pages_v_blocks_team" CASCADE;
   DROP TABLE "_pages_v" CASCADE;
   DROP TABLE "_pages_v_rels" CASCADE;
   DROP TABLE "posts_populated_authors" CASCADE;
@@ -1844,10 +1949,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_pages_blocks_cta_variant";
   DROP TYPE "public"."enum_pages_blocks_cta_cta_type";
   DROP TYPE "public"."enum_pages_blocks_content_columns_size";
+  DROP TYPE "public"."enum_pages_blocks_content_columns_type";
+  DROP TYPE "public"."enum_pages_blocks_content_columns_decorator_vertical_color";
+  DROP TYPE "public"."enum_pages_blocks_content_columns_decorator_horizontal_color";
   DROP TYPE "public"."enum_pages_blocks_content_columns_link_type";
   DROP TYPE "public"."enum_pages_blocks_content_columns_link_appearance";
   DROP TYPE "public"."enum_pages_blocks_archive_style";
-  DROP TYPE "public"."enum_pages_blocks_archive_link_type";
   DROP TYPE "public"."enum_pages_blocks_archive_populate_by";
   DROP TYPE "public"."enum_pages_blocks_archive_relation_to";
   DROP TYPE "public"."enum_pages_blocks_archive_long_card_styles_card1";
@@ -1864,8 +1971,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_pages_blocks_divider_pattern";
   DROP TYPE "public"."enum_pages_blocks_divider_primary_color";
   DROP TYPE "public"."enum_pages_blocks_divider_secondary_color";
-  DROP TYPE "public"."enum_pages_blocks_divider_tertiary_color";
   DROP TYPE "public"."enum_pages_blocks_timeline_entries_link_type";
+  DROP TYPE "public"."enum_pages_blocks_team_departments_members_link_type";
+  DROP TYPE "public"."enum_pages_blocks_team_departments_color";
   DROP TYPE "public"."enum_pages_hero_type";
   DROP TYPE "public"."enum_pages_hero_bg_color";
   DROP TYPE "public"."enum_pages_hero_cta_link_type";
@@ -1881,10 +1989,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__pages_v_blocks_cta_variant";
   DROP TYPE "public"."enum__pages_v_blocks_cta_cta_type";
   DROP TYPE "public"."enum__pages_v_blocks_content_columns_size";
+  DROP TYPE "public"."enum__pages_v_blocks_content_columns_type";
+  DROP TYPE "public"."enum__pages_v_blocks_content_columns_decorator_vertical_color";
+  DROP TYPE "public"."enum__pages_v_blocks_content_columns_decorator_horizontal_color";
   DROP TYPE "public"."enum__pages_v_blocks_content_columns_link_type";
   DROP TYPE "public"."enum__pages_v_blocks_content_columns_link_appearance";
   DROP TYPE "public"."enum__pages_v_blocks_archive_style";
-  DROP TYPE "public"."enum__pages_v_blocks_archive_link_type";
   DROP TYPE "public"."enum__pages_v_blocks_archive_populate_by";
   DROP TYPE "public"."enum__pages_v_blocks_archive_relation_to";
   DROP TYPE "public"."enum__pages_v_blocks_archive_long_card_styles_card1";
@@ -1901,14 +2011,17 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__pages_v_blocks_divider_pattern";
   DROP TYPE "public"."enum__pages_v_blocks_divider_primary_color";
   DROP TYPE "public"."enum__pages_v_blocks_divider_secondary_color";
-  DROP TYPE "public"."enum__pages_v_blocks_divider_tertiary_color";
   DROP TYPE "public"."enum__pages_v_blocks_timeline_entries_link_type";
+  DROP TYPE "public"."enum__pages_v_blocks_team_departments_members_link_type";
+  DROP TYPE "public"."enum__pages_v_blocks_team_departments_color";
   DROP TYPE "public"."enum__pages_v_version_hero_type";
   DROP TYPE "public"."enum__pages_v_version_hero_bg_color";
   DROP TYPE "public"."enum__pages_v_version_hero_cta_link_type";
   DROP TYPE "public"."enum__pages_v_version_hero_cta_link_appearance";
   DROP TYPE "public"."enum__pages_v_version_status";
+  DROP TYPE "public"."enum_posts_hero_overlay_color";
   DROP TYPE "public"."enum_posts_status";
+  DROP TYPE "public"."enum__posts_v_version_hero_overlay_color";
   DROP TYPE "public"."enum__posts_v_version_status";
   DROP TYPE "public"."enum_redirects_to_type";
   DROP TYPE "public"."enum_forms_confirmation_type";
