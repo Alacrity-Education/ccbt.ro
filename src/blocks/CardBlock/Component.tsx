@@ -1,31 +1,29 @@
 import React from "react";
 import type { CardBlock as CardBlockProps } from "@/payload-types";
 
-import RichText from "@/components/RichText";
-import { PillarCard } from "@/components/Card/PillarCard";
+import { createVariantBlock } from "../createVariantBlock";
 
-export const CardBlock: React.FC<CardBlockProps> = ({ cards }) => {
-  const visibleCards = cards || [];
-  if (visibleCards.length === 0) return null;
+import { PillarCardBlock } from "./Pillar";
+import { LongCardBlock } from "./Long";
+import { MotifCardBlock } from "./Motif";
 
-  return (
-    <section className="container mx-auto w-full py-12">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleCards.map((card, i) => (
-          <PillarCard
-            key={card.id ?? i}
-            title={card.title}
-            color={card.color}
-            orientation={card.orientation}
-            withLink={card.withLink}
-            link={card.link}
-            backgroundImage={card.backgroundImage}
-            backgroundOpacity={card.backgroundOpacity}
-          >
-            {card.description && <RichText data={card.description} enableGutter={false} />}
-          </PillarCard>
-        ))}
-      </div>
-    </section>
-  );
-};
+const CardBlockVariants = createVariantBlock<
+  CardBlockProps & { id?: string },
+  "cardType"
+>({
+  discriminator: "cardType",
+  variants: {
+    pillar: PillarCardBlock,
+    long: LongCardBlock,
+    motif: MotifCardBlock,
+  },
+});
+
+/**
+ * `cardType` was added after the block shipped, so rows saved before it have no
+ * value and would dispatch to nothing. Pillar is what they were, so that is the
+ * fallback rather than a blank block.
+ */
+export const CardBlock: React.FC<CardBlockProps & { id?: string }> = (
+  props,
+) => <CardBlockVariants {...props} cardType={props.cardType ?? "pillar"} />;

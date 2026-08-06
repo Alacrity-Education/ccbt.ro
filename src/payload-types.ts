@@ -925,9 +925,19 @@ export interface FormBlock {
  * via the `definition` "CardBlock".
  */
 export interface CardBlock {
+  cardType: 'pillar' | 'long' | 'motif';
   cards?:
     | {
         title: string;
+        subtitle?: string | null;
+        date?: string | null;
+        image?: (number | null) | Media;
+        longStyle?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
+        motif?: {
+          horizontalColor?: ('purple' | 'coral' | 'cyan' | 'green') | null;
+          verticalColor?: ('purple' | 'coral' | 'cyan' | 'green') | null;
+          arrowColor?: ('purple' | 'coral' | 'cyan' | 'green') | null;
+        };
         description?: {
           root: {
             type: string;
@@ -943,11 +953,8 @@ export interface CardBlock {
           };
           [k: string]: unknown;
         } | null;
-        color: 'purple' | 'coral' | 'cyan';
-        orientation: 'vertical' | 'horizontal';
-        /**
-         * Enable to add a link to the card
-         */
+        color?: ('purple' | 'coral' | 'cyan') | null;
+        orientation?: ('vertical' | 'horizontal') | null;
         withLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -964,9 +971,6 @@ export interface CardBlock {
           url?: string | null;
           label?: string | null;
         };
-        /**
-         * Optional image shown behind the card, over its color.
-         */
         backgroundImage?: (number | null) | Media;
         backgroundOpacity?: number | null;
         id?: string | null;
@@ -1687,10 +1691,22 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CardBlock_select".
  */
 export interface CardBlockSelect<T extends boolean = true> {
+  cardType?: T;
   cards?:
     | T
     | {
         title?: T;
+        subtitle?: T;
+        date?: T;
+        image?: T;
+        longStyle?: T;
+        motif?:
+          | T
+          | {
+              horizontalColor?: T;
+              verticalColor?: T;
+              arrowColor?: T;
+            };
         description?: T;
         color?: T;
         orientation?: T;
