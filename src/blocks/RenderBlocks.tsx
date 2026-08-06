@@ -26,6 +26,7 @@ import { ImageContentBlock } from "@/blocks/ImageContent/Component";
 import { StaticMapBlock } from "@/blocks/StaticMap/Component";
 import { DividerBlock } from "@/blocks/Divider/Component";
 import { TimelineBlock } from "@/blocks/Timeline/Component";
+import { TeamBlock } from "@/blocks/Team/Component";
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -39,6 +40,7 @@ const blockComponents = {
   staticMap: StaticMapBlock,
   divider: DividerBlock,
   timeline: TimelineBlock,
+  team: TeamBlock,
 }
 
 export const RenderBlocks: React.FC<{

@@ -26,6 +26,7 @@ import {CardBlock} from "@/blocks/CardBlock/config";
 import {CarouselLogoBlock} from "@/blocks/LogoCarouselBlock/config";
 import { ImageContentBlock } from "@/blocks/ImageContent/config";
 import { StaticMap } from "@/blocks/StaticMap/config";
+import { Team } from "@/blocks/Team/config";
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -78,7 +79,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, CarouselLogoBlock, ImageContentBlock, StaticMap, Divider, Timeline ],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, CarouselLogoBlock, ImageContentBlock, StaticMap, Divider, Timeline, Team ],
               required: false,
               admin: {
                 initCollapsed: true,
