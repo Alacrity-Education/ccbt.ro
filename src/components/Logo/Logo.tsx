@@ -26,12 +26,12 @@ export const Logo = (props: Props) => {
         fetchPriority={priority}
         decoding="async"
         className={clsx(
-          "hidden h-10 p-1 sm:inline-block sm:h-16 sm:p-2",
+          " h-10 p-1 inline-block sm:h-16 sm:p-2",
           className,
         )}
         src="/logo.svg"
       />
-      <img
+      {/* <img
         alt="CCBT Logo"
         width={50}
         height={50}
@@ -40,7 +40,7 @@ export const Logo = (props: Props) => {
         decoding="async"
         className={clsx("block h-10 p-1 sm:hidden", className)}
         src="/logo-sm.svg"
-      />
+      /> */}
     </>
   );
 };

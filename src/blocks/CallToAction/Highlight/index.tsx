@@ -6,7 +6,7 @@ import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
 import { PillarCard } from "@/components/Card/PillarCard";
-import { HighlightMotif } from "./Motif";
+import { HighlightMotif, HighlightMotifMobile } from "./Motif";
 
 type HighlightCard = NonNullable<CTABlockProps["cards"]>[number];
 
@@ -54,6 +54,19 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
           enough — while overflow-hidden on the section clips it to the CTA's own bounds.
           Whatever runs past the top or bottom edge is simply cut, never drawn over the
           hero above or the section below. */}
+      {/* Phone motif: the diagonal chain, anchored top-right and clipped by the
+          section. Its own paths run past the right edge of the viewBox, so it is
+          meant to be cut there — `xMinYMin` keeps that crop on the right and the
+          chain's head at the top. Swapped out for the woven column at `lg`. */}
+      {showMotif && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-0 right-0 z-0 w-[120px] min-[420px]:w-[150px] lg:hidden"
+        >
+          <HighlightMotifMobile className="h-auto w-full" />
+        </div>
+      )}
+
       {showMotif && (
         <div
           aria-hidden
@@ -79,10 +92,15 @@ export const HighlightCTA: React.FC<CTABlockProps> = ({
           showMotif && "lg:pr-64",
         )}
       >
+        {/* Only the copy is narrowed to clear the phone motif — the cards below
+            keep the full width, since the motif has run out by the time they
+            start. At `lg` the woven column takes over and the container's own
+            `lg:pr-64` does the same job for the whole block. */}
         <div
           className={cn(
             "flex flex-col",
             centered ? "items-center text-center" : "items-start text-left",
+            showMotif && "pr-[104px] min-[420px]:pr-[130px] lg:pr-0",
           )}
         >
           {title && (

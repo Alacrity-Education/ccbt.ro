@@ -40,3 +40,55 @@ export const HighlightMotif: React.FC<{ className?: string; viewBoxHeight?: numb
     <path d="M0.675781 692.665L43.1829 734.348L126.996 816.537L169.503 858.22L202.406 825.955L159.899 784.271L76.0864 702.083L33.5793 660.399L0.675781 692.665Z" fill="#E84935" />
   </svg>
 );
+
+/**
+ * The phone-sized motif: a chain of diagonals stepping down and to the right,
+ * rather than the woven column the wide layout uses. Verbatim from the export
+ * apart from the drop shadows — the three filters there are identical except for
+ * their bounds, so one region generous enough to cover every path replaces all
+ * three (the same trim the timeline's vertical rail got).
+ *
+ * The artwork's own paths run past the right edge of the 612-wide viewBox; that
+ * is by design, the chain is meant to be cut off there.
+ */
+export const HighlightMotifMobile: React.FC<{ className?: string }> = ({
+  className,
+}) => (
+  <svg
+    className={className}
+    viewBox="0 0 612 2025"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden
+    preserveAspectRatio="xMinYMin meet"
+  >
+    <g filter="url(#cta_hl_mobile_shadow)">
+      <path d="M257.937 581.513L263.728 587.313L516.305 840.29L603.736 752.72L351.16 499.743L345.368 493.943L342.43 491L254.999 578.57L257.937 581.513Z" fill="#5F0058" />
+      <path d="M23.0293 -3.77994L34.2651 7.47368L524.305 498.29L611.736 410.72L121.696 -80.0961L110.461 -91.3497L104.76 -97.0593L17.3287 -9.48958L23.0293 -3.77994Z" fill="#5F0058" />
+      <path d="M275.937 947.513L281.728 953.313L534.305 1206.29L621.736 1118.72L369.16 865.743L363.368 859.943L360.43 857L272.999 944.57L275.937 947.513Z" fill="#5F0058" />
+    </g>
+    <path d="M604.691 928.863L540.157 864.226L413.044 736.911L348.587 672.353L261.156 759.923L325.612 824.481L452.726 951.796L517.26 1016.43L604.691 928.863Z" fill="#E84935" />
+    <path d="M604.535 578.51L540.001 513.873L412.887 386.558L348.431 322L261 409.57L325.456 474.128L452.569 601.443L517.104 666.08L604.535 578.51Z" fill="#E84935" />
+    <path d="M772.999 1437.41L670.841 1335.09L469.621 1133.55L367.587 1031.35L280.156 1118.92L382.19 1221.12L583.41 1422.66L685.568 1524.98L772.999 1437.41Z" fill="#E84935" />
+    <defs>
+      <filter
+        id="cta_hl_mobile_shadow"
+        x="-40"
+        y="-140"
+        width="720"
+        height="1420"
+        filterUnits="userSpaceOnUse"
+        colorInterpolationFilters="sRGB"
+      >
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+        <feOffset dy="4" />
+        <feGaussianBlur stdDeviation="2" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="fx" />
+        <feBlend mode="normal" in="SourceGraphic" in2="fx" result="shape" />
+      </filter>
+    </defs>
+  </svg>
+);

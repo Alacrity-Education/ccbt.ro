@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import type { Header as HeaderType } from "@/payload-types";
 
 import { CMSLink } from "@/components/Link";
-import { MenuIcon } from "lucide-react";
+import { MenuButton } from "@/Header/MenuButton";
 import { usePathname } from "next/navigation";
 import { FiChevronRight } from "react-icons/fi";
 
@@ -127,16 +127,12 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       })}
 
       {/* Mobile trigger */}
-      <button
-        type="button"
-        aria-label="Deschide meniul"
-        aria-expanded={isSidebarOpen}
-        aria-controls="mobile-sidebar"
-        className="btn btn-primary m-1 lg:hidden"
+      <MenuButton
+        className="m-1 lg:hidden"
+        expanded={isSidebarOpen}
+        controls="mobile-sidebar"
         onClick={() => setIsSidebarOpen(true)}
-      >
-        <MenuIcon className="h-full" />
-      </button>
+      />
 
       {/* Mobile sidebar */}
       <div
