@@ -79,11 +79,15 @@ export const CardsArchiveBlock: React.FC<
 
   return (
     <div className="container mx-auto my-8" id={`block-${id}`}>
+      {/* Same field, same preset as the Text variant — the intro used to fall
+          through to `body` here and came out at prose sizes, so the two styles
+          rendered identical content at visibly different scales. */}
       {introContent && (
         <div className="container mb-6">
           <RichText
-            className="ms-0 max-w-3xl"
+            className="ms-0"
             data={introContent}
+            preset="display"
             enableGutter={false}
           />
         </div>

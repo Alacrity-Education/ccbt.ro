@@ -68,7 +68,12 @@ export const CTAPrimitive: React.FC<PrimitiveProps> = ({
         <div className="relative z-20 flex h-max min-h-64 w-full flex-col rounded p-6 sm:p-8">
           <div className="max-w-3xl">
             {richText && (
-              <RichText className={`mb-0 text-start ${textClass}`} data={richText} enableGutter={false} />
+              <RichText
+                className={`mb-0 text-start ${textClass}`}
+                data={richText}
+                preset="onDark"
+                enableGutter={false}
+              />
             )}
           </div>
           <div className="grow"></div>

@@ -10,6 +10,7 @@ import {
 
 import type {
   BannerBlock as BannerBlockProps,
+  ButtonBlock as ButtonBlockProps,
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
   StaticMapBlock as StaticMapBlockProps,
@@ -19,14 +20,34 @@ import { BannerBlock } from "@/blocks/Banner/Component";
 import { CallToActionBlock } from "@/blocks/CallToAction/Component";
 import { MediaBlock } from "@/blocks/MediaBlock/Component";
 import { StaticMapBlock } from "@/blocks/StaticMap/Component";
+import { CMSLink } from "@/components/Link";
 
 import { TextStateJSXConverter } from "./textState";
 
 export type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      CTABlockProps | MediaBlockProps | BannerBlockProps | StaticMapBlockProps
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | StaticMapBlockProps
+      | ButtonBlockProps
     >;
+
+/**
+ * The button node, rendered with whichever set of fills suits the surface.
+ *
+ * Which one that is depends on where the rich text is being rendered, not on
+ * anything the editor picked — so the preset decides and the button block itself
+ * carries no appearance field.
+ */
+export const buttonConverter = (appearance: "brand" | "brandInvert") => ({
+  button: ({ node }: { node: SerializedBlockNode<ButtonBlockProps> }) => (
+    <div className="not-prose my-6">
+      <CMSLink {...node.fields.link} appearance={appearance} />
+    </div>
+  ),
+});
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!;
@@ -64,5 +85,6 @@ export const baseConverters: JSXConvertersFunction<NodeTypes> = ({
     ),
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
     staticMap: ({ node }) => <StaticMapBlock {...node.fields} />,
+    ...buttonConverter("brand"),
   },
 });

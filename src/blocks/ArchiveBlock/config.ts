@@ -1,7 +1,6 @@
 import type { Block } from "payload";
 
 import { richTextEditor } from "@/fields/richTextEditor";
-import { link } from "@/fields/link";
 
 export const Archive: Block = {
   slug: "archive",
@@ -14,7 +13,7 @@ export const Archive: Block = {
       label: "Intro Content",
       admin: {
         description:
-          "Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them.",
+          "Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them. Add a Button block for the call to action.",
       },
     },
     {
@@ -26,15 +25,9 @@ export const Archive: Block = {
       ],
       defaultValue: "text",
     },
-    link({
-      appearances: false,
-      overrides: {
-        label: "Button",
-        admin: {
-          condition: (_, siblingData) => siblingData.style === "text",
-        },
-      },
-    }),
+    // The button used to live here as its own field, pinned below the intro and
+    // only available to the Text style. It is a Button block inside introContent
+    // now, so both styles can have one and the editor places it.
     {
       name: "populateBy",
       type: "select",

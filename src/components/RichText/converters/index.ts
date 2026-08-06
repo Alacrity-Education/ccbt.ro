@@ -2,6 +2,7 @@ import type { JSXConvertersFunction } from "@payloadcms/richtext-lexical/react";
 
 import { baseConverters, type NodeTypes } from "./base";
 import { displayConverters } from "./display";
+import { onDarkConverters } from "./onDark";
 import { sectionConverters } from "./section";
 
 export type { NodeTypes };
@@ -24,12 +25,14 @@ export const PRESETS = {
   body: { converters: baseConverters, prose: true },
   /** Content block columns, where an h2 is the section heading. */
   section: { converters: sectionConverters, prose: true },
-  /** Archive "Text" intro: eyebrow, display heading and body in one field. */
+  /** Archive intro: eyebrow, display heading and body in one field. */
   display: {
     converters: displayConverters,
     prose: false,
     className: "text-base-content/80 mb-8 max-w-lg",
   },
+  /** Body copy on a saturated panel — buttons in it use the inverted fills. */
+  onDark: { converters: onDarkConverters, prose: true },
 } satisfies Record<string, Preset>;
 
 export type PresetName = keyof typeof PRESETS;
