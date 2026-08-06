@@ -5,7 +5,7 @@ import React from "react";
 import type { Footer as FooterGlobal, Media } from "@/payload-types";
 
 import { CMSLink } from "@/components/Link";
-import { Divider, BandH } from "@/components/Motif";
+import { Logo } from "@/components/Logo/Logo";
 
 export async function Footer() {
   const footerData = (await getCachedGlobal("footer", 1)()) as FooterGlobal | null;
@@ -14,107 +14,90 @@ export async function Footer() {
   const sections = footerData?.sections || [];
   const credit = footerData?.credit;
 
+  const [firstSection, ...otherSections] = sections;
+
+  // Safely narrow logo to Media
   const logo: Media | null =
     brand && typeof brand.logo === "object" && brand.logo && "url" in brand.logo
       ? (brand.logo as Media)
       : null;
 
   return (
-    <footer style={{ background: "var(--ink)", color: "var(--cream)", position: "relative", overflow: "hidden" }}>
-      <BandH color="#C8A456" opacity={0.18} height={14} style={{ position: "absolute", top: 0, left: 0, right: 0 }} />
+    <footer className="text-primary bg-base-300">
+      <div className="container mx-auto px-6 py-16 lg:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          {/* Brand and first section under it */}
+          <div className="space-y-10">
+            {brand && (
+              <div>
+                <Link className="flex items-center mb-4" href="/">
+                  {logo?.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={logo.url as string} alt="Logo" className="h-10 w-auto" />
+                  ) : (
+                    <Logo className="" />
+                  )}
+                </Link>
+              </div>
+            )}
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 64px 48px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 40,
-          }}
-          className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-        >
-          {/* Brand column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <Link href="/">
-              {logo?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={logo.url as string}
-                  alt="Centrul Cultural Botoșani"
-                  style={{ height: 48, width: "auto", filter: "invert(1) brightness(1.15)" }}
-                />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src="/logo.svg"
-                  alt="Centrul Cultural Botoșani"
-                  style={{ height: 48, width: "auto", filter: "invert(1) brightness(1.15)" }}
-                />
-              )}
-            </Link>
-            <p style={{ fontSize: 14, color: "rgba(245,237,224,0.65)", lineHeight: 1.7, maxWidth: 240 }}>
-              Centrul Cultural Botoșani — instituție publică de cultură, artă și educație.
-            </p>
-            <Divider tone="gold" width={160} />
-          </div>
-
-          {/* Nav sections */}
-          {sections.map((section, i) => {
-            const colStart = (section as any).colStartLg;
-            return (
-              <div
-                key={i}
-                style={{ display: "flex", flexDirection: "column", gap: 16 }}
-                className={colStart ? `lg:col-start-${colStart}` : ""}
-              >
-                {section.title && (
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      color: "var(--gold)",
-                      margin: 0,
-                    }}
-                  >
-                    {section.title}
-                  </h3>
+            {firstSection && (
+              <div>
+                {firstSection.title && (
+                  <h3 className="font-semibold text-lg mb-4">{firstSection.title}</h3>
                 )}
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-                  {(section.links || []).map(({ link }, j) => (
+                <ul className="space-y-2">
+                  {(firstSection.links || []).map(({ link }, j) => (
                     <li key={j}>
                       <CMSLink
+                        className="text-primary hover:text-secondary transition-colors text-sm hover:cursor-pointer hover:underline"
                         {...link}
-                        appearance="inline"
-                        style={{
-                          fontSize: 14,
-                          color: "rgba(245,237,224,0.7)",
-                          textDecoration: "none",
-                          transition: "color 0.2s",
-                        }}
-                        className="hover:!text-[var(--cream)]"
                       />
                     </li>
                   ))}
                 </ul>
               </div>
+            )}
+          </div>
+
+          {/* Remaining sections */}
+          {otherSections.map((section, i) => {
+            const colStart = section.colStartLg;
+            const colStartClass = colStart ? `lg:col-start-${colStart}` : undefined;
+            return (
+              <div key={i} className={`space-y-10 ${colStartClass ?? ""}`.trim()}>
+                <div>
+                  {section.title && (
+                    <h3 className="font-semibold text-lg mb-4">{section.title}</h3>
+                  )}
+                  <ul className="space-y-2">
+                    {(section.links || []).map(({ link }, j) => (
+                      <li key={j}>
+                        <CMSLink
+                          className="text-primary hover:text-secondary transition-colors text-sm"
+                          {...link}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             );
           })}
         </div>
+      </div>
 
-        <div
-          style={{
-            marginTop: 64,
-            paddingTop: 24,
-            borderTop: "1px solid rgba(255,255,255,0.14)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <p style={{ fontSize: 13, color: "rgba(245,237,224,0.45)", margin: 0 }}>
-            {credit ?? "Dezvoltat de Alacrity Education"}
+      {/* Bottom Credit */}
+      <div className="border-t border-primary">
+        <div className="container mx-auto px-6 py-6">
+          <p className="text-center  text-sm">
+            {credit ? (
+              credit
+            ) : (
+              <span className="inline-flex items-center justify-center">
+                Dezvoltat de Alacrity Education
+              </span>
+            )}
           </p>
         </div>
       </div>

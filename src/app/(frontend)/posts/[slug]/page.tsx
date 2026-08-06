@@ -11,6 +11,7 @@ import RichText from '@/components/RichText'
 import type { Post } from '@/payload-types'
 
 import { PostHero } from '@/heros/PostHero'
+import { PostMotif, PostStrip } from '@/heros/PostHero/PostMotif'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -51,8 +52,11 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
+  // No `pb-16` here: the trailing space belongs to the body wrapper below, which
+  // is the ribbon's containing block. Space left outside it is space the ribbon
+  // cannot reach. Same total spacing, but the artwork now runs into it.
   return (
-    <article className="pt-16 pb-16">
+    <article className="pt-16">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -62,10 +66,21 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       <PostHero post={post} />
 
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="container">
+      {/* Default-on: only an explicit `false` hides the decoration. */}
+      {post.showMotif !== false && <PostStrip />}
+
+      {/* Positioned so the ribbon can span the article — it starts where the body
+          starts, directly under the strip, and runs all the way to the footer.
+          The trailing space is this element's padding rather than the article's,
+          so the ribbon reaches the bottom of the page and is cut by the footer
+          instead of stopping short at a margin it cannot paint into.
+          `overflow-x-clip` rather than `overflow-hidden`: the ribbon hangs past
+          the right edge and has to be cut, but clipping on one axis avoids
+          turning this into a scroll container. */}
+      <div className="relative flex flex-col items-center gap-4 overflow-x-clip pt-8 pb-16">
+        {post.showMotif !== false && <PostMotif />}
+        <div className="container relative z-10">
           <RichText className="max-w-[48rem] mx-auto" data={post.content} enableGutter={false} />
-       
         </div>
       </div>
     </article>

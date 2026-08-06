@@ -12,7 +12,6 @@ type ColorToken = "primary" | "secondary" | "neutral" | "base" | "transparent";
 type PrimitiveProps = CTABlockProps & {
   bgToken?: ColorToken;
   textToken?: ColorToken;
-  buttonToken?: ColorToken;
   // Optional: use media as background when provided
   useMediaBackground?: boolean;
   // Modal variant support
@@ -37,21 +36,12 @@ const tokenToTextClass: Record<ColorToken, string> = {
   transparent: "text-base-content",
 };
 
-const tokenToButtonClass: Record<ColorToken, string> = {
-  primary: "btn btn-primary",
-  secondary: "btn btn-secondary",
-  neutral: "btn btn-neutral",
-  base: "btn btn-base !text-base-content",
-  transparent: "btn btn-ghost text-base border border-base-100",
-};
-
 export const CTAPrimitive: React.FC<PrimitiveProps> = ({
   links,
   richText,
   media,
   bgToken = "primary",
   textToken = "base",
-  buttonToken = "primary",
   useMediaBackground = false,
   ctaType,
   form,
@@ -59,9 +49,6 @@ export const CTAPrimitive: React.FC<PrimitiveProps> = ({
 }) => {
   const bgClass = tokenToBgClass[bgToken];
   const textClass = tokenToTextClass[textToken];
-  const buttonClass = tokenToButtonClass[buttonToken];
-
-
 
   return (
     <div className={"container mx-auto max-w-2xl lg:max-w-4xl"}>
@@ -78,20 +65,33 @@ export const CTAPrimitive: React.FC<PrimitiveProps> = ({
         {useMediaBackground && (
           <div className="absolute top-0 left-0 z-0 h-full w-full bg-linear-to-r from-black to-transparent opacity-40 backdrop-blur-xs"></div>
         )}
-        <div className="relative z-20 flex h-max min-h-64 w-full flex-col rounded p-8">
+        <div className="relative z-20 flex h-max min-h-64 w-full flex-col rounded p-6 sm:p-8">
           <div className="max-w-3xl">
             {richText && (
-              <RichText className={`mb-0 text-start ${textClass}`} data={richText} enableGutter={false} />
+              <RichText
+                className={`mb-0 text-start ${textClass}`}
+                data={richText}
+                preset="onDark"
+                enableGutter={false}
+              />
             )}
           </div>
           <div className="grow"></div>
-          <div className="max-w flex flex-col sm:flex-row gap-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
             {ctaType === "modal" && form ? (
-              <CTAModal id="cta_modal" buttonText={modalButtonText || "Open"} form={form} buttonClassName={buttonClass} />
+              <CTAModal
+                id="cta_modal"
+                buttonText={modalButtonText || "Open"}
+                form={form}
+                buttonClassName="btn-brand btn-brand-invert"
+              />
             ) : (
-              (links || []).map(({ link }, i) => {
-                return <CMSLink key={i} size="lg" {...link} className={buttonClass} />;
-              })
+              // The panel behind these is purple or coral, where the standard
+              // button's coral face and purple plinth would each disappear into
+              // the surface — so this is the one place the inverted fills are used.
+              (links || []).map(({ link }, i) => (
+                <CMSLink key={i} {...link} appearance="brandInvert" />
+              ))
             )}
           </div>
         </div>

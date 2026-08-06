@@ -15,6 +15,7 @@ import { Banner } from '../../blocks/Banner/config'
 
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { HERO_COLORS, brandOptions } from '@/utilities/brand'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
@@ -174,6 +175,30 @@ export const Posts: CollectionConfig<'posts'> = {
           ],
         },
       ],
+    },
+    {
+      // Same choice the page heroes offer, so a post's hero can be tinted to
+      // match the section it belongs to rather than always fading to black.
+      name: 'heroOverlayColor',
+      type: 'select',
+      label: 'Hero overlay colour',
+      defaultValue: 'purple',
+      options: brandOptions(HERO_COLORS),
+      admin: {
+        position: 'sidebar',
+        description: 'The wash over the hero image that keeps the title legible.',
+      },
+    },
+    {
+      name: 'showMotif',
+      type: 'checkbox',
+      label: 'Show decorative motif',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Purple strip between the hero and the article, plus the woven ribbon running down beside it. On by default; switch off to hide it for this post.',
+      },
     },
     {
       name: 'isEvent',

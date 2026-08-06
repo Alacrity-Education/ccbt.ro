@@ -1,183 +1,207 @@
-"use client";
-import React from "react";
-import { useViewport } from "@/hooks/useViewport";
-import { Diamond } from "@/components/Motif";
-import type { LogoCarouselBlock as Props } from "@/payload-types";
+'use client'
 
-function Crest({ name }: { name: string }) {
-  return (
-    <div
-      style={{
-        fontSize: 9.5,
-        fontWeight: 600,
-        letterSpacing: "0.08em",
-        color: "var(--ink-soft)",
-        textAlign: "center",
-        lineHeight: 1.35,
-        whiteSpace: "pre-line",
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        opacity: 0.8,
-        flexShrink: 0,
-      }}
-    >
-      <span
-        style={{
-          width: 32,
-          height: 32,
-          border: "1.5px solid var(--ink-soft)",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 1,
-        }}
-      >
-        <Diamond size={6} color="var(--ink-soft)" />
-      </span>
-      <span>{name}</span>
-    </div>
-  );
+import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import { Media as MediaType } from '@/payload-types'
+import { Media } from '@/components/Media'
+
+interface CarouselProps {
+  children?: ReactNode
 }
 
-const DEFAULT_PARTNERS = [
-  "CONSILIUL JUDEȚEAN\nBOTOȘANI",
-  "PRIMĂRIA\nMUNICIPIULUI BOTOȘANI",
-  'TEATRUL\n„MIHAI EMINESCU”\nBOTOȘANI',
-  "MUZEUL JUDEȚEAN\nBOTOȘANI",
-  'UNIVERSITATEA\n„Stefan cel Mare”\nSUCEAVA',
-  "TVR\nIAȘI",
-  "RADIO ROMÂNIA\nIAȘI",
-];
+export const CarouselCard = ({ media, link }: { media: MediaType | number; link: string }) => (
+  <Link href={link} target="_blank" rel="noopener noreferrer">
+    <div className="flex items-center justify-center p-2 h-30 sm:h-40 aspect-square bg-white border border-primary/40 rounded-lg overflow-hidden hover:shadow-lg transition-shadow shrink-0">
+      <Media
+        imgClassName="h-full w-full object-contain"
+        pictureClassName="h-full w-full object-contain"
+        className="h-full w-full object-contain"
+        resource={media}
+      />
+    </div>
+  </Link>
+)
 
-export const LogoCarousel: React.FC<Props> = (props) => {
-  const { partners: partnerItems } = props as any;
-  const vp = useViewport();
-  const m = vp.isMobile;
-  const t = vp.isTablet;
+// Exponential-decay spring — higher = snappier (0.1 sluggish … 0.25 snappy)
+const FRICTION = 0.18
+// Auto-scroll speed in px per frame at 60 fps (1 ≈ 60 px/s)
+const AUTO_SPEED = 1
 
-  const partnerNames: string[] =
-    partnerItems?.length
-      ? partnerItems.map((p: any) => p.name || "")
-      : DEFAULT_PARTNERS;
+const Carousel: React.FC<CarouselProps> = ({ children }) => {
+  const trackRef  = useRef<HTMLDivElement>(null)
+  const copy1Ref  = useRef<HTMLDivElement>(null)
+  const wrapRef   = useRef<HTMLDivElement>(null)
+  const posRef    = useRef(0)    // current animated position
+  const targetRef = useRef(0)    // destination the spring chases
+  const pausedRef = useRef(false)
+  const rafRef    = useRef<number | null>(null)
+  const [numCopies, setNumCopies] = useState(10)
 
-  if (m) {
-    return (
-      <section
-        style={{
-          background: "var(--cream)",
-          padding: "28px 0 24px",
-          borderTop: "1px solid var(--rule)",
-          overflow: "hidden",
-        }}
-      >
-        <style>{`
-          @keyframes partners-marquee {
-            from { transform: translateX(0); }
-            to   { transform: translateX(-50%); }
-          }
-          .partners-track {
-            display: flex; gap: 36px; width: max-content;
-            animation: partners-marquee 28s linear infinite;
-          }
-          .partners-mask {
-            position: relative;
-            mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
-          }
-        `}</style>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 10,
-            marginBottom: 18,
-          }}
-        >
-          <Diamond color="var(--red)" />
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", color: "var(--ink)" }}>
-            PARTENERI
-          </span>
-        </div>
-        <div className="partners-mask">
-          <div className="partners-track">
-            {partnerNames.map((p, i) => <Crest key={`a-${i}`} name={p} />)}
-            {partnerNames.map((p, i) => <Crest key={`b-${i}`} name={p} />)}
-          </div>
-        </div>
-      </section>
-    );
+  const items = React.Children.toArray(children).filter(Boolean)
+
+  // Width of one copy: items + internal gap-6 spacings + trailing pr-6 padding
+  // (the trailing padding makes the inter-copy visual gap match the inter-item gap)
+  const getW = () => copy1Ref.current?.offsetWidth ?? 0
+  const computeCopies = (W: number) => Math.max(3, Math.ceil(window.innerWidth / W) + 2)
+
+  // Map any raw position into the middle-copy zone (-2W, -W] via modulo (O(1)).
+  // Because all three copies are identical, the wrap is undetectable.
+  const normalise = (raw: number, W: number): number => {
+    if (W < 1) return raw
+    const x = ((raw + 2 * W) % W + W) % W
+    return x === 0 ? -W : x - 2 * W
   }
 
+  const applyTransform = (raw: number) => {
+    const track = trackRef.current
+    const W = getW()
+    if (!track || W === 0) return
+    track.style.transform = `translateX(${normalise(raw, W)}px)`
+  }
+
+  // Initialise to the start of the middle copy before the first paint
+  useLayoutEffect(() => {
+    const W = getW()
+    if (!W) return
+    posRef.current    = -W
+    targetRef.current = -W
+    applyTransform(-W)
+    setNumCopies(computeCopies(W))
+  }, [items.length])
+
+  // Continuous spring loop — always running so arrow clicks are immediately responsive
+  useEffect(() => {
+    const tick = () => {
+      const W = getW()
+      if (W > 0) {
+        // Auto-scroll: advance both pos and target together so there is no
+        // spring lag for the baseline drift. Paused while the user hovers or touches.
+        // Use half speed on narrow screens so fast motion doesn't feel jarring.
+        if (!pausedRef.current) {
+          const speed = window.innerWidth < 640 ? AUTO_SPEED * 0.5 : AUTO_SPEED
+          posRef.current    -= speed
+          targetRef.current -= speed
+        }
+
+        // When pos crosses a copy boundary, normalise it and shift target by the
+        // same delta so the spring's remaining distance is perfectly preserved.
+        const n = normalise(posRef.current, W)
+        if (n !== posRef.current) {
+          targetRef.current += n - posRef.current
+          posRef.current = n
+        }
+
+        const diff = targetRef.current - posRef.current
+        if (Math.abs(diff) < 0.3) {
+          posRef.current = targetRef.current
+        } else {
+          posRef.current += diff * FRICTION
+        }
+        applyTransform(posRef.current)
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+
+    rafRef.current = requestAnimationFrame(tick)
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
+  }, [items.length])
+
+  // Pause auto-scroll on hover and touch
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const pause  = () => { pausedRef.current = true  }
+    const resume = () => { pausedRef.current = false }
+    el.addEventListener('mouseenter',  pause)
+    el.addEventListener('mouseleave',  resume)
+    el.addEventListener('touchstart',  pause,  { passive: true })
+    el.addEventListener('touchend',    resume)
+    el.addEventListener('touchcancel', resume)
+    return () => {
+      el.removeEventListener('mouseenter',  pause)
+      el.removeEventListener('mouseleave',  resume)
+      el.removeEventListener('touchstart',  pause)
+      el.removeEventListener('touchend',    resume)
+      el.removeEventListener('touchcancel', resume)
+    }
+  }, [])
+
+  // Re-anchor when copy width changes (e.g. responsive card size breakpoint hit)
+  useEffect(() => {
+    const el = copy1Ref.current
+    if (!el) return
+    const ro = new ResizeObserver(() => {
+      const W = el.offsetWidth
+      if (W < 1) return
+      const n = normalise(posRef.current, W)
+      if (n !== posRef.current) {
+        targetRef.current += n - posRef.current
+        posRef.current = n
+      }
+      setNumCopies(computeCopies(W))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Update copy count when viewport width changes (card sizes don't change, only coverage does)
+  useEffect(() => {
+    const handleResize = () => {
+      const W = getW()
+      if (W > 0) setNumCopies(computeCopies(W))
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const scroll = (dir: 'left' | 'right') => {
+    targetRef.current += dir === 'left' ? 300 : -300
+  }
+
+  if (items.length === 0) return null
+
   return (
-    <section style={{ background: "var(--cream)", padding: "28px 0", borderTop: "1px solid var(--rule)" }}>
-      <div
-        style={{
-          maxWidth: 1280,
-          margin: "0 auto",
-          padding: t ? "0 40px" : "0 64px",
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-        }}
-      >
-        <button
-          aria-label="prev"
-          style={{
-            background: "none",
-            border: "none",
-            color: "var(--ink-soft)",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </button>
+    <div ref={wrapRef} className="w-full py-16">
+      <div className="relative">
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            paddingRight: 14,
-            borderRight: "1px solid var(--rule)",
-            flexShrink: 0,
-          }}
-        >
-          <Diamond color="var(--red)" />
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.2em", color: "var(--ink)" }}>PARTENERI</span>
+        {/* Arrows live outside the overflow-hidden clip so they are never cropped */}
+        <div className="absolute inset-0 container pointer-events-none z-10">
+          <button
+            onClick={() => scroll('left')}
+            className="pointer-events-auto absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+            aria-label="Scroll left"
+          >
+            <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="pointer-events-auto absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+            aria-label="Scroll right"
+          >
+            <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
 
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            gap: 14,
-            justifyContent: "space-between",
-            overflow: "hidden",
-          }}
-        >
-          {partnerNames.map((p, i) => <Crest key={i} name={p} />)}
+        {/* overflow-hidden clips the wide track; px-12 keeps items clear of the arrows */}
+        <div className="overflow-hidden px-12 pb-4">
+          {/* numCopies identical copies — dynamically sized to always cover the viewport.
+              pr-6 on each copy adds a trailing gap equal to the inter-item gap,
+              so the loop point is visually seamless. */}
+          <div ref={trackRef} className="flex will-change-transform">
+            <div ref={copy1Ref} className="flex gap-6 shrink-0 pr-6">{items}</div>
+            {Array.from({ length: numCopies - 1 }, (_, i) => (
+              <div key={i} className="flex gap-6 shrink-0 pr-6">{items}</div>
+            ))}
+          </div>
         </div>
 
-        <button
-          aria-label="next"
-          style={{
-            background: "none",
-            border: "none",
-            color: "var(--ink-soft)",
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="m9 18 6-6-6-6" />
-          </svg>
-        </button>
       </div>
-    </section>
-  );
-};
+    </div>
+  )
+}
+
+export default Carousel

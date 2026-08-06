@@ -1,5 +1,4 @@
 import type { Block } from "payload";
-import { lexicalEditor, FixedToolbarFeature, InlineToolbarFeature, HeadingFeature } from "@payloadcms/richtext-lexical";
 
 export const StaticMap: Block = {
   slug: "staticMap",
@@ -9,11 +8,6 @@ export const StaticMap: Block = {
     plural: "Static Maps",
   },
   fields: [
-    {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
     {
       name: "variant",
       type: "select",

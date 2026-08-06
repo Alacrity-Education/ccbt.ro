@@ -5,6 +5,8 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
+import { Divider } from '../../blocks/Divider/config'
+import { Timeline } from '../../blocks/Timeline/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { hero } from '@/heros/config'
@@ -20,13 +22,11 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { CardBlock } from "@/blocks/CardBlock/config";
-import { LogoCarouselBlock } from "@/blocks/LogoCarouselBlock/config";
+import {CardBlock} from "@/blocks/CardBlock/config";
+import {CarouselLogoBlock} from "@/blocks/LogoCarouselBlock/config";
 import { ImageContentBlock } from "@/blocks/ImageContent/config";
 import { StaticMap } from "@/blocks/StaticMap/config";
-import { AboutSectionBlock } from "@/blocks/AboutSection/config";
-import { TeamTeaserBlock } from "@/blocks/TeamTeaser/config";
-import { ChronologyBlock } from "@/blocks/ChronologyBlock/config";
+import { Team } from "@/blocks/Team/config";
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -79,20 +79,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [
-              CallToAction,
-              Content,
-              MediaBlock,
-              Archive,
-              FormBlock,
-              CardBlock,
-              LogoCarouselBlock,
-              ImageContentBlock,
-              StaticMap,
-              AboutSectionBlock,
-              TeamTeaserBlock,
-              ChronologyBlock,
-            ],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, CarouselLogoBlock, ImageContentBlock, StaticMap, Divider, Timeline, Team ],
               required: false,
               admin: {
                 initCollapsed: true,

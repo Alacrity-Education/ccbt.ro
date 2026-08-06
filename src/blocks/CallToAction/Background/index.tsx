@@ -12,7 +12,6 @@ export const BackgroundCTA: React.FC<CTABlockProps> = (props) => {
       form = {props.form  }
       bgToken="primary"
       textToken="primary"
-      buttonToken="base"
       useMediaBackground
     />
   );

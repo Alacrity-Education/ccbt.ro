@@ -15,17 +15,24 @@ const buttonVariants = cva(
         clear: '',
         default: 'h-10 px-4 py-2',
         icon: 'h-10 w-10',
-        lg: 'h-11 rounded px-8',
-        sm: 'h-9 rounded px-3',
+        lg: 'btn-lg',
+        sm: 'btn-sm',
       },
       variant: {
+        // The site's action button. Defined unlayered in globals.css, so it wins
+        // over the Tailwind utilities in the base string above.
+        brand: 'btn-brand',
+        brandInvert: 'btn-brand btn-brand-invert',
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         primary: 'btn btn-primary',
+        secondary: 'btn btn-secondary',
+        accent: 'btn btn-accent',
+        neutral: 'btn btn-neutral',
+        success: 'btn btn-success',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         ghost: 'btn btn-ghost',
         link: 'text-primary items-start justify-start underline-offset-4 hover:underline',
         outline: 'border border-border bg-background hover:bg-card hover:text-accent-foreground',
-        secondary: 'btn btn-secondary',
       },
     },
   },
@@ -47,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const Comp = asChild ? Slot : 'button'
-  return <Comp className={cn(buttonVariants({ className, size, variant }),"text-primary-content")} ref={ref} {...props} />
+  return <Comp className={cn(buttonVariants({ className, size, variant }))} ref={ref} {...props} />
 }
 
 export { Button, buttonVariants }

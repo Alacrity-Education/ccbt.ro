@@ -6,10 +6,9 @@ import React from "react";
 import type { Page, Post } from "@/payload-types";
 
 type CMSLinkType = {
-  appearance?: "inline" | ButtonProps["variant"];
+  appearance?: "inline" | "brand" | "brandInvert" | ButtonProps["variant"];
   children?: React.ReactNode;
   className?: string;
-  style?: React.CSSProperties;
   label?: string | null;
   newTab?: boolean | null;
   reference?: {
@@ -21,12 +20,35 @@ type CMSLinkType = {
   url?: string | null;
 };
 
-const linkAppearance = {
-  "primary" : "btn btn-primary",
-  "secondary" : "btn btn-secondary",
-  "accent": "btn btn-accent",
-  "neutral": "btn btn-neutral",
-  "transparent": "btn btn-ghost"
+/**
+ * Maps a link appearance onto its button class.
+ *
+ * `brand` is the site's action button (.btn-brand in globals.css) and the
+ * default for new links; `brandInvert` is the same button with its fills swapped
+ * for saturated panels. The daisyUI colors below are kept for the heroes, which
+ * are excluded from the single-button rule.
+ */
+const linkAppearance: Record<string, string> = {
+  brand: "btn-brand",
+  brandInvert: "btn-brand btn-brand-invert",
+  default: "btn btn-primary",
+  primary: "btn btn-primary",
+  secondary: "btn btn-secondary",
+  accent: "btn btn-accent",
+  neutral: "btn btn-neutral",
+  success: "btn btn-success",
+  outline: "btn btn-outline",
+  transparent: "btn btn-ghost",
+  ghost: "btn btn-ghost",
+}
+
+/** Maps a button size onto its daisyUI size class. */
+const linkSize: Record<string, string> = {
+  clear: "",
+  default: "",
+  icon: "btn-square",
+  lg: "btn-lg",
+  sm: "btn-sm",
 }
 
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
@@ -35,7 +57,6 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     appearance = "inline",
     children,
     className,
-    style,
     label,
     newTab,
     reference,
@@ -54,7 +75,10 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null;
 
-  const size = appearance === "link" ? "clear" : sizeFromProps;
+  // The brand button ships at one size, so the daisyUI size modifiers (which
+  // also expect a `.btn` base it does not have) are dropped for it.
+  const isBrand = appearance === "brand" || appearance === "brandInvert";
+  const size = appearance === "link" || isBrand ? "clear" : sizeFromProps;
   const newTabProps = newTab
     ? { rel: "noopener noreferrer", target: "_blank" }
     : {};
@@ -62,7 +86,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   /* Ensure we don't break any styles set by richText */
   if (appearance === "inline") {
     return (
-      <Link className={cn(className)} style={style} href={href || url || ""} {...newTabProps}>
+      <Link className={cn(className)} href={href || url || ""} {...newTabProps}>
         {label && label}
         {children && children}
       </Link>
@@ -71,8 +95,11 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   return (
     <Link
-      className={cn("btn", className)}
-      style={style}
+      className={cn(
+        linkAppearance[appearance as string] ?? "btn",
+        size ? linkSize[size] : undefined,
+        className,
+      )}
       href={href || url || ""}
       {...newTabProps}
     >

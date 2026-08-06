@@ -1,0 +1,49 @@
+x-app: &app
+  build:
+    context: .
+    target: dev
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/app
+    - node_modules:/app/node_modules
+    - next_cache:/app/.next
+  env_file:
+    - .env
+  # -H 0.0.0.0 is what makes the published port reachable: next dev otherwise binds
+  # to the container's loopback, where the port mapping cannot see it. The giveaway
+  # is a startup banner with a "Local:" line but no "Network:" line.
+  command: sh -c "[ -x node_modules/.bin/next ] || npm ci; exec npm run dev -- -H 0.0.0.0"
+  restart: unless-stopped
+
+services:
+  app:
+    <<: *app
+    container_name: ccbt-app
+    environment:
+      DATABASE_URI: postgresql://payload:payload@postgres:5432/ccbt
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    container_name: ccbt-db-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: ccbt
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payload -d ccbt"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
+  node_modules:
+  next_cache:

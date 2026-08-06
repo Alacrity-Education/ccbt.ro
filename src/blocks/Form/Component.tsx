@@ -133,7 +133,13 @@ export const FormBlock: React.FC<
   return (
     <div className="container mx-auto border-0 lg:max-w-3xl">
       {showTitle && formTitle && !hasSubmitted && (
-        <h2 className="text-lg text-primary text-center mb-4">{formTitle}</h2>
+        // Deliberately smaller than a section heading: this sits inside the form
+        // card, not above a page section. It also comes from the related form
+        // document rather than the block, which is why it survived the removal
+        // of the blocks' own title fields.
+        <h2 className="text-primary mb-4 text-center text-lg font-semibold md:text-xl">
+          {formTitle}
+        </h2>
       )}
       {enableIntro && introContent && !hasSubmitted && (
         <RichText
@@ -178,7 +184,7 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
+              <Button form={formID} type="submit" variant="brand" size="clear">
                 {submitButtonLabel}
               </Button>
             </form>

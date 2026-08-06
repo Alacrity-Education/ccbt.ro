@@ -1,16 +1,21 @@
-import { formatDateTime } from "src/utilities/formatDateTime";
+import { formatDateTime } from "@/utilities/formatDateTime";
 import React from "react";
 
 import type { Post } from "@/payload-types";
 
 import { Media } from "@/components/Media";
 import { formatAuthors } from "@/utilities/formatAuthors";
+import { resolveColor, type HeroColor } from "@/heros/heroColor";
+import { HeroScrim } from "@/heros/HeroScrim";
 import {cn} from "@/utilities/ui";
 
 export const PostHero: React.FC<{
   post: Post;
 }> = ({ post }) => {
-  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle } = post;
+  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle, heroOverlayColor } = post;
+
+  // Same wash the page heroes use, so a post reads as part of the same family.
+  const { bg } = resolveColor((heroOverlayColor as HeroColor) ?? "purple");
 
   const hasAuthors =
     populatedAuthors &&
@@ -20,7 +25,7 @@ export const PostHero: React.FC<{
   const hasMD = heroImageMD && typeof heroImageMD !== undefined;
   const hasSM = heroImageSM && typeof heroImageSM !== undefined;
 
-  const aspectClass = "aspect-[4/3] sm:aspect-[3/2] sm:max-h-[36rem]";
+  const aspectClass = "aspect-[210/297] sm:aspect-[3/2]";
 
 
   return (
@@ -75,7 +80,7 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className="h-full w-full select-none absolute top-0 left-0 inset-0">
+      <div className={cn(aspectClass," h-full w-full select-none absolute top-0 left-0 inset-0")}>
 
         {/* MD Image: Shows on md+ screens if both exist, otherwise shows everywhere */}
         {hasMD && (
@@ -101,8 +106,7 @@ export const PostHero: React.FC<{
           />
         )}
 
-        {/* Gradient Overlay */}
-        <div className="pointer-events-none absolute bottom-0 left-0 h-1/2 w-full bg-linear-to-t from-black to-transparent" />
+        <HeroScrim color={bg} />
       </div>
     </div>
   );

@@ -1,16 +1,19 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from './getURL'
+import { SITE_DESCRIPTION, SITE_NAME } from './siteMeta'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Centrul Cultural Botoșani — instituție publică de cultură, artă și educație.',
+  description: SITE_DESCRIPTION,
+  // The starter pointed at `/website-template-OG.webp`, which was never in
+  // `public/` here — every share card fell back to a broken image.
   images: [
     {
       url: `${getServerSideURL()}/logo.svg`,
     },
   ],
-  siteName: 'Centrul Cultural Botoșani',
-  title: 'Centrul Cultural Botoșani',
+  siteName: SITE_NAME,
+  title: SITE_NAME,
 }
 
 export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'] => {

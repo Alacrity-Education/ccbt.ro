@@ -1,59 +1,91 @@
 import type { Block } from "payload";
+import { richTextEditor } from "@/fields/richTextEditor";
 import { link } from "@/fields/link";
+import { linkGroup } from "@/fields/linkGroup";
 
 export const ImageContentBlock: Block = {
   slug: "imageContent",
   interfaceName: "ImageContentBlock",
   labels: {
-    plural: "Feature Blocks",
-    singular: "Feature Block",
+    plural: "Image Content Blocks",
+    singular: "Image Content Block",
   },
   fields: [
+    // Optional grid controls for lg screens
     {
-      name: "sectionEyebrow",
-      type: "text",
-      label: "Section eyebrow",
-      defaultValue: "Implică-te",
+      name: "colsLg",
+      type: "number",
+      label: "Columns on Large Screens",
+      defaultValue: 2,
+      min: 1,
+      max: 4,
+      admin: { description: "Number of columns at lg breakpoint (1-4)" },
     },
     {
-      name: "sectionTitle",
-      type: "text",
-      label: "Section heading",
+      name: "rowsLg",
+      type: "number",
+      label: "Rows on Large Screens",
+      defaultValue: 2,
+      min: 1,
+
+      admin: { description: "Number of rows at lg breakpoint" },
     },
     {
-      name: "items",
+      name: "cells",
       type: "array",
-      label: "Feature cards",
+      label: "Cells",
       minRows: 1,
-      maxRows: 2,
+      maxRows: 8,
+      labels: {
+        plural: "Cells",
+        singular: "Cell",
+      },
       fields: [
-        { name: "eyebrow", type: "text", label: "Eyebrow badge" },
-        { name: "title", type: "text", required: true },
-        { name: "body", type: "textarea" },
-        link({
-          appearances: false,
-          overrides: {
-            name: "ctaLink",
-            label: "CTA link",
-            required: false,
+        {
+          name: "type",
+          type: "select",
+          label: "Cell Type",
+          defaultValue: "text",
+          options: [
+            { label: "Text", value: "text" },
+            { label: "Media", value: "media" },
+          ],
+          required: true,
+        },
+        {
+          name: "rowSpan",
+          type: "number",
+          label: "Row Span (md+)",
+          defaultValue: 1,
+          min: 1,
+
+          admin: { description: "How many rows this cell spans on md+ (1-2)" },
+        },
+        {
+          name: "richText",
+          type: "richText",
+          label: "Text",
+          admin: {
+            condition: (data, siblingData) => siblingData?.type === "text",
           },
-        }),
+          editor: richTextEditor(['h2', 'h3', 'h4']),
+        },
+            linkGroup({
+              appearances: ["brand", "default", "secondary"],
+              overrides: {
+                name:"links",
+                maxRows: 2,
+                
+              },
+            }),
         {
           name: "media",
           type: "upload",
           relationTo: "media",
-          required: false,
-          label: "Image",
-        },
-        {
-          name: "tone",
-          type: "select",
-          label: "Card tone",
-          defaultValue: "navy",
-          options: [
-            { label: "Navy (dark)", value: "navy" },
-            { label: "Cream (light)", value: "cream" },
-          ],
+          label: "Media",
+          admin: {
+            condition: (data, siblingData) => siblingData?.type === "media",
+          },
         },
       ],
     },

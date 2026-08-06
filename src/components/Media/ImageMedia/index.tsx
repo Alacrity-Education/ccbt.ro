@@ -56,8 +56,13 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
         .join(', ')
 
+  // Next's `fill` requires the parent (<picture>) to be positioned. If the caller
+  // didn't already set a position (e.g. absolute for full-bleed heroes), default
+  // it to relative so `fill` has a valid, sized parent.
+  const hasPositionClass = /\b(absolute|fixed|relative|sticky)\b/.test(pictureClassName ?? "")
+
   return (
-    <picture className={cn(pictureClassName)}>
+    <picture className={cn(fill && !hasPositionClass && "relative", pictureClassName)}>
       <NextImage
         alt={alt || ''}
         className={cn(imgClassName)}

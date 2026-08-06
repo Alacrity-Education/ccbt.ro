@@ -1,60 +1,33 @@
 import type { Block } from "payload";
 
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
+import { richTextEditor } from "@/fields/richTextEditor";
 
 export const Archive: Block = {
   slug: "archive",
   interfaceName: "ArchiveBlock",
   fields: [
     {
-      name: "title",
-      type: "text",
-      label: "Block Title",
-    },
-    {
       name: "introContent",
       type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
+      editor: richTextEditor(["h2", "h3"]),
       label: "Intro Content",
-    },
-    {
-      name: "eventsOnly",
-      type: "checkbox",
-      label: "Show events only (upcoming future events)",
-      defaultValue: false,
-    },
-    {
-      name: "sectionLabel",
-      type: "text",
-      label: "Section label",
-      defaultValue: "Evenimente",
       admin: {
-        condition: (_, siblingData) => siblingData.eventsOnly === true,
+        description:
+          "Heading 3 renders as the eyebrow, Heading 2 as the heading, paragraphs as body text — in whatever order you write them. Add a Button block for the call to action.",
       },
     },
     {
-      name: "viewAllUrl",
-      type: "text",
-      label: "\"View all\" link URL",
-      defaultValue: "/posts",
-      admin: {
-        condition: (_, siblingData) => siblingData.eventsOnly === true,
-      },
+      name: "style",
+      type: "select",
+      options: [
+        { label: "Text", value: "text" },
+        { label: "Cards", value: "cards" },
+      ],
+      defaultValue: "text",
     },
+    // The button used to live here as its own field, pinned below the intro and
+    // only available to the Text style. It is a Button block inside introContent
+    // now, so both styles can have one and the editor places it.
     {
       name: "populateBy",
       type: "select",
@@ -119,6 +92,9 @@ export const Archive: Block = {
       name: "longCardStyles",
       type: "group",
       label: "Card Styles",
+      admin: {
+        condition: (_, siblingData) => siblingData.style === "cards",
+      },
       fields: [
         {
           name: "card1",
