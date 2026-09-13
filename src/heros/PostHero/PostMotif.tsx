@@ -11,7 +11,7 @@ export const PostStrip: React.FC = () => (
  * The woven ribbon beside a post's body — the same tiled treatment the team
  * section uses, so the two read as one motif rather than two.
  *
- * The previous version drew the Highlight CTA's artwork once and then continued
+ * The previous version drew the base CTA's artwork once and then continued
  * its tails as flat bars, which meant a single crossing near the top and a long
  * dead run under it however long the post was. The tiled artwork repeats the
  * crossing the whole way down instead, and handles any article height on its own.

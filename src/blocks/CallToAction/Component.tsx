@@ -5,7 +5,7 @@ import { createVariantBlock } from "../createVariantBlock";
 import { PrimaryCTA } from "./Primary";
 import { BackgroundCTA } from "./Background";
 import { SecondaryCTA } from "./Secondary";
-import { HighlightCTA } from "./Highlight";
+import { BaseCTA } from "./Base";
 
 export const CallToActionBlock = createVariantBlock<CTABlockProps, "variant">({
   discriminator: "variant",
@@ -13,6 +13,6 @@ export const CallToActionBlock = createVariantBlock<CTABlockProps, "variant">({
     primary: PrimaryCTA,
     background: BackgroundCTA,
     secondary: SecondaryCTA,
-    highlight: HighlightCTA,
+    base: BaseCTA,
   },
 });

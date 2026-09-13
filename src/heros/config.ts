@@ -1,7 +1,7 @@
 import type { Field } from 'payload'
 
 import { richTextEditor } from '@/fields/richTextEditor'
-import { link } from '@/fields/link'
+import { link, type LinkAppearances } from '@/fields/link'
 
 import { linkGroup } from '@/fields/linkGroup'
 import { GRADIENT_COLORS, HERO_COLORS, brandOptions } from '@/utilities/brand'
@@ -11,6 +11,24 @@ const WITH_MEDIA = ['homeHero', 'highImpactHero']
 const WITH_SUBTITLE = ['homeHero', 'highImpactHero']
 // Sliding hero uses a per-slide color instead of one hero-wide background color.
 const SELECTABLE_COLOR = ['homeHero', 'highImpactHero']
+
+/**
+ * The heroes are the one place excluded from the site's single-button rule, but
+ * the full palette was more choice than the surface can carry — a hero button
+ * sits on a saturated gradient, where most of the daisyUI colours read as mud.
+ * These five cover it: the site button, the same with its plinth, and the three
+ * that hold up against a photograph.
+ *
+ * `default` stays because existing hero links are stored with it, and because
+ * SlidingHero reads it as "unset" and renders coral.
+ */
+const HERO_APPEARANCES: LinkAppearances[] = [
+  'brand',
+  'brandPlinth',
+  'default',
+  'secondary',
+  'outline',
+]
 
 export const hero: Field = {
   name: 'hero',
@@ -65,6 +83,7 @@ export const hero: Field = {
       },
     },
     link({
+      appearances: HERO_APPEARANCES,
       overrides: {
         name: 'ctaLink',
         label: 'CTA button link',
@@ -157,6 +176,7 @@ export const hero: Field = {
               label: 'Enable CTA Button',
             },
             link({
+              appearances: HERO_APPEARANCES,
               overrides: {
                 admin: {
                   condition: (_, { enable } = {}) => enable === true,

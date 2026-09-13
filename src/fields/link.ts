@@ -4,6 +4,7 @@ import deepMerge from '@/utilities/deepMerge'
 
 export type LinkAppearances =
   | 'brand'
+  | 'brandPlinth'
   | 'default'
   | 'primary'
   | 'secondary'
@@ -19,6 +20,12 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
   brand: {
     label: 'Button (site standard)',
     value: 'brand',
+  },
+  // The same button with the offset plinth behind it. Off by default; pick this
+  // for the one link on a page that has to carry it.
+  brandPlinth: {
+    label: 'Button with plinth',
+    value: 'brandPlinth',
   },
   default: {
     label: 'Default',
@@ -174,6 +181,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
     // site standard the default.
     let appearanceOptionsToUse = [
       appearanceOptions.brand,
+      appearanceOptions.brandPlinth,
       appearanceOptions.default,
       appearanceOptions.primary,
       appearanceOptions.secondary,

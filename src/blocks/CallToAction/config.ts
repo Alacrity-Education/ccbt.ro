@@ -5,39 +5,22 @@ import { richTextEditor } from "@/fields/richTextEditor";
 import { linkGroup } from "../../fields/linkGroup";
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
+import { sectionLayout } from "@/fields/sectionLayout"
 
-// The "highlight" variant renders left-aligned when the motif is enabled (the motif
-// claims the right side of the section) and centered otherwise. See
-// blocks/CallToAction/Highlight — alignment is derived, never picked by the editor.
-const isHighlight = (variant?: string) => variant === "highlight";
+// The "base" variant is the one with the motif and the highlight cards. It is
+// always left-aligned — see blocks/CallToAction/Base.
+const isBase = (variant?: string) => variant === "base";
 
 export const CallToAction: Block = {
   slug: "cta",
   interfaceName: "CallToActionBlock",
   fields: [
-    // Highlight draws its own heading and lays out around it. The other variants
-    // have no heading of their own — put a Content block above them instead.
-    {
-      name: "title",
-      type: "text",
-      label: "Title",
-      admin: {
-        condition: (_, sibling) => isHighlight(sibling?.variant),
-      },
-    },
-    {
-      name: "subtitle",
-      type: "text",
-      label: "Subtitle",
-      admin: {
-        description: "Colored line shown under the title.",
-        condition: (_, sibling) => isHighlight(sibling?.variant),
-      },
-    },
+    // The heading and its coloured line are written as an H2 and an H3 in the
+    // rich text below, rather than as fields of their own.
     {
       name: "richText",
       type: "richText",
-      editor: richTextEditor(['h1', 'h2', 'h3', 'h4']),
+      editor: richTextEditor(['h1', 'h2', 'h3', 'h4'], { align: true }),
       label: false,
     },
     {
@@ -47,7 +30,7 @@ export const CallToAction: Block = {
         { label: "Purple", value: "primary" },
         { label: "Coral", value: "secondary" },
         { label: "Background image", value: "background" },
-        { label: "Highlight", value: "highlight" },
+        { label: "Base", value: "base" },
       ],
     },
     {
@@ -97,23 +80,12 @@ export const CallToAction: Block = {
       },
     }),
     {
-      name: "enableMotif",
-      type: "checkbox",
-      label: "Enable motif",
-      defaultValue: false,
-      admin: {
-        description:
-          "Draws the woven-ribbon motif down the right side of the section. The motif takes up that space, so enabling it also left-aligns the content; leave it off for a centered layout.",
-        condition: (_, sibling) => isHighlight(sibling?.variant),
-      },
-    },
-    {
       name: "enableCards",
       type: "checkbox",
       label: "Enable highlight cards",
       defaultValue: false,
       admin: {
-        condition: (_, sibling) => isHighlight(sibling?.variant),
+        condition: (_, sibling) => isBase(sibling?.variant),
       },
     },
     {
@@ -125,7 +97,7 @@ export const CallToAction: Block = {
       admin: {
         initCollapsed: true,
         condition: (_, sibling) =>
-          isHighlight(sibling?.variant) && sibling?.enableCards === true,
+          isBase(sibling?.variant) && sibling?.enableCards === true,
       },
       fields: [
         { name: "title", type: "text", required: true },
@@ -175,6 +147,7 @@ export const CallToAction: Block = {
         },
       ],
     },
+      ...sectionLayout(),
   ],
   labels: {
     plural: "Calls to Action",

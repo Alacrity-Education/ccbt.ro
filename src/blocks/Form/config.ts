@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { richTextEditor } from '@/fields/richTextEditor'
+import { sectionLayout } from '@/fields/sectionLayout'
 
 export const FormBlock: Block = {
   slug: 'formBlock',
@@ -31,6 +32,7 @@ export const FormBlock: Block = {
       editor: richTextEditor(['h1', 'h2', 'h3', 'h4']),
       label: 'Intro Content',
     },
+      ...sectionLayout(),
   ],
   graphQL: {
     singularName: 'FormBlock',

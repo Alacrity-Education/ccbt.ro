@@ -42,8 +42,7 @@ export type Slides =
           /**
            * Choose how the link should be rendered.
            */
-          appearance?:
-            ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+          appearance?: ('brand' | 'brandPlinth' | 'default' | 'secondary' | 'outline') | null;
         };
       };
       id?: string | null;
@@ -227,8 +226,7 @@ export interface Page {
       /**
        * Choose how the link should be rendered.
        */
-      appearance?:
-        ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+      appearance?: ('brand' | 'brandPlinth' | 'default' | 'secondary' | 'outline') | null;
     };
     media?: (number | null) | Media;
     /**
@@ -262,9 +260,7 @@ export interface Page {
         | FormBlock
         | CardBlock
         | CarouselLogoBlock
-        | ImageContentBlock
         | StaticMapBlock
-        | DividerBlock
         | TimelineBlock
         | TeamBlock
       )[]
@@ -523,11 +519,6 @@ export interface User {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
-  title?: string | null;
-  /**
-   * Colored line shown under the title.
-   */
-  subtitle?: string | null;
   richText?: {
     root: {
       type: string;
@@ -543,7 +534,7 @@ export interface CallToActionBlock {
     };
     [k: string]: unknown;
   } | null;
-  variant?: ('primary' | 'secondary' | 'background' | 'highlight') | null;
+  variant?: ('primary' | 'secondary' | 'background' | 'base') | null;
   media?: (number | null) | Media;
   ctaType?: ('links' | 'modal') | null;
   modalButtonText?: string | null;
@@ -572,10 +563,6 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Draws the woven-ribbon motif down the right side of the section. The motif takes up that space, so enabling it also left-aligns the content; leave it off for a centered layout.
-   */
-  enableMotif?: boolean | null;
   enableCards?: boolean | null;
   cards?:
     | {
@@ -609,6 +596,19 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'cta';
@@ -811,6 +811,10 @@ export interface ContentBlock {
           verticalColor?: ('purple' | 'coral' | 'cyan') | null;
           horizontalColor?: ('purple' | 'coral' | 'cyan') | null;
         };
+        /**
+         * Centres this column's contents vertically against the other columns in the row.
+         */
+        centerContent?: boolean | null;
         enableLink?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
@@ -830,11 +834,35 @@ export interface ContentBlock {
            * Choose how the link should be rendered.
            */
           appearance?:
-            ('brand' | 'default' | 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'outline') | null;
+            | (
+                | 'brand'
+                | 'brandPlinth'
+                | 'default'
+                | 'primary'
+                | 'secondary'
+                | 'accent'
+                | 'neutral'
+                | 'success'
+                | 'outline'
+              )
+            | null;
         };
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -845,6 +873,19 @@ export interface ContentBlock {
  */
 export interface MediaBlock {
   media?: (number | null) | Media;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -889,6 +930,19 @@ export interface ArchiveBlock {
     card3?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
     card4?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
   };
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
@@ -916,6 +970,19 @@ export interface FormBlock {
     };
     [k: string]: unknown;
   } | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'formBlock';
@@ -972,6 +1039,19 @@ export interface CardBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'cardBlock';
@@ -989,76 +1069,22 @@ export interface CarouselLogoBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'carouselLogoBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageContentBlock".
- */
-export interface ImageContentBlock {
-  /**
-   * Number of columns at lg breakpoint (1-4)
-   */
-  colsLg?: number | null;
-  /**
-   * Number of rows at lg breakpoint
-   */
-  rowsLg?: number | null;
-  cells?:
-    | {
-        type: 'text' | 'media';
-        /**
-         * How many rows this cell spans on md+ (1-2)
-         */
-        rowSpan?: number | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        links?:
-          | {
-              link?: {
-                type?: ('reference' | 'custom') | null;
-                newTab?: boolean | null;
-                reference?:
-                  | ({
-                      relationTo: 'pages';
-                      value: number | Page;
-                    } | null)
-                  | ({
-                      relationTo: 'posts';
-                      value: number | Post;
-                    } | null);
-                url?: string | null;
-                label?: string | null;
-                /**
-                 * Choose how the link should be rendered.
-                 */
-                appearance?: ('brand' | 'default' | 'secondary') | null;
-              };
-              id?: string | null;
-            }[]
-          | null;
-        media?: (number | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'imageContent';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1080,21 +1106,22 @@ export interface StaticMapBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'staticMap';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "DividerBlock".
- */
-export interface DividerBlock {
-  pattern: 'a' | 'b' | 'c' | 'd';
-  primaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  secondaryColor?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'divider';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1141,6 +1168,19 @@ export interface TimelineBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'timeline';
@@ -1187,6 +1227,19 @@ export interface TeamBlock {
         id?: string | null;
       }[]
     | null;
+  fullWidth?: boolean | null;
+  dividerTop?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
+  dividerBottom?: {
+    enabled?: boolean | null;
+    pattern?: ('a' | 'b' | 'c' | 'd') | null;
+    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'team';
@@ -1503,9 +1556,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         cardBlock?: T | CardBlockSelect<T>;
         carouselLogoBlock?: T | CarouselLogoBlockSelect<T>;
-        imageContent?: T | ImageContentBlockSelect<T>;
         staticMap?: T | StaticMapBlockSelect<T>;
-        divider?: T | DividerBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
         team?: T | TeamBlockSelect<T>;
       };
@@ -1555,8 +1606,6 @@ export interface SlidesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
-  title?: T;
-  subtitle?: T;
   richText?: T;
   variant?: T;
   media?: T;
@@ -1578,7 +1627,6 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  enableMotif?: T;
   enableCards?: T;
   cards?:
     | T
@@ -1599,6 +1647,23 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
         backgroundImage?: T;
         backgroundOpacity?: T;
         id?: T;
+      };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -1622,6 +1687,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
               verticalColor?: T;
               horizontalColor?: T;
             };
+        centerContent?: T;
         enableLink?: T;
         link?:
           | T
@@ -1635,6 +1701,23 @@ export interface ContentBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1644,6 +1727,23 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1667,6 +1767,23 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
         card3?: T;
         card4?: T;
       };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1679,6 +1796,23 @@ export interface FormBlockSelect<T extends boolean = true> {
   showTitle?: T;
   enableIntro?: T;
   introContent?: T;
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1708,6 +1842,23 @@ export interface CardBlockSelect<T extends boolean = true> {
         backgroundOpacity?: T;
         id?: T;
       };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1724,39 +1875,22 @@ export interface CarouselLogoBlockSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ImageContentBlock_select".
- */
-export interface ImageContentBlockSelect<T extends boolean = true> {
-  colsLg?: T;
-  rowsLg?: T;
-  cells?:
+  fullWidth?: T;
+  dividerTop?:
     | T
     | {
-        type?: T;
-        rowSpan?: T;
-        richText?: T;
-        links?:
-          | T
-          | {
-              link?:
-                | T
-                | {
-                    type?: T;
-                    newTab?: T;
-                    reference?: T;
-                    url?: T;
-                    label?: T;
-                    appearance?: T;
-                  };
-              id?: T;
-            };
-        media?: T;
-        id?: T;
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -1783,17 +1917,23 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
         subtitle?: T;
         id?: T;
       };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "DividerBlock_select".
- */
-export interface DividerBlockSelect<T extends boolean = true> {
-  pattern?: T;
-  primaryColor?: T;
-  secondaryColor?: T;
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1818,6 +1958,23 @@ export interface TimelineBlockSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -1851,6 +2008,23 @@ export interface TeamBlockSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  fullWidth?: T;
+  dividerTop?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
+      };
+  dividerBottom?:
+    | T
+    | {
+        enabled?: T;
+        pattern?: T;
+        bars?: T;
+        accent?: T;
       };
   id?: T;
   blockName?: T;

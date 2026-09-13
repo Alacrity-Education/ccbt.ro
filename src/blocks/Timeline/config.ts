@@ -3,6 +3,7 @@ import type { Block } from "payload";
 import { richTextEditor } from "@/fields/richTextEditor";
 
 import { link } from "@/fields/link";
+import { sectionLayout } from "@/fields/sectionLayout"
 
 export const Timeline: Block = {
   slug: "timeline",
@@ -46,5 +47,6 @@ export const Timeline: Block = {
         }),
       ],
     },
+      ...sectionLayout(),
   ],
 };

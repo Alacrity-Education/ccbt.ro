@@ -25,13 +25,25 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
         {columns &&
           columns.length > 0 &&
           columns.map((col, index) => {
-            const { decorator, enableLink, link, media, richText, size, type } =
-              col;
+            const {
+              centerContent,
+              decorator,
+              enableLink,
+              link,
+              media,
+              richText,
+              size,
+              type,
+            } = col;
             const isMedia = (type ?? "text") === "media";
 
             return (
               <div
-                className={cn("col-span-4", size && COL_SPAN[size])}
+                className={cn(
+                  "col-span-4 md:flex md:flex-col",
+                  size && COL_SPAN[size],
+                  centerContent && "md:justify-center",
+                )}
                 key={index}
               >
                 {isMedia

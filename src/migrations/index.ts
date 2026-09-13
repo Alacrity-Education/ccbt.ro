@@ -1,9 +1,39 @@
 import * as migration_20260806_132502_initial from './20260806_132502_initial';
+import * as migration_20260912_112737_add_brand_plinth_appearance from './20260912_112737_add_brand_plinth_appearance';
+import * as migration_20260913_075405_remove_image_content_add_center_content from './20260913_075405_remove_image_content_add_center_content';
+import * as migration_20260913_083045_reduce_hero_link_appearances from './20260913_083045_reduce_hero_link_appearances';
+import * as migration_20260913_092930 from './20260913_092930';
+import * as migration_20260913_094411_rename_cta_highlight_to_base from './20260913_094411_rename_cta_highlight_to_base';
 
 export const migrations = [
   {
     up: migration_20260806_132502_initial.up,
     down: migration_20260806_132502_initial.down,
-    name: '20260806_132502_initial'
+    name: '20260806_132502_initial',
+  },
+  {
+    up: migration_20260912_112737_add_brand_plinth_appearance.up,
+    down: migration_20260912_112737_add_brand_plinth_appearance.down,
+    name: '20260912_112737_add_brand_plinth_appearance',
+  },
+  {
+    up: migration_20260913_075405_remove_image_content_add_center_content.up,
+    down: migration_20260913_075405_remove_image_content_add_center_content.down,
+    name: '20260913_075405_remove_image_content_add_center_content',
+  },
+  {
+    up: migration_20260913_083045_reduce_hero_link_appearances.up,
+    down: migration_20260913_083045_reduce_hero_link_appearances.down,
+    name: '20260913_083045_reduce_hero_link_appearances',
+  },
+  {
+    up: migration_20260913_092930.up,
+    down: migration_20260913_092930.down,
+    name: '20260913_092930',
+  },
+  {
+    up: migration_20260913_094411_rename_cta_highlight_to_base.up,
+    down: migration_20260913_094411_rename_cta_highlight_to_base.down,
+    name: '20260913_094411_rename_cta_highlight_to_base'
   },
 ];

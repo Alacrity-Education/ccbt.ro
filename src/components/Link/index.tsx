@@ -6,7 +6,13 @@ import React from "react";
 import type { Page, Post } from "@/payload-types";
 
 type CMSLinkType = {
-  appearance?: "inline" | "brand" | "brandInvert" | ButtonProps["variant"];
+  appearance?:
+    | "inline"
+    | "brand"
+    | "brandPlinth"
+    | "brandInvert"
+    | "brandInvertPlinth"
+    | ButtonProps["variant"];
   children?: React.ReactNode;
   className?: string;
   label?: string | null;
@@ -25,12 +31,15 @@ type CMSLinkType = {
  *
  * `brand` is the site's action button (.btn-brand in globals.css) and the
  * default for new links; `brandInvert` is the same button with its fills swapped
- * for saturated panels. The daisyUI colors below are kept for the heroes, which
- * are excluded from the single-button rule.
+ * for saturated panels. The `*Plinth` pair adds the offset rectangle behind the
+ * face, which is off by default. The daisyUI colors below are kept for the
+ * heroes, which are excluded from the single-button rule.
  */
 const linkAppearance: Record<string, string> = {
   brand: "btn-brand",
+  brandPlinth: "btn-brand btn-brand-plinth",
   brandInvert: "btn-brand btn-brand-invert",
+  brandInvertPlinth: "btn-brand btn-brand-invert btn-brand-plinth",
   default: "btn btn-primary",
   primary: "btn btn-primary",
   secondary: "btn btn-secondary",
@@ -77,7 +86,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   // The brand button ships at one size, so the daisyUI size modifiers (which
   // also expect a `.btn` base it does not have) are dropped for it.
-  const isBrand = appearance === "brand" || appearance === "brandInvert";
+  const isBrand = String(appearance ?? "").startsWith("brand");
   const size = appearance === "link" || isBrand ? "clear" : sizeFromProps;
   const newTabProps = newTab
     ? { rel: "noopener noreferrer", target: "_blank" }

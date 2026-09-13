@@ -4,6 +4,7 @@ import { richTextEditor } from '@/fields/richTextEditor'
 
 import { link } from '@/fields/link'
 import { SURFACE_COLORS, brandOptions } from '@/utilities/brand'
+import { sectionLayout } from '@/fields/sectionLayout'
 
 // Brand palette shared by the decorator's two lines; the fills live in
 // utilities/brand, mapped onto the theme tokens.
@@ -111,6 +112,18 @@ const columnFields: Field[] = [
       },
     ],
   },
+  // Centres the column's contents down its own height, so a short paragraph sits
+  // level with a tall image beside it rather than riding the top of the row.
+  {
+    name: 'centerContent',
+    type: 'checkbox',
+    label: 'Center content',
+    defaultValue: false,
+    admin: {
+      description:
+        "Centres this column's contents vertically against the other columns in the row.",
+    },
+  },
   {
     name: 'enableLink',
     type: 'checkbox',
@@ -138,5 +151,6 @@ export const Content: Block = {
       },
       fields: columnFields,
     },
+      ...sectionLayout(),
   ],
 }
