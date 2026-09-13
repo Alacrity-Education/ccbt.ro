@@ -34,7 +34,7 @@ type PillarCardProps = {
 /**
  * Shared "pillar" card — a solid theme-colored panel with a corner title, an
  * optional background image at a set opacity, and a top-right arrow when linked.
- * Used by the CardBlock and the Highlight CTA (and future card blocks).
+ * Used by the CardBlock and the base CTA (and future card blocks).
  */
 export const PillarCard: React.FC<PillarCardProps> = ({
   title,

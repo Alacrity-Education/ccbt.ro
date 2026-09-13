@@ -20,9 +20,12 @@ const buttonVariants = cva(
       },
       variant: {
         // The site's action button. Defined unlayered in globals.css, so it wins
-        // over the Tailwind utilities in the base string above.
+        // over the Tailwind utilities in the base string above. The `*Plinth`
+        // pair opts back into the offset rectangle behind the face.
         brand: 'btn-brand',
+        brandPlinth: 'btn-brand btn-brand-plinth',
         brandInvert: 'btn-brand btn-brand-invert',
+        brandInvertPlinth: 'btn-brand btn-brand-invert btn-brand-plinth',
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         primary: 'btn btn-primary',
         secondary: 'btn btn-secondary',

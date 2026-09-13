@@ -1,6 +1,7 @@
 import type { Block } from "payload";
 
 import { richTextEditor } from "@/fields/richTextEditor";
+import { sectionLayout } from "@/fields/sectionLayout"
 
 export const Archive: Block = {
   slug: "archive",
@@ -146,6 +147,7 @@ export const Archive: Block = {
         },
       ],
     },
+      ...sectionLayout(),
   ],
   labels: {
     plural: "Archives",

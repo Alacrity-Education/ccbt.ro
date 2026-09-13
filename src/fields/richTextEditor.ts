@@ -1,4 +1,5 @@
 import {
+  AlignFeature,
   BlocksFeature,
   FixedToolbarFeature,
   HeadingFeature,
@@ -11,6 +12,17 @@ import { ButtonBlock } from '@/blocks/Button/config'
 import { TEXT_STATE } from './textState'
 
 type HeadingSize = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+
+type EditorOptions = {
+  /**
+   * Adds the left/center/right controls to the toolbar.
+   *
+   * Off by default. Most copy on the site is left-aligned by its block, and an
+   * alignment control there would only let an editor fight the layout; it is
+   * turned on for the blocks whose design actually offers the choice.
+   */
+  align?: boolean
+}
 
 /**
  * The editor shared by every rich text field in the project: the default feature
@@ -28,11 +40,15 @@ type HeadingSize = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
  * BlocksFeature contributes the button, so a call to action belongs to the copy
  * that leads up to it instead of being a separate field on the block.
  */
-export const richTextEditor = (headings?: HeadingSize[]) =>
+export const richTextEditor = (
+  headings?: HeadingSize[],
+  { align = false }: EditorOptions = {},
+) =>
   lexicalEditor({
     features: ({ rootFeatures }) => [
       ...rootFeatures,
       ...(headings ? [HeadingFeature({ enabledHeadingSizes: headings })] : []),
+      ...(align ? [AlignFeature()] : []),
       TextStateFeature({ state: TEXT_STATE }),
       BlocksFeature({ blocks: [ButtonBlock] }),
       FixedToolbarFeature(),

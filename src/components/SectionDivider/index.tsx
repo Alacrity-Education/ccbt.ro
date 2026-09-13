@@ -1,8 +1,23 @@
 import React from "react";
 
-import type { DividerBlock as DividerBlockProps } from "@/payload-types";
-
 import { brandHex } from "@/utilities/brand";
+
+/**
+ * The banded ornament that finishes the edge of a full-width section.
+ *
+ * It used to be a block an editor dropped between two sections. That made the
+ * break and its edge two separate things to keep in sync; now a section owns its
+ * own top and bottom edge (see fields/sectionLayout) and this just draws one.
+ */
+export type SectionDividerProps = {
+  pattern?: string | null;
+  /** Primary colour — the bars. */
+  bars?: string | null;
+  /** Secondary colour — the ornament. */
+  accent?: string | null;
+  /** Distinguishes the two instances a section can have. */
+  uid?: string | null;
+};
 
 // Each pattern is kept verbatim from the exported SVG. Recoloring maps the
 // pattern's source hexes (roles c1/c2/c3) onto the chosen palette colors, with
@@ -76,7 +91,7 @@ const SVG_D = `<svg width="1602" height="107" viewBox="0 0 1602 107" fill="none"
 <path d="M180.602 29.208H0V48.5847H180.602V29.208Z" fill="#5ED9FC"/>
 <path d="M180.602 58.4155H0V77.7922H180.602V58.4155Z" fill="#5ED9FC"/>
 <path d="M180.602 87.6235H0V107H180.602V87.6235Z" fill="#5ED9FC"/>
-<path d="M1600.38 87.6235H316.609V107H1600.38V87.6235Z" fill="#5ED9FC"/>
+<path d="M1602 87.6235H316.609V107H1602V87.6235Z" fill="#5ED9FC"/>
 <path d="M238.934 29.208H229.117V48.5847H238.934V29.208Z" fill="#5ED9FC"/>
 <path d="M1602 29.208H316.609V48.5847H1602V29.208Z" fill="#5ED9FC"/>
 <path d="M268.098 29.208H258.281V48.5847H268.098V29.208Z" fill="#5ED9FC"/>
@@ -183,18 +198,18 @@ function mobileViewBox({ size, ornament, mobileWidth }: Pattern) {
   return `${Math.round(x)} 0 ${mobileWidth} ${size.h}`;
 }
 
-export const DividerBlock: React.FC<DividerBlockProps> = ({
-  id,
+export const SectionDivider: React.FC<SectionDividerProps> = ({
+  uid,
   pattern,
-  primaryColor,
-  secondaryColor,
+  bars,
+  accent,
 }) => {
   const key = pattern ?? "a";
   const def = PATTERNS[key] ?? PATTERNS.a;
 
   const chosen: Record<keyof Roles, string | null | undefined> = {
-    c1: primaryColor,
-    c2: secondaryColor,
+    c1: bars,
+    c2: accent,
   };
   const roleKeys = Object.keys(def.roles) as (keyof Roles)[];
 
@@ -209,7 +224,7 @@ export const DividerBlock: React.FC<DividerBlockProps> = ({
     svg = svg.split(`__DV_${role}__`).join(hexes[i] as string);
   });
 
-  const artworkId = `divider-${id ?? `${key}-${hexes.join("")}`.replace(/[^a-z0-9]/gi, "")}`;
+  const artworkId = `divider-${uid ?? ""}-${`${key}-${hexes.join("")}`.replace(/[^a-z0-9]/gi, "")}`;
   const artwork = svg
     .replace(/^[\s\S]*?<svg[^>]*>/, "")
     .replace(/<\/svg>\s*$/, "");

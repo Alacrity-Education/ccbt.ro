@@ -2,6 +2,7 @@ import type { Block } from "payload";
 import { richTextEditor } from "@/fields/richTextEditor";
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
+import { sectionLayout } from "@/fields/sectionLayout"
 
 export const CardBlock: Block = {
   slug: "cardBlock",
@@ -82,5 +83,6 @@ export const CardBlock: Block = {
         },
       ],
     },
+      ...sectionLayout(),
   ],
 };

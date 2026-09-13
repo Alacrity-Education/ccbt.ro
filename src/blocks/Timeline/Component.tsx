@@ -331,6 +331,35 @@ const TimelineEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
 // screen with one entry. Only colour is overridden here.
 const StackedEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
   const hasHref = entry.withLink && (entry.link?.url || entry.link?.reference);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const copyInnerRef = useRef<HTMLDivElement>(null);
+  const [isClipped, setIsClipped] = useState(false);
+
+  // The copy box now hugs its text, so the fade can no longer be left on
+  // permanently — over an entry that fits it would grey out the last line of a
+  // perfectly complete paragraph. Both boxes are watched because either can
+  // change without the other: the outer one when the panel resizes, the inner
+  // one when the text reflows (a late webfont, a rotation).
+  useEffect(() => {
+    const box = copyRef.current;
+    if (!box) return;
+
+    // Measured off the content's own height, not `scrollHeight`: under
+    // `overflow: clip` the box is not a scroll container, so `scrollHeight`
+    // collapses to `clientHeight` and would report nothing as ever cut.
+    const measure = () => {
+      const content = copyInnerRef.current;
+      if (!content) return;
+      setIsClipped(content.offsetHeight - box.clientHeight > 1);
+    };
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    if (copyInnerRef.current) observer.observe(copyInnerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     // A panel is exactly one screen wide, so the padding that keeps the copy off
     // the screen edge and clear of the vertical motif lives here rather than on
@@ -341,23 +370,58 @@ const StackedEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         <Pivot className="absolute top-[29px] left-0 h-[90px] w-auto" />
       </div>
 
-      {/* Only this scrolls, and only when an entry is taller than the fixed
-          viewport — the section's own height never changes. */}
-      <div className="min-h-0 flex-1 overflow-y-auto pt-14">
-        <p className="text-secondary mb-4 text-2xl font-bold tracking-wide uppercase">
-          {entry.date}
-        </p>
-        {entry.content && (
-          <RichText
-            className="prose [&_h3]:text-primary [&_h4]:text-primary text-base-content/80"
-            data={entry.content}
-            enableGutter={false}
+      {/* Copy that outgrows the panel is cut, not scrolled — the section's own
+          height never changes, and a nested scroller inside a horizontal swipe
+          carousel fights the swipe for the same gesture.
+
+          The button is a sibling rather than the last thing in this box, so the
+          copy yields to it rather than the other way round: `flex-initial`
+          (grow 0, shrink 1) lets this box take its natural height while there is
+          room, then gives ground once there is not. A long entry therefore loses
+          lines off the bottom instead of pushing its call to action out of the
+          panel, and a short one still sits its button directly under the text
+          rather than stranding it at the foot of the panel. */}
+      <div className="relative flex min-h-0 flex-initial flex-col">
+        {/* `clip`, not `hidden`: `hidden` still makes this a scroll container,
+            so script — and the browser itself, when focus lands on a link in the
+            cut-off part — can scroll it and strand the panel mid-paragraph.
+            `clip` is not a scroll container at all. */}
+        <div ref={copyRef} className="min-h-0 overflow-clip pt-14">
+          <div ref={copyInnerRef}>
+            <p className="text-secondary mb-4 text-2xl font-bold tracking-wide uppercase">
+              {entry.date}
+            </p>
+            {entry.content && (
+              <RichText
+                className="prose [&_h3]:text-primary [&_h4]:text-primary text-base-content/80"
+                data={entry.content}
+                enableGutter={false}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Only drawn over copy that really is cut off, and sitting on the copy's
+            own bottom edge — which is above the button, not at the foot of the
+            panel. Signals "there is more here" rather than slicing a line of
+            text in half. */}
+        {isClipped && (
+          <div
+            aria-hidden
+            className="from-base-100 pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t to-transparent"
           />
         )}
-        {hasHref && (
-          <CMSLink {...entry.link} appearance="brand" className="mt-6" />
-        )}
       </div>
+
+      {/* self-start keeps the button its own width — a stretched flex item would
+          run the full panel. */}
+      {hasHref && (
+        <CMSLink
+          {...entry.link}
+          appearance="brand"
+          className="mt-6 shrink-0 self-start"
+        />
+      )}
     </div>
   );
 };
@@ -400,13 +464,29 @@ const NudgeControls: React.FC<{
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [entryIdx, setEntryIdx] = useState(0);
+  // Both layouts open on the most recent entry: the timeline runs oldest-left to
+  // newest-right, so the far right is where a reader starts and scrolls back from.
+  const [entryIdx, setEntryIdx] = useState(() =>
+    Math.max((entries?.length ?? 1) - 1, 0),
+  );
 
-  // Start scrolled to the end so the arrow + latest entries are shown first;
-  // scroll left to reach earlier entries.
   useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollLeft = el.scrollWidth;
+    const toEnd = (el: HTMLDivElement | null) => {
+      // A hidden layout measures 0 wide, so this is a no-op for whichever of the
+      // two is not on screen.
+      if (el) el.scrollLeft = el.scrollWidth;
+    };
+
+    toEnd(scrollRef.current);
+    toEnd(trackRef.current);
+
+    // Re-assert once layout has settled. On first paint the panels can still be
+    // measuring, and a track whose width is not final yet lands short of the end.
+    const frame = requestAnimationFrame(() => {
+      toEnd(scrollRef.current);
+      toEnd(trackRef.current);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   // Keep the index in step with a swipe, so the arrows stay correct whichever way
@@ -482,6 +562,17 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
               style={VRAIL_BAR}
             />
           </div>
+
+          {/* Wherever the section ends the bar is sliced off square, which reads
+              as a rendering fault rather than a design — and the cut lands in
+              open background, so there is nothing for it to run into. This fades
+              its last stretch out into the page instead. It is the final child
+              of the motif, so it paints over both the artwork and the bar below
+              it without needing a stacking context of its own. */}
+          <div
+            aria-hidden
+            className="from-base-100 pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t to-transparent"
+          />
         </div>
 
         {/* The rail runs the full width of the screen, uncapped — it reads as a
@@ -501,24 +592,17 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ entries }) => {
             A fixed height means the section never resizes as you move through it —
             which is what made the old vertical paging lurch. Native scroll-snap so
             a swipe works as well as the arrows. */}
-        <div className="relative">
-          <div
-            ref={trackRef}
-            className="flex h-[60svh] snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            {entries.map((entry, i) => (
-              <StackedEntry key={entry.id ?? i} entry={entry} />
-            ))}
-          </div>
-
-          {/* A fixed box will sometimes be shorter than the entry in it. This
-              fades the cut into the page instead of slicing a line of text in
-              half; over a short entry it lies on empty background and cannot
-              be seen. */}
-          <div
-            aria-hidden
-            className="from-base-100 pointer-events-none absolute inset-x-0 bottom-0 z-0 h-12 bg-gradient-to-t to-transparent"
-          />
+        {/* The fade that covers a clipped entry lives on each panel's copy box
+            rather than across the track, so it sits at the edge the text is
+            actually cut at — which is above the button, not at the foot of the
+            panel. See StackedEntry. */}
+        <div
+          ref={trackRef}
+          className="flex h-[60svh] snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {entries.map((entry, i) => (
+            <StackedEntry key={entry.id ?? i} entry={entry} />
+          ))}
         </div>
 
         {/* Controls keep the lane inset the track gave up — they are not part of

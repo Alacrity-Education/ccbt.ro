@@ -9,6 +9,7 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
+import { PageMotif } from '@/components/PageMotif'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -67,7 +68,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className="pt-10 pb-24">
+    <article className="pt-10">
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
@@ -75,7 +76,19 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout ?? []} />
+
+      {/* The motif starts where the hero ends and runs to the foot of the page,
+          one element spanning every block rather than one per section — which is
+          what stops it being clipped at each section boundary.
+
+          The page's bottom padding belongs to this box rather than the article:
+          the ribbon is sized to it, so left outside it the motif stopped short
+          and left a gap above the footer. Here it runs the last stretch too and
+          ends flush where the footer begins. */}
+      <div className="relative isolate pb-24" data-motif-lane>
+        <PageMotif />
+        <RenderBlocks blocks={layout ?? []} />
+      </div>
     </article>
   )
 }

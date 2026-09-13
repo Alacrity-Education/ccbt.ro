@@ -1,10 +1,10 @@
 import React from "react";
 
 /**
- * Decorative woven-ribbon motif for the Highlight CTA. Verbatim from the export.
+ * Decorative woven-ribbon motif for the base CTA. Verbatim from the export.
  * Colors are the brand palette used in the artwork. Purely decorative, so aria-hidden.
  */
-export const HighlightMotif: React.FC<{ className?: string; viewBoxHeight?: number }> = ({
+export const BaseMotif: React.FC<{ className?: string; viewBoxHeight?: number }> = ({
   className,
   viewBoxHeight = 975,
 }) => (
@@ -51,7 +51,7 @@ export const HighlightMotif: React.FC<{ className?: string; viewBoxHeight?: numb
  * The artwork's own paths run past the right edge of the 612-wide viewBox; that
  * is by design, the chain is meant to be cut off there.
  */
-export const HighlightMotifMobile: React.FC<{ className?: string }> = ({
+export const BaseMotifMobile: React.FC<{ className?: string }> = ({
   className,
 }) => (
   <svg
