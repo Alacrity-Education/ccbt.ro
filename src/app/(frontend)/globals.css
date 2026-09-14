@@ -112,19 +112,10 @@
   @apply px-6
 }
 
-/* The motif's lane. Scoped to the blocks wrapper rather than put on `.container`
-   itself, so the header and footer keep their own full-width measure — the
-   ribbon only runs beside page content (see components/PageMotif). A block set
-   to full width takes the padding back and runs at the container's own measure,
-   with the ribbon passing behind it. Change these together with the rail's
-   width. */
-[data-motif-lane] .container {
-  @apply lg:pr-[220px] xl:pr-[270px]
-}
-
-[data-motif-lane] [data-full-bleed] .container {
-  @apply lg:pr-6 xl:pr-6
-}
+/* No lane is reserved for the motif: it runs *behind* the blocks at z-index -10
+   (see components/PageMotif), so content keeps the container's full measure and
+   simply paints over the ribbon. Holding blocks clear of it instead squeezes
+   every container at `lg` and above for the sake of decoration. */
 
 @theme inline {
   --font-base: var(--font-montserrat);
