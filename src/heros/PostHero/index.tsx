@@ -29,16 +29,15 @@ export const PostHero: React.FC<{
   // same height as a page rather than at whatever its own aspect ratio worked
   // out to — which was a portrait 210:297 on phones and 3:2 above `sm`.
   //
-  // The height alone does not make them look alike: the pull above has to leave
-  // this sitting where a page hero sits. A page hero starts 40px down (its
-  // article's `pt-10`) with the fixed 80px header over its top; the article here
-  // opens with `pt-16`, so -24px lands it in the same place. The old -9rem put
-  // 80px of it above the document, which cost the hero that much visible height.
+  // The height alone does not make them look alike: this has to sit where a page
+  // hero sits. Both articles open with `pt-16` now, so neither hero needs a pull
+  // of its own. The old -9rem put 80px of this one above the document, which
+  // cost it that much visible height.
   const heightClass = "min-h-[80svh]";
 
 
   return (
-    <div className={cn(heightClass, "relative flex w-full -mt-6 items-end overflow-hidden")}>
+    <div className={cn(heightClass, "relative flex w-full items-end overflow-hidden")}>
       <div className="relative z-10 container pb-8 z-10 text-white lg:grid lg:grid-cols-[1fr_48rem_1fr]">
         <div className="col-span-1 col-start-1 md:col-span-2 md:col-start-2">
           <div className="mb-6 text-sm uppercase">

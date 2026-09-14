@@ -20,7 +20,9 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns } = props;
 
   return (
-    <div className="container mx-auto w-full">
+    // my-4 sm:my-10 is the block's own breathing room. It was dropped in 535428a
+    // and the block has run flush against its neighbours since.
+    <div className="container mx-auto my-4 w-full sm:my-10">
       <div className="grid grid-cols-4 gap-x-8 gap-y-8 md:grid-cols-12 lg:gap-x-16">
         {columns &&
           columns.length > 0 &&

@@ -148,7 +148,7 @@ export const TeamBlock: React.FC<TeamBlockProps & { id?: string | null }> = ({
         <TeamMotif uid={id ?? "team"} className="h-auto w-full" />
       </div>
 
-      <div className="relative container mx-auto py-12 lg:py-16">
+      <div className="relative container mx-auto py-6">
         {/* Keeps the cards clear of the ribbons. The motif is anchored to the
             section edge while the container is centred, so this has to hold at
             every width its own motif is shown at. From `lg` that motif is gone

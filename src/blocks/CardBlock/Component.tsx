@@ -9,7 +9,7 @@ export const CardBlock: React.FC<CardBlockProps> = ({ title, cards }) => {
   if (visibleCards.length === 0) return null;
 
   return (
-    <section className="container mx-auto w-full py-12">
+    <section className="container mx-auto w-full py-6">
       {/* Title and grid share one box so the heading keeps the cards' left edge
           at every width — held apart, the centred single column left the title
           hanging outside it. */}
