@@ -992,6 +992,7 @@ export interface FormBlock {
  * via the `definition` "CardBlock".
  */
 export interface CardBlock {
+  title?: string | null;
   cards?:
     | {
         title: string;
@@ -1821,6 +1822,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "CardBlock_select".
  */
 export interface CardBlockSelect<T extends boolean = true> {
+  title?: T;
   cards?:
     | T
     | {

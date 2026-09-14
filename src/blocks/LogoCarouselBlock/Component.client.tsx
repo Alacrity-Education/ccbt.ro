@@ -164,8 +164,18 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
     <div ref={wrapRef} className="w-full py-16">
       <div className="relative">
 
-        {/* Arrows live outside the overflow-hidden clip so they are never cropped */}
-        <div className="absolute inset-0 container pointer-events-none z-10">
+        {/* Arrows live outside the overflow-hidden clip so they are never cropped.
+
+            `inset-0` alone left this over-constrained against `.container`'s own
+            max-width: with left and right both pinned, the max-width won and the
+            box anchored left, so the right arrow sat short of the right edge and
+            the pair read as off-centre. `mx-auto` resolves it and centres the
+            box; `bottom-4` matches the track's own `pb-4`, so the arrows centre
+            on the logos rather than on the logos plus their padding.
+
+            Hidden below `lg`: the carousel drifts on its own and takes a swipe,
+            so on a phone the arrows only cover logos. */}
+        <div className="absolute inset-x-0 top-0 bottom-4 container mx-auto pointer-events-none z-10 hidden lg:block">
           <button
             onClick={() => scroll('left')}
             className="pointer-events-auto absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
@@ -186,8 +196,9 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
           </button>
         </div>
 
-        {/* overflow-hidden clips the wide track; px-12 keeps items clear of the arrows */}
-        <div className="overflow-hidden px-12 pb-4">
+        {/* overflow-hidden clips the wide track; the `lg` padding keeps items
+            clear of the arrows, which only exist at that width. */}
+        <div className="overflow-hidden px-4 pb-4 lg:px-12">
           {/* numCopies identical copies — dynamically sized to always cover the viewport.
               pr-6 on each copy adds a trailing gap equal to the inter-item gap,
               so the loop point is visually seamless. */}
