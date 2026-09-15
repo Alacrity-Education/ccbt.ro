@@ -23,7 +23,11 @@ import { TeamMotif } from "@/blocks/Team/Motif";
 export const PageMotif: React.FC = () => (
   <div
     aria-hidden
-    className="pointer-events-none absolute inset-y-[-1rem] -top-10 right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]"
+    // `top-0`, not a negative top: the lane begins where the hero ends, and
+    // pulling the rail above it puts the ribbon over the hero's purple
+    // transition strip — the lane paints after the hero, so it wins. The
+    // bottom keeps its overhang so the ribbon runs into the footer.
+    className="pointer-events-none absolute top-0 -bottom-4 right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]"
   >
     <TeamMotif uid="page" className="h-auto w-full" />
   </div>
