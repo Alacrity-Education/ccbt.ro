@@ -23,7 +23,7 @@ import { TeamMotif } from "@/blocks/Team/Motif";
 export const PageMotif: React.FC = () => (
   <div
     aria-hidden
-    className="pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]"
+    className="pointer-events-none absolute inset-y-[-1rem] -top-10 right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]"
   >
     <TeamMotif uid="page" className="h-auto w-full" />
   </div>

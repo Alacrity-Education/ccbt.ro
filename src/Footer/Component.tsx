@@ -23,7 +23,7 @@ export async function Footer() {
       : null;
 
   return (
-    <footer className="text-primary bg-base-300">
+    <footer className="text-primary bg-base-300 z-10 ">
       <div className="container mx-auto px-6 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand and first section under it */}
