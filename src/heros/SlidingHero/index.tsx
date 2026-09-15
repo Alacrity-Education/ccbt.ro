@@ -52,7 +52,7 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroColor }> = ({
   const prevIndex = (visibleSlide - 1 + len) % len;
 
   return (
-    <div className="relative isolate flex h-[80svh] min-h-[30rem] w-full overflow-hidden text-white">
+    <div className="relative isolate flex h-[80svh] min-h-[30rem] w-full overflow-hidden text-white -mt-10 ">
       {slides?.map((slide, index) => {
         // 2. Determine the state of this specific slide
         const isCurrent = index === visibleSlide;

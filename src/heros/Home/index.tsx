@@ -49,7 +49,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
   const { bg, dark } = resolveColor(color);
 
   const bodyClass = dark ? "text-white/90" : "text-base-content/80";
-
+  s
   /* ----------------------------- HIGH IMPACT ----------------------------- */
   if (impact === "high") {
     return (
@@ -57,7 +57,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
         className={cn(
           // Copy sits low in the frame rather than centred, which puts it where
           // the scrim is densest and leaves the top of the image uncovered.
-          "relative flex min-h-[80svh] items-end overflow-hidden",
+          "relative flex min-h-[80svh] items-end overflow-hidden -mt-10",
           dark ? "text-white" : "text-base-content",
         )}
         data-theme={dark ? "dark" : undefined}
@@ -118,7 +118,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
     return (
       <section
         className={cn(
-          "relative overflow-hidden",
+          "relative overflow-hidden -mt-10",
           dark ? "text-white" : "text-base-content",
         )}
         style={{ background: bg }}
