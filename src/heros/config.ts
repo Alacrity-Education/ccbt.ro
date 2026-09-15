@@ -13,6 +13,19 @@ const WITH_SUBTITLE = ['homeHero', 'highImpactHero']
 const SELECTABLE_COLOR = ['homeHero', 'highImpactHero']
 
 /**
+ * How the hero image fills its frame.
+ *
+ * `cover` crops to fill and is right for a photograph, where losing the edges
+ * costs nothing. `contain` fits the whole image in and leaves the hero's
+ * background showing around it — which is what a poster or a logo needs, since
+ * cropping those cuts into the artwork.
+ */
+const OBJECT_FIT_OPTIONS = [
+  { label: 'Cover — fill the frame, cropping the edges', value: 'cover' },
+  { label: 'Contain — fit the whole image, letterboxed', value: 'contain' },
+]
+
+/**
  * The heroes are the one place excluded from the site's single-button rule, but
  * the full palette was more choice than the surface can carry — a hero button
  * sits on a saturated gradient, where most of the daisyUI colours read as mud.
@@ -115,6 +128,16 @@ export const hero: Field = {
       },
     },
     {
+      name: 'objectFit',
+      type: 'select',
+      label: 'Image fit',
+      defaultValue: 'cover',
+      options: OBJECT_FIT_OPTIONS,
+      admin: {
+        condition: (_, { type } = {}) => WITH_MEDIA.includes(type),
+      },
+    },
+    {
       name: 'timeout',
       type: 'number',
       label: 'Time per slide',
@@ -161,6 +184,13 @@ export const hero: Field = {
             description:
               'Optional portrait crop for phones; the desktop image is used when empty.',
           },
+        },
+        {
+          name: 'objectFit',
+          type: 'select',
+          label: 'Image fit',
+          defaultValue: 'cover',
+          options: OBJECT_FIT_OPTIONS,
         },
         { name: 'title', type: 'text' },
         { name: 'subtitle', type: 'text' },

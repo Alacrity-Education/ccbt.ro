@@ -120,7 +120,7 @@ const Slide = ({
   fallbackColor: HeroColor;
   priority?: boolean;
 }) => {
-  const { media, mediaMobile, title, subtitle, cta } = slide;
+  const { media, mediaMobile, objectFit, title, subtitle, cta } = slide;
   // Each slide sets its own gradient color; fall back to the hero-level color.
   const { bg, dark } = resolveColor(
     (slide.color as HeroColor) ?? fallbackColor,
@@ -172,6 +172,7 @@ const Slide = ({
           desktop={media}
           mobile={mediaMobile}
           priority={priority}
+          objectFit={objectFit}
           className="absolute inset-0 h-full w-full"
           imgClassName="object-center"
         />

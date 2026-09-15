@@ -50,6 +50,12 @@ export const HeroBackdrop: React.FC<{
   priority?: boolean;
   /** Width the image occupies, for the browser's srcset maths. */
   sizes?: string;
+  /**
+   * `cover` crops to fill the frame; `contain` fits the whole image in and lets
+   * the hero's own background show around it. Editor's choice per hero, because
+   * a photograph and a poster want opposite things here.
+   */
+  objectFit?: "cover" | "contain" | null;
 }> = ({
   desktop,
   mobile,
@@ -57,6 +63,7 @@ export const HeroBackdrop: React.FC<{
   imgClassName,
   priority = false,
   sizes = "100vw",
+  objectFit = "cover",
 }) => {
   const desktopDoc = asDoc(desktop);
   const mobileDoc = asDoc(mobile);
@@ -82,7 +89,11 @@ export const HeroBackdrop: React.FC<{
         src={getMediaUrl(main.url, main.updatedAt)}
         srcSet={srcSetFor(main)}
         sizes={sizes}
-        className={cn("h-full w-full object-cover", imgClassName)}
+        className={cn(
+          "h-full w-full",
+          objectFit === "contain" ? "object-contain" : "object-cover",
+          imgClassName,
+        )}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : undefined}
         decoding="async"

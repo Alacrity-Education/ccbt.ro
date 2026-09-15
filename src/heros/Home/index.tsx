@@ -43,8 +43,8 @@ const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({
 
 export const Hero: React.FC<HeroProps> = (props) => {
   const { impact, color } = props;
-  const { title, subtitle, body, media, mediaMobile, ctaLink } =
-    props as unknown as HeroContent;
+  const { title, subtitle, body, media, mediaMobile, ctaLink, objectFit } =
+    props as unknown as HeroContent & { objectFit?: "cover" | "contain" | null };
 
   const { bg, dark } = resolveColor(color);
 
@@ -100,6 +100,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
             desktop={media}
             mobile={mediaMobile}
             priority
+            objectFit={objectFit}
             className="absolute inset-0 h-full w-full"
             imgClassName="object-center"
           />
@@ -145,6 +146,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
               <HeroBackdrop
                 desktop={media}
                 mobile={mediaMobile}
+                objectFit={objectFit}
                 className="absolute inset-0 h-full w-full"
                 sizes="(max-width: 767px) 100vw, 50vw"
               />

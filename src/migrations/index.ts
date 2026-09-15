@@ -6,6 +6,7 @@ import * as migration_20260913_092930 from './20260913_092930';
 import * as migration_20260913_094411_rename_cta_highlight_to_base from './20260913_094411_rename_cta_highlight_to_base';
 import * as migration_20260914_154015_card_block_title from './20260914_154015_card_block_title';
 import * as migration_20260914_160117_mcp_plugin_api_keys from './20260914_160117_mcp_plugin_api_keys';
+import * as migration_20260915_094522_hero_object_fit from './20260915_094522_hero_object_fit';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20260914_160117_mcp_plugin_api_keys.up,
     down: migration_20260914_160117_mcp_plugin_api_keys.down,
-    name: '20260914_160117_mcp_plugin_api_keys'
+    name: '20260914_160117_mcp_plugin_api_keys',
+  },
+  {
+    up: migration_20260915_094522_hero_object_fit.up,
+    down: migration_20260915_094522_hero_object_fit.down,
+    name: '20260915_094522_hero_object_fit'
   },
 ];

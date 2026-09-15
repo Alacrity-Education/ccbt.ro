@@ -21,6 +21,7 @@ export type Slides =
        * Optional portrait crop for phones; the desktop image is used when empty.
        */
       mediaMobile?: (number | null) | Media;
+      objectFit?: ('cover' | 'contain') | null;
       title?: string | null;
       subtitle?: string | null;
       cta?: {
@@ -254,6 +255,7 @@ export interface Page {
      * Optional portrait crop for phones. A landscape image has to be scaled up hard to fill a tall screen, which is what leaves the subject cropped out. Left empty, the desktop image is used everywhere.
      */
     mediaMobile?: (number | null) | Media;
+    objectFit?: ('cover' | 'contain') | null;
     timeout?: number | null;
     slides?: Slides;
     richText?: {
@@ -1701,6 +1703,7 @@ export interface PagesSelect<T extends boolean = true> {
             };
         media?: T;
         mediaMobile?: T;
+        objectFit?: T;
         timeout?: T;
         slides?: T | SlidesSelect<T>;
         richText?: T;
@@ -1741,6 +1744,7 @@ export interface SlidesSelect<T extends boolean = true> {
   color?: T;
   media?: T;
   mediaMobile?: T;
+  objectFit?: T;
   title?: T;
   subtitle?: T;
   cta?:
