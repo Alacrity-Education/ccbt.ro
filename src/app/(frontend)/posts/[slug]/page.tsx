@@ -56,7 +56,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   // is the ribbon's containing block. Space left outside it is space the ribbon
   // cannot reach. Same total spacing, but the artwork now runs into it.
   return (
-    <article className="pt-16">
+    <article className="pt-20">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}

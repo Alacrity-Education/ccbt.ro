@@ -20,9 +20,11 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   const { columns } = props;
 
   return (
-    // my-4 sm:my-10 is the block's own breathing room. It was dropped in 535428a
-    // and the block has run flush against its neighbours since.
-    <div className="container mx-auto my-4 w-full sm:my-10">
+    // Padding, not margin. This is the page's first block as often as not, and a
+    // top margin collapses out of the blocks wrapper — taking the wrapper's top
+    // edge with it, which left the motif starting below the nav instead of at it.
+    // Padding is contained, so the wrapper still begins where the hero ends.
+    <div className="container mx-auto w-full py-6 sm:py-12">
       <div className="grid grid-cols-4 gap-x-8 gap-y-8 md:grid-cols-12 lg:gap-x-16">
         {columns &&
           columns.length > 0 &&
