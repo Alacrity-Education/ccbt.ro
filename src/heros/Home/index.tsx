@@ -49,7 +49,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
   const { bg, dark } = resolveColor(color);
 
   const bodyClass = dark ? "text-white/90" : "text-base-content/80";
-  s
+
   /* ----------------------------- HIGH IMPACT ----------------------------- */
   if (impact === "high") {
     return (
