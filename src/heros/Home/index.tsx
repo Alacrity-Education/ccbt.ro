@@ -95,7 +95,10 @@ export const Hero: React.FC<HeroProps> = (props) => {
         {/* Scrim after the image, not before: both sit at stacking level 0, so
             painting order is what decides, and an image that came second would
             cover the wash. Ordering keeps that true whatever the z-indexes are. */}
-        <div className="absolute inset-0 z-0 select-none">
+        {/* The hero's own colour sits under the image. With `cover` the image hides
+            it; with `contain` the image is letterboxed, and this is what the bars
+            are filled with — otherwise they fall through to the page's white. */}
+        <div className="absolute inset-0 z-0 select-none" style={{ backgroundColor: bg }}>
           <HeroBackdrop
             desktop={media}
             mobile={mediaMobile}
@@ -142,7 +145,10 @@ export const Hero: React.FC<HeroProps> = (props) => {
           </div>
 
           {(media || mediaMobile) && (
-            <div className="rounded-box relative aspect-4/3 w-full overflow-hidden">
+            <div
+              className="rounded-box relative aspect-4/3 w-full overflow-hidden"
+              style={{ backgroundColor: bg }}
+            >
               <HeroBackdrop
                 desktop={media}
                 mobile={mediaMobile}

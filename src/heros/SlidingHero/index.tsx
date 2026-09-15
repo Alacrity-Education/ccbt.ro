@@ -167,7 +167,10 @@ const Slide = ({
           already moves; the image panning inside it as well was what made the
           edges show. */}
       {/* Scrim after the image — see the note in heros/Home. */}
-      <div className="absolute inset-0 z-0 select-none">
+      {/* The hero's own colour sits under the image. With `cover` the image hides
+          it; with `contain` the image is letterboxed, and this is what the bars
+          are filled with — otherwise they fall through to the page's white. */}
+      <div className="absolute inset-0 z-0 select-none" style={{ backgroundColor: bg }}>
         <HeroBackdrop
           desktop={media}
           mobile={mediaMobile}
