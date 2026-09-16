@@ -9,6 +9,7 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { ButtonBlock } from '@/blocks/Button/config'
+import { CardsBlock } from '@/blocks/Cards/config'
 import { TEXT_STATE } from './textState'
 
 type HeadingSize = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
@@ -22,6 +23,12 @@ type EditorOptions = {
    * turned on for the blocks whose design actually offers the choice.
    */
   align?: boolean
+  /**
+   * Adds the cards block to the insert menu. Only the Content block turns this
+   * on — cards are a section-level device, and offering them inside every rich
+   * text field invites a row of them in places that cannot hold one.
+   */
+  cards?: boolean
 }
 
 /**
@@ -42,7 +49,7 @@ type EditorOptions = {
  */
 export const richTextEditor = (
   headings?: HeadingSize[],
-  { align = false }: EditorOptions = {},
+  { align = false, cards = false }: EditorOptions = {},
 ) =>
   lexicalEditor({
     features: ({ rootFeatures }) => [
@@ -50,7 +57,7 @@ export const richTextEditor = (
       ...(headings ? [HeadingFeature({ enabledHeadingSizes: headings })] : []),
       ...(align ? [AlignFeature()] : []),
       TextStateFeature({ state: TEXT_STATE }),
-      BlocksFeature({ blocks: [ButtonBlock] }),
+      BlocksFeature({ blocks: cards ? [ButtonBlock, CardsBlock] : [ButtonBlock] }),
       FixedToolbarFeature(),
       InlineToolbarFeature(),
     ],

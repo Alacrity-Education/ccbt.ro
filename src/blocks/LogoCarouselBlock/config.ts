@@ -1,5 +1,4 @@
 import type { Block } from 'payload'
-import { sectionLayout } from '@/fields/sectionLayout'
 
 export const CarouselLogoBlock: Block = {
   slug: 'carouselLogoBlock',
@@ -28,6 +27,5 @@ export const CarouselLogoBlock: Block = {
         },
       ],
     },
-      ...sectionLayout(),
   ],
 }

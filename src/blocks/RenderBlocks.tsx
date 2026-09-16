@@ -42,12 +42,20 @@ const blockComponents = {
   team: TeamBlock,
 }
 
-/** The section-level fields every block carries (see fields/sectionLayout). */
+/**
+ * Full width and dividers are not an editor's choice any more: two blocks get the
+ * treatment and the rest never do. The timeline always; the CTA only in its base
+ * variant, which is the one built as a band. What an editor still picks is the
+ * pattern and colours, which live on the block (see fields/sectionDividers).
+ */
 type BlockLayout = {
-  fullWidth?: boolean | null
-  dividerTop?: SectionDividerProps & { enabled?: boolean | null }
-  dividerBottom?: SectionDividerProps & { enabled?: boolean | null }
+  variant?: string | null
+  dividerTop?: SectionDividerProps
+  dividerBottom?: SectionDividerProps
 }
+
+const isBanded = (blockType: string, block: BlockLayout): boolean =>
+  blockType === 'timeline' || (blockType === 'cta' && block.variant === 'base')
 
 export const RenderBlocks: React.FC<{
   blocks: NonNullable<Page['layout']>
@@ -67,15 +75,15 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               const flush = FLUSH_BLOCKS.has(blockType)
-              const { fullWidth, dividerTop, dividerBottom } =
-                block as BlockLayout
+              const layout = block as BlockLayout
+              const banded = isBanded(blockType, layout)
 
               return (
                 <div
                   // `data-full-bleed` hands the motif's lane back to the
                   // content, so the block runs at the container's full measure
                   // and the ribbon passes behind it. See globals.css.
-                  data-full-bleed={fullWidth ? '' : undefined}
+                  data-full-bleed={banded ? '' : undefined}
                   className={cn(
                     // Every block keeps bottom spacing; flush blocks additionally
                     // pull up over the previous block's margin (unless first).
@@ -85,24 +93,27 @@ export const RenderBlocks: React.FC<{
                     // measure back (see `data-full-bleed` above), and its own
                     // opaque background covers the ribbon running behind it —
                     // which is what makes a full-width section read as a break.
-                    fullWidth && 'bg-base-200 relative w-full',
+                    banded && 'bg-base-200 relative w-full',
                   )}
                   key={index}
                 >
-                  {dividerTop?.enabled && (
-                    <SectionDivider {...dividerTop} uid={`${index}-top`} />
+                  {banded && (
+                    <SectionDivider {...layout.dividerTop} uid={`${index}-top`} />
                   )}
 
                   {/* Sits inside the dividers rather than on the wrapper, so a
                       divider stays flush against the block's edge instead of
                       floating in from it. */}
-                  <div className={cn(fullWidth && 'py-10 lg:py-14')}>
+                  <div className={cn(banded && 'py-10 lg:py-14')}>
                     {/* @ts-expect-error there may be some mismatch between the expected types here */}
                     <Block {...block} disableInnerContainer />
                   </div>
 
-                  {dividerBottom?.enabled && (
-                    <SectionDivider {...dividerBottom} uid={`${index}-bottom`} />
+                  {banded && (
+                    <SectionDivider
+                      {...layout.dividerBottom}
+                      uid={`${index}-bottom`}
+                    />
                   )}
                 </div>
               )

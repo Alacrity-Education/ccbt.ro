@@ -586,48 +586,12 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
-  enableCards?: boolean | null;
-  cards?:
-    | {
-        title: string;
-        body?: string | null;
-        color: 'purple' | 'coral' | 'cyan';
-        withLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label?: string | null;
-        };
-        /**
-         * Optional image shown behind the card, over its color.
-         */
-        backgroundImage?: (number | null) | Media;
-        /**
-         * How visible the background image is over the card color.
-         */
-        backgroundOpacity?: number | null;
-        id?: string | null;
-      }[]
-    | null;
-  fullWidth?: boolean | null;
   dividerTop?: {
-    enabled?: boolean | null;
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
   };
   dividerBottom?: {
-    enabled?: boolean | null;
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
@@ -838,54 +802,9 @@ export interface ContentBlock {
          * Centres this column's contents vertically against the other columns in the row.
          */
         centerContent?: boolean | null;
-        enableLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label?: string | null;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?:
-            | (
-                | 'brand'
-                | 'brandPlinth'
-                | 'default'
-                | 'primary'
-                | 'secondary'
-                | 'accent'
-                | 'neutral'
-                | 'success'
-                | 'outline'
-              )
-            | null;
-        };
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -896,19 +815,6 @@ export interface ContentBlock {
  */
 export interface MediaBlock {
   media?: (number | null) | Media;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -953,19 +859,6 @@ export interface ArchiveBlock {
     card3?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
     card4?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
   };
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
@@ -993,19 +886,6 @@ export interface FormBlock {
     };
     [k: string]: unknown;
   } | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'formBlock';
@@ -1035,7 +915,6 @@ export interface CardBlock {
           [k: string]: unknown;
         } | null;
         color: 'purple' | 'coral' | 'cyan';
-        orientation: 'vertical' | 'horizontal';
         /**
          * Enable to add a link to the card
          */
@@ -1063,19 +942,6 @@ export interface CardBlock {
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'cardBlock';
@@ -1093,19 +959,6 @@ export interface CarouselLogoBlock {
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'carouselLogoBlock';
@@ -1130,19 +983,6 @@ export interface StaticMapBlock {
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'staticMap';
@@ -1192,15 +1032,12 @@ export interface TimelineBlock {
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
   dividerTop?: {
-    enabled?: boolean | null;
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
   };
   dividerBottom?: {
-    enabled?: boolean | null;
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
@@ -1251,19 +1088,6 @@ export interface TeamBlock {
         id?: string | null;
       }[]
     | null;
-  fullWidth?: boolean | null;
-  dividerTop?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
-  dividerBottom?: {
-    enabled?: boolean | null;
-    pattern?: ('a' | 'b' | 'c' | 'd') | null;
-    bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-    accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'team';
@@ -1790,32 +1614,9 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  enableCards?: T;
-  cards?:
-    | T
-    | {
-        title?: T;
-        body?: T;
-        color?: T;
-        withLink?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        backgroundImage?: T;
-        backgroundOpacity?: T;
-        id?: T;
-      };
-  fullWidth?: T;
   dividerTop?:
     | T
     | {
-        enabled?: T;
         pattern?: T;
         bars?: T;
         accent?: T;
@@ -1823,7 +1624,6 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
   dividerBottom?:
     | T
     | {
-        enabled?: T;
         pattern?: T;
         bars?: T;
         accent?: T;
@@ -1851,35 +1651,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
               horizontalColor?: T;
             };
         centerContent?: T;
-        enableLink?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
         id?: T;
-      };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -1890,23 +1662,6 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
   id?: T;
   blockName?: T;
 }
@@ -1930,23 +1685,6 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
         card3?: T;
         card4?: T;
       };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
   id?: T;
   blockName?: T;
 }
@@ -1959,23 +1697,6 @@ export interface FormBlockSelect<T extends boolean = true> {
   showTitle?: T;
   enableIntro?: T;
   introContent?: T;
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
   id?: T;
   blockName?: T;
 }
@@ -1991,7 +1712,6 @@ export interface CardBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         color?: T;
-        orientation?: T;
         withLink?: T;
         link?:
           | T
@@ -2005,23 +1725,6 @@ export interface CardBlockSelect<T extends boolean = true> {
         backgroundImage?: T;
         backgroundOpacity?: T;
         id?: T;
-      };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -2038,23 +1741,6 @@ export interface CarouselLogoBlockSelect<T extends boolean = true> {
         media?: T;
         link?: T;
         id?: T;
-      };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -2081,23 +1767,6 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
         subtitle?: T;
         id?: T;
       };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
   id?: T;
   blockName?: T;
 }
@@ -2123,11 +1792,9 @@ export interface TimelineBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  fullWidth?: T;
   dividerTop?:
     | T
     | {
-        enabled?: T;
         pattern?: T;
         bars?: T;
         accent?: T;
@@ -2135,7 +1802,6 @@ export interface TimelineBlockSelect<T extends boolean = true> {
   dividerBottom?:
     | T
     | {
-        enabled?: T;
         pattern?: T;
         bars?: T;
         accent?: T;
@@ -2172,23 +1838,6 @@ export interface TeamBlockSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
-      };
-  fullWidth?: T;
-  dividerTop?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
-      };
-  dividerBottom?:
-    | T
-    | {
-        enabled?: T;
-        pattern?: T;
-        bars?: T;
-        accent?: T;
       };
   id?: T;
   blockName?: T;
@@ -2927,6 +2576,44 @@ export interface ButtonBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'button';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardsBlock".
+ */
+export interface CardsBlock {
+  cards?:
+    | {
+        title: string;
+        body?: string | null;
+        color: 'purple' | 'coral' | 'cyan';
+        withLink?: boolean | null;
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+        };
+        /**
+         * Optional image shown behind the card, over its color.
+         */
+        backgroundImage?: (number | null) | Media;
+        backgroundOpacity?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

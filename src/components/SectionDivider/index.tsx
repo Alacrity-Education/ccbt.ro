@@ -7,7 +7,7 @@ import { brandHex } from "@/utilities/brand";
  *
  * It used to be a block an editor dropped between two sections. That made the
  * break and its edge two separate things to keep in sync; now a section owns its
- * own top and bottom edge (see fields/sectionLayout) and this just draws one.
+ * own top and bottom edge (see fields/sectionDividers) and this just draws one.
  */
 export type SectionDividerProps = {
   pattern?: string | null;

@@ -2,7 +2,6 @@ import type { Block } from "payload";
 
 import { link } from "@/fields/link";
 import { brandOptions } from "@/utilities/brand";
-import { sectionLayout } from "@/fields/sectionLayout"
 
 // Departments alternate between the two brand surfaces, and the colour a
 // department carries is also the colour of its people's cards — so the choice is
@@ -73,6 +72,5 @@ export const Team: Block = {
         },
       ],
     },
-      ...sectionLayout(),
   ],
 };

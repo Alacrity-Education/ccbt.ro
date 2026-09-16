@@ -5,7 +5,7 @@ import { richTextEditor } from "@/fields/richTextEditor";
 import { linkGroup } from "../../fields/linkGroup";
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
-import { sectionLayout } from "@/fields/sectionLayout"
+import { sectionDividers } from "@/fields/sectionDividers";
 
 // The "base" variant is the one with the motif and the highlight cards. It is
 // always left-aligned — see blocks/CallToAction/Base.
@@ -79,75 +79,7 @@ export const CallToAction: Block = {
         },
       },
     }),
-    {
-      name: "enableCards",
-      type: "checkbox",
-      label: "Enable highlight cards",
-      defaultValue: false,
-      admin: {
-        condition: (_, sibling) => isBase(sibling?.variant),
-      },
-    },
-    {
-      name: "cards",
-      type: "array",
-      label: "Highlight cards",
-      minRows: 1,
-      maxRows: 4,
-      admin: {
-        initCollapsed: true,
-        condition: (_, sibling) =>
-          isBase(sibling?.variant) && sibling?.enableCards === true,
-      },
-      fields: [
-        { name: "title", type: "text", required: true },
-        { name: "body", type: "textarea", label: "Body" },
-        {
-          name: "color",
-          type: "select",
-          required: true,
-          defaultValue: "coral",
-          options: brandOptions(SURFACE_COLORS),
-        },
-        {
-          name: "withLink",
-          type: "checkbox",
-          label: "Enable link",
-          defaultValue: false,
-        },
-        link({
-          appearances: false,
-          overrides: {
-            admin: {
-              condition: (_, sibling) => sibling?.withLink === true,
-            },
-          },
-        }),
-        {
-          name: "backgroundImage",
-          type: "upload",
-          relationTo: "media",
-          label: "Background image",
-          admin: {
-            description: "Optional image shown behind the card, over its color.",
-          },
-        },
-        {
-          name: "backgroundOpacity",
-          type: "number",
-          label: "Background image opacity (%)",
-          defaultValue: 100,
-          min: 0,
-          max: 100,
-          admin: {
-            step: 1,
-            description: "How visible the background image is over the card color.",
-            condition: (_, sibling) => Boolean(sibling?.backgroundImage),
-          },
-        },
-      ],
-    },
-      ...sectionLayout(),
+    ...sectionDividers((_, sibling) => isBase(sibling?.variant as string)),
   ],
   labels: {
     plural: "Calls to Action",

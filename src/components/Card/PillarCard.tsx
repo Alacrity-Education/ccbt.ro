@@ -8,19 +8,15 @@ import { cn } from "@/utilities/ui";
 import { brandSurface, type SurfaceColor } from "@/utilities/brand";
 
 export type PillarCardColor = SurfaceColor;
-export type PillarCardOrientation = "vertical" | "horizontal";
 
-const ORIENTATION_CLASSES: Record<PillarCardOrientation, string> = {
-  // Rectangular, height-limited. Aspect sets the shape; max-h caps how tall they
-  // get in wide grid cells.
-  vertical: "aspect-3/2 max-h-72",
-  horizontal: "aspect-2/1 max-h-56",
-};
+// One shape for every card. Aspect sets it; max-h caps how tall a card gets in a
+// wide grid cell. The horizontal variant is gone — two shapes for the same object
+// only ever made a grid of them look unresolved.
+const CARD_SHAPE = "aspect-3/2 max-h-72";
 
 type PillarCardProps = {
   title?: string | null;
   color?: PillarCardColor | null;
-  orientation?: PillarCardOrientation | null;
   /** Payload link object; the card becomes clickable and shows the arrow. */
   link?: any;
   withLink?: boolean | null;
@@ -39,7 +35,6 @@ type PillarCardProps = {
 export const PillarCard: React.FC<PillarCardProps> = ({
   title,
   color,
-  orientation,
   link,
   withLink,
   backgroundImage,
@@ -48,8 +43,6 @@ export const PillarCard: React.FC<PillarCardProps> = ({
   className,
 }) => {
   const colorClass = brandSurface(color, "coral");
-  const orientationClass =
-    ORIENTATION_CLASSES[orientation ?? "vertical"] ?? ORIENTATION_CLASSES.vertical;
   const hasHref = withLink && (link?.url || link?.reference);
 
   const inner = (
@@ -101,7 +94,7 @@ export const PillarCard: React.FC<PillarCardProps> = ({
         appearance="inline"
         className={cn(
           "group block h-full transition-transform duration-200 hover:-translate-y-1",
-          orientationClass,
+          CARD_SHAPE,
         )}
       >
         {inner}
@@ -109,5 +102,5 @@ export const PillarCard: React.FC<PillarCardProps> = ({
     );
   }
 
-  return <div className={cn("h-full", orientationClass)}>{inner}</div>;
+  return <div className={cn("h-full", CARD_SHAPE)}>{inner}</div>;
 };

@@ -4,7 +4,6 @@ import { richTextEditor } from '@/fields/richTextEditor'
 
 import { link } from '@/fields/link'
 import { SURFACE_COLORS, brandOptions } from '@/utilities/brand'
-import { sectionLayout } from '@/fields/sectionLayout'
 
 // Brand palette shared by the decorator's two lines; the fills live in
 // utilities/brand, mapped onto the theme tokens.
@@ -53,7 +52,7 @@ const columnFields: Field[] = [
   {
     name: 'richText',
     type: 'richText',
-    editor: richTextEditor(['h2', 'h3', 'h4']),
+    editor: richTextEditor(['h2', 'h3', 'h4'], { cards: true }),
     label: false,
     admin: {
       condition: (_data, siblingData) => siblingData?.type !== 'media',
@@ -124,19 +123,6 @@ const columnFields: Field[] = [
         "Centres this column's contents vertically against the other columns in the row.",
     },
   },
-  {
-    name: 'enableLink',
-    type: 'checkbox',
-  },
-  link({
-    overrides: {
-      admin: {
-        condition: (_data, siblingData) => {
-          return Boolean(siblingData?.enableLink)
-        },
-      },
-    },
-  }),
 ]
 
 export const Content: Block = {
@@ -151,6 +137,5 @@ export const Content: Block = {
       },
       fields: columnFields,
     },
-      ...sectionLayout(),
   ],
 }

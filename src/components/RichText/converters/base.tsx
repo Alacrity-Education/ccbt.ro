@@ -12,11 +12,13 @@ import type {
   BannerBlock as BannerBlockProps,
   ButtonBlock as ButtonBlockProps,
   CallToActionBlock as CTABlockProps,
+  CardsBlock as CardsBlockProps,
   MediaBlock as MediaBlockProps,
   StaticMapBlock as StaticMapBlockProps,
 } from "@/payload-types";
 
 import { BannerBlock } from "@/blocks/Banner/Component";
+import { CardsBlockComponent } from "@/blocks/Cards/Component";
 import { CallToActionBlock } from "@/blocks/CallToAction/Component";
 import { MediaBlock } from "@/blocks/MediaBlock/Component";
 import { StaticMapBlock } from "@/blocks/StaticMap/Component";
@@ -32,6 +34,7 @@ export type NodeTypes =
       | BannerBlockProps
       | StaticMapBlockProps
       | ButtonBlockProps
+      | CardsBlockProps
     >;
 
 /**
@@ -85,6 +88,7 @@ export const baseConverters: JSXConvertersFunction<NodeTypes> = ({
     ),
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
     staticMap: ({ node }) => <StaticMapBlock {...node.fields} />,
+    cards: ({ node }) => <CardsBlockComponent {...node.fields} />,
     ...buttonConverter("brand"),
   },
 });

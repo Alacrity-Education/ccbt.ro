@@ -32,7 +32,6 @@ export const CardBlock: React.FC<CardBlockProps> = ({ title, cards }) => {
               key={card.id ?? i}
               title={card.title}
               color={card.color}
-              orientation={card.orientation}
               withLink={card.withLink}
               link={card.link}
               backgroundImage={card.backgroundImage}

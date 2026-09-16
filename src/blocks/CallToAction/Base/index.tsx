@@ -5,54 +5,11 @@ import type { CallToActionBlock as CTABlockProps } from "@/payload-types";
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
-import { PillarCard } from "@/components/Card/PillarCard";
 import { BaseMotifMobile } from "./Motif";
-
-type BaseCard = NonNullable<CTABlockProps["cards"]>[number];
-
-// The cards are the shared PillarCard, kept vertical (square) here.
-const BaseCardItem: React.FC<BaseCard> = ({
-  title,
-  body,
-  color,
-  withLink,
-  link,
-  backgroundImage,
-  backgroundOpacity,
-}) => (
-  <PillarCard
-    title={title}
-    color={color}
-    orientation="vertical"
-    withLink={withLink}
-    link={link}
-    backgroundImage={backgroundImage}
-    backgroundOpacity={backgroundOpacity}
-  >
-    {body}
-  </PillarCard>
-);
-
-/**
- * Heading sizes for the copy.
- *
- * The heading and the coloured line under it used to be two text fields of their
- * own. They are ordinary rich text now — an H2 and an H3 — so an editor writes
- * the whole block in one place and can leave either out. These classes are what
- * keep an H2 reading as the section's title and an H3 as its subtitle.
- */
-const HEADINGS = [
-  "[&_h2]:text-primary [&_h2]:text-4xl [&_h2]:font-bold [&_h2]:tracking-tight",
-  "[&_h2]:text-balance sm:[&_h2]:text-5xl lg:[&_h2]:text-6xl",
-  "[&_h3]:text-secondary [&_h3]:mt-2 [&_h3]:text-2xl [&_h3]:font-semibold",
-  "sm:[&_h3]:text-3xl",
-].join(" ");
 
 export const BaseCTA: React.FC<CTABlockProps & { fullWidth?: boolean | null }> = ({
   richText,
   links,
-  enableCards,
-  cards,
   fullWidth,
 }) => (
   // No background of its own: the page motif runs behind the blocks, and an
@@ -98,9 +55,8 @@ export const BaseCTA: React.FC<CTABlockProps & { fullWidth?: boolean | null }> =
               // w-full so an alignment chosen in the editor has the whole
               // column to act in — without it the flex parent's `items-start`
               // shrinks this to its text and centring is invisible.
-              "text-base-content/70 w-full text-base sm:text-lg",
+              "w-full",
               fullWidth ? "mx-auto max-w-none" : "mx-0 max-w-2xl",
-              HEADINGS,
             )}
             data={richText}
             enableGutter={false}
@@ -120,13 +76,6 @@ export const BaseCTA: React.FC<CTABlockProps & { fullWidth?: boolean | null }> =
         )}
       </div>
 
-      {enableCards && cards && cards.length > 0 && (
-        <div className="mt-12 grid gap-4 sm:max-w-4/5 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((card, i) => (
-            <BaseCardItem key={card.id ?? i} {...card} />
-          ))}
-        </div>
-      )}
     </div>
   </section>
 );

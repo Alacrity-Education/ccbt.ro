@@ -2,7 +2,6 @@ import { cn } from "@/utilities/ui";
 import React from "react";
 import RichText from "@/components/RichText";
 import type { ContentBlock as ContentBlockProps } from "@/payload-types";
-import { CMSLink } from "../../components/Link";
 import { DecoratedMedia } from "@/components/Media/DecoratedMedia";
 
 type ColumnSize = NonNullable<
@@ -32,8 +31,6 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
             const {
               centerContent,
               decorator,
-              enableLink,
-              link,
               media,
               richText,
               size,
@@ -61,11 +58,6 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                         enableGutter={false}
                       />
                     )}
-                {enableLink && (
-                  <div className="mt-6">
-                    <CMSLink {...link} appearance="brand" />
-                  </div>
-                )}
               </div>
             );
           })}

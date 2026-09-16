@@ -1,37 +1,35 @@
 import type { Block } from "payload";
-import { richTextEditor } from "@/fields/richTextEditor";
+
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
 
-export const CardBlock: Block = {
-  slug: "cardBlock",
-  interfaceName: "CardBlock",
-  labels: {
-    singular: "Card Block",
-    plural: "Card Blocks",
-  },
+/**
+ * A row of cards, written inside a Content column's copy.
+ *
+ * Cards used to exist twice: as a block of their own, and as a set of fields
+ * bolted onto the base CTA. Neither let an editor put them where the argument
+ * for them lands — between the paragraph that sets them up and the one that
+ * follows. As a lexical block they sit in the copy, the way the button does.
+ *
+ * The description is plain text rather than rich text: a card is a label and a
+ * sentence, and nesting an editor inside an editor inside a column invites
+ * content no card can hold.
+ */
+export const CardsBlock: Block = {
+  slug: "cards",
+  interfaceName: "CardsBlock",
+  labels: { singular: "Cards", plural: "Cards" },
   fields: [
-    {
-      name: "title",
-      type: "text",
-      label: "Title",
-    },
     {
       name: "cards",
       type: "array",
       label: "Cards",
+      minRows: 1,
+      maxRows: 6,
+      admin: { initCollapsed: true },
       fields: [
-        {
-          name: "title",
-          type: "text",
-          required: true,
-        },
-        {
-          name: "description",
-          type: "richText",
-          label: "Description",
-          editor: richTextEditor(['h3', 'h4']),
-        },
+        { name: "title", type: "text", required: true },
+        { name: "body", type: "textarea", label: "Body" },
         {
           name: "color",
           type: "select",
@@ -42,15 +40,12 @@ export const CardBlock: Block = {
         {
           name: "withLink",
           type: "checkbox",
-          label: "Enable Link",
+          label: "Enable link",
           defaultValue: false,
-          admin: { description: "Enable to add a link to the card" },
         },
         link({
           appearances: false,
           overrides: {
-            required: false,
-            validate: () => true,
             admin: {
               condition: (_data, siblingData) => siblingData?.withLink === true,
             },
@@ -61,7 +56,10 @@ export const CardBlock: Block = {
           type: "upload",
           relationTo: "media",
           label: "Background image",
-          admin: { description: "Optional image shown behind the card, over its color." },
+          admin: {
+            description:
+              "Optional image shown behind the card, over its color.",
+          },
         },
         {
           name: "backgroundOpacity",
@@ -72,7 +70,8 @@ export const CardBlock: Block = {
           max: 100,
           admin: {
             step: 1,
-            condition: (_data, siblingData) => Boolean(siblingData?.backgroundImage),
+            condition: (_data, siblingData) =>
+              Boolean(siblingData?.backgroundImage),
           },
         },
       ],
