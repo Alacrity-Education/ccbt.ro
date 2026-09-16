@@ -4,14 +4,9 @@ import type { CallToActionBlock as CTABlockProps } from "@/payload-types";
 
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
-import { cn } from "@/utilities/ui";
 import { BaseMotifMobile } from "./Motif";
 
-export const BaseCTA: React.FC<CTABlockProps & { fullWidth?: boolean | null }> = ({
-  richText,
-  links,
-  fullWidth,
-}) => (
+export const BaseCTA: React.FC<CTABlockProps> = ({ richText, links }) => (
   // No background of its own: the page motif runs behind the blocks, and an
   // opaque fill would cut it (see components/PageMotif).
   <section className="relative overflow-hidden">
@@ -31,44 +26,24 @@ export const BaseCTA: React.FC<CTABlockProps & { fullWidth?: boolean | null }> =
     </div>
 
     <div className="relative z-10 container mx-auto py-16 sm:py-20 lg:py-24">
-      {/* Left-aligned and held to a readable measure by default, so the copy
-          lines up with every other block on the page.
+      {/* This block always runs full width — RenderBlocks bands it on sight of
+          the variant, so there is no narrow case left to branch on. The copy
+          takes the container's whole measure, which is what lets an alignment
+          chosen in the editor centre against the screen rather than inside a
+          column sitting off to the left.
 
-          Running full width drops both: the block already has the container's
-          whole measure, so the copy takes it too and an alignment chosen in the
-          editor then centres against the screen rather than inside a column
-          sitting off to the left.
-
-          Only the copy is narrowed to clear the phone motif — the cards below
-          keep the full width, since the motif has run out by the time they
-          start. From `lg` the motif is the page-wide one and `.container`
-          reserves its lane for every block, so this resets. */}
-      <div
-        className={cn(
-          "flex flex-col pr-[104px] min-[420px]:pr-[130px] md:pr-[72px] lg:pr-0",
-          fullWidth ? "items-stretch" : "items-start text-left",
-        )}
-      >
+          Only the right padding is kept, to clear the phone motif; from `lg`
+          the page-wide motif takes over and it resets. */}
+      <div className="flex flex-col items-stretch pr-[104px] min-[420px]:pr-[130px] md:pr-[72px] lg:pr-0">
         {richText && (
           <RichText
-            className={cn(
-              // w-full so an alignment chosen in the editor has the whole
-              // column to act in — without it the flex parent's `items-start`
-              // shrinks this to its text and centring is invisible.
-              "w-full",
-              fullWidth ? "mx-auto max-w-none" : "mx-0 max-w-2xl",
-            )}
+            className="mx-auto w-full max-w-none"
             data={richText}
             enableGutter={false}
           />
         )}
         {links && links.length > 0 && (
-          <div
-            className={cn(
-              "mt-8 flex flex-wrap gap-4",
-              fullWidth && "justify-center",
-            )}
-          >
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
             {links.map(({ link }, i) =>
               link ? <CMSLink key={i} {...link} appearance="brand" /> : null,
             )}
