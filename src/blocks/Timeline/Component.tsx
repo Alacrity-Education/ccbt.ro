@@ -316,7 +316,11 @@ const TimelineEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         />
       )}
       {hasHref && (
-        <CMSLink {...entry.link} appearance="brand" className="mt-6" />
+        <CMSLink
+          {...entry.link}
+          appearance="brand"
+          className="btn-brand-xs mt-6"
+        />
       )}
     </div>
   );
@@ -419,7 +423,7 @@ const StackedEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         <CMSLink
           {...entry.link}
           appearance="brand"
-          className="mt-6 shrink-0 self-start"
+          className="btn-brand-xs mt-6 shrink-0 self-start"
         />
       )}
     </div>

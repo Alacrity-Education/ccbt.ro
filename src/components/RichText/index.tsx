@@ -30,8 +30,8 @@ const TYPE_SCALE = [
   "prose-h4:text-base-content prose-h4:font-semibold",
   "prose-h4:text-lg/[1.35] sm:prose-h4:text-xl/[1.3]",
   "prose-p:text-base-content/80",
-  "prose-p:text-base/[1.65] sm:prose-p:text-lg/[1.6]",
-  "prose-li:text-base-content/80 prose-li:text-base/[1.65] sm:prose-li:text-lg/[1.6]",
+  "prose-p:text-base/[1.65] sm:prose-p:text-lg/[1.6] lg:prose-p:text-xl/[1.6]",
+  "prose-li:text-base-content/80 prose-li:text-base/[1.65] sm:prose-li:text-lg/[1.6] lg:prose-li:text-xl/[1.6]",
 ].join(" ");
 
 type Props = {

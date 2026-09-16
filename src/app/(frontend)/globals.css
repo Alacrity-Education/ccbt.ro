@@ -251,6 +251,25 @@
   transform: translate(0, 0);
 }
 
+/* ---------------------------------------------------------------------------
+   The action button, small
+   ---------------------------------------------------------------------------
+   Used where the button is a secondary move rather than the section's point —
+   the timeline's per-entry links.
+
+   The face deepens, which is not decoration. White on coral is 3.86:1: enough
+   for large text, which is the only reason the standard button's 18px/700 label
+   passes. At this size the label is ordinary text and needs 4.5:1, so the fill
+   moves to the deep coral at 6.02:1.
+--------------------------------------------------------------------------- */
+.btn-brand-xs {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  --btn-brand-face: var(--ccbt-coral-deep);
+  --btn-brand-face-hover: color-mix(in srgb, var(--ccbt-coral-deep) 85%, black);
+}
+
 /* Icon-only and circular — the timeline's prev/next controls. Same face and
    response as the text button, so the arrows read as the same object as every
    other button on the site. Size comes from the call site. */
