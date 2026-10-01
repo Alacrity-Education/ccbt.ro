@@ -162,8 +162,8 @@ export const TeamBlock: React.FC<TeamBlockProps & { id?: string | null }> = ({
                 color={department.color}
               />
 
-              {/* Two up on a phone, the mockup's three once there is room. */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+              {/* Two up on a phone, four once there is room. */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
                 {(department.members ?? []).map((member, j) => (
                   <MemberCard
                     key={member.id ?? j}

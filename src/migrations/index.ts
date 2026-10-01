@@ -8,6 +8,7 @@ import * as migration_20260914_154015_card_block_title from './20260914_154015_c
 import * as migration_20260914_160117_mcp_plugin_api_keys from './20260914_160117_mcp_plugin_api_keys';
 import * as migration_20260915_094522_hero_object_fit from './20260915_094522_hero_object_fit';
 import * as migration_20260916_152042_strip_section_layout_cards_refactor from './20260916_152042_strip_section_layout_cards_refactor';
+import * as migration_20261001_151523_show_motif_toggle from './20261001_151523_show_motif_toggle';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260916_152042_strip_section_layout_cards_refactor.up,
     down: migration_20260916_152042_strip_section_layout_cards_refactor.down,
-    name: '20260916_152042_strip_section_layout_cards_refactor'
+    name: '20260916_152042_strip_section_layout_cards_refactor',
+  },
+  {
+    up: migration_20261001_151523_show_motif_toggle.up,
+    down: migration_20261001_151523_show_motif_toggle.down,
+    name: '20261001_151523_show_motif_toggle'
   },
 ];

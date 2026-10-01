@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { sectionBackground } from '@/fields/sectionBackground'
 
 export const CarouselLogoBlock: Block = {
   slug: 'carouselLogoBlock',
@@ -27,5 +28,6 @@ export const CarouselLogoBlock: Block = {
         },
       ],
     },
+      sectionBackground,
   ],
 }

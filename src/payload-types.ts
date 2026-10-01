@@ -596,6 +596,7 @@ export interface CallToActionBlock {
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
   };
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'cta';
@@ -805,6 +806,7 @@ export interface ContentBlock {
         id?: string | null;
       }[]
     | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -815,6 +817,7 @@ export interface ContentBlock {
  */
 export interface MediaBlock {
   media?: (number | null) | Media;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -859,6 +862,7 @@ export interface ArchiveBlock {
     card3?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
     card4?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
   };
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
@@ -886,6 +890,7 @@ export interface FormBlock {
     };
     [k: string]: unknown;
   } | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'formBlock';
@@ -942,6 +947,7 @@ export interface CardBlock {
         id?: string | null;
       }[]
     | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'cardBlock';
@@ -959,6 +965,7 @@ export interface CarouselLogoBlock {
         id?: string | null;
       }[]
     | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'carouselLogoBlock';
@@ -983,6 +990,7 @@ export interface StaticMapBlock {
         id?: string | null;
       }[]
     | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'staticMap';
@@ -1042,6 +1050,7 @@ export interface TimelineBlock {
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
     accent?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
   };
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'timeline';
@@ -1088,6 +1097,7 @@ export interface TeamBlock {
         id?: string | null;
       }[]
     | null;
+  showMotif?: boolean | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'team';
@@ -1628,6 +1638,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
         bars?: T;
         accent?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1653,6 +1664,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
         centerContent?: T;
         id?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1662,6 +1674,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1685,6 +1698,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
         card3?: T;
         card4?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1697,6 +1711,7 @@ export interface FormBlockSelect<T extends boolean = true> {
   showTitle?: T;
   enableIntro?: T;
   introContent?: T;
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1726,6 +1741,7 @@ export interface CardBlockSelect<T extends boolean = true> {
         backgroundOpacity?: T;
         id?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1742,6 +1758,7 @@ export interface CarouselLogoBlockSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1767,6 +1784,7 @@ export interface StaticMapBlockSelect<T extends boolean = true> {
         subtitle?: T;
         id?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1806,6 +1824,7 @@ export interface TimelineBlockSelect<T extends boolean = true> {
         bars?: T;
         accent?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }
@@ -1839,6 +1858,7 @@ export interface TeamBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  showMotif?: T;
   id?: T;
   blockName?: T;
 }

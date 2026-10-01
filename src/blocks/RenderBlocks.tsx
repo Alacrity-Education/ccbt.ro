@@ -50,6 +50,7 @@ const blockComponents = {
  */
 type BlockLayout = {
   variant?: string | null
+  showMotif?: boolean | null
   dividerTop?: SectionDividerProps
   dividerBottom?: SectionDividerProps
 }
@@ -94,6 +95,12 @@ export const RenderBlocks: React.FC<{
                     // opaque background covers the ribbon running behind it —
                     // which is what makes a full-width section read as a break.
                     banded && 'bg-base-200 relative w-full',
+                    // The ribbon runs behind the blocks, so a block hides it by
+                    // painting over it. A banded block already has a fill of its
+                    // own and needs nothing here.
+                    !banded &&
+                      layout.showMotif === false &&
+                      'bg-base-100 relative w-full',
                   )}
                   key={index}
                 >

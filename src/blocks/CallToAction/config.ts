@@ -6,6 +6,7 @@ import { linkGroup } from "../../fields/linkGroup";
 import { link } from "@/fields/link";
 import { SURFACE_COLORS, brandOptions } from "@/utilities/brand";
 import { sectionDividers } from "@/fields/sectionDividers";
+import { sectionBackground } from "@/fields/sectionBackground"
 
 // The "base" variant is the one with the motif and the highlight cards. It is
 // always left-aligned — see blocks/CallToAction/Base.
@@ -80,6 +81,7 @@ export const CallToAction: Block = {
       },
     }),
     ...sectionDividers((_, sibling) => isBase(sibling?.variant as string)),
+      sectionBackground,
   ],
   labels: {
     plural: "Calls to Action",

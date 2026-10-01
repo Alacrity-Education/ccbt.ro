@@ -4,6 +4,7 @@ import { richTextEditor } from "@/fields/richTextEditor";
 
 import { link } from "@/fields/link";
 import { sectionDividers } from "@/fields/sectionDividers";
+import { sectionBackground } from "@/fields/sectionBackground"
 
 export const Timeline: Block = {
   slug: "timeline",
@@ -48,5 +49,6 @@ export const Timeline: Block = {
       ],
     },
     ...sectionDividers(),
+      sectionBackground,
   ],
 };

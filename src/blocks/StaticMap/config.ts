@@ -1,4 +1,5 @@
 import type { Block } from "payload";
+import { sectionBackground } from "@/fields/sectionBackground"
 
 export const StaticMap: Block = {
   slug: "staticMap",
@@ -42,6 +43,7 @@ export const StaticMap: Block = {
       ],
     },
 
+      sectionBackground,
   ],
 };
 

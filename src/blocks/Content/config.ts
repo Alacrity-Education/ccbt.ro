@@ -4,6 +4,7 @@ import { richTextEditor } from '@/fields/richTextEditor'
 
 import { link } from '@/fields/link'
 import { SURFACE_COLORS, brandOptions } from '@/utilities/brand'
+import { sectionBackground } from '@/fields/sectionBackground'
 
 // Brand palette shared by the decorator's two lines; the fills live in
 // utilities/brand, mapped onto the theme tokens.
@@ -137,5 +138,6 @@ export const Content: Block = {
       },
       fields: columnFields,
     },
+      sectionBackground,
   ],
 }
