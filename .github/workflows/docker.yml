@@ -1,11 +1,15 @@
 # Builds the full app (frontend + Payload admin/API) as a Docker image, pushes
 # it to GHCR, and asks Coolify to redeploy.
 #
-# The build needs no database. `generateStaticParams` queries Payload, but with
-# `output: 'standalone'` and no reachable DATABASE_URI it yields no params and
-# the routes fall back to rendering on demand — so the workflow needs no tunnel
-# and no database credentials. Migrations run at deploy time from the migrator
-# image, gated before the app starts.
+# The build needs no database, so the workflow needs no tunnel and no database
+# credentials. Two things make that hold, and both have to stay true:
+#   - routes with a parameter prerender from `generateStaticParams`, which
+#     yields nothing when Payload cannot connect (utilities/buildTimeParams);
+#   - `/` and `/posts` take no parameter, so they would prerender regardless and
+#     are marked `force-dynamic` instead. A page that queries Payload and takes
+#     no route parameter must do the same, or this build starts failing.
+# Migrations run at deploy time from the migrator image, gated before the app
+# starts.
 #
 # Repository configuration:
 #   vars.NEXT_PUBLIC_SERVER_URL - public URL of this deployment
