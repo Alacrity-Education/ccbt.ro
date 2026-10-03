@@ -9,6 +9,7 @@ import * as migration_20260914_160117_mcp_plugin_api_keys from './20260914_16011
 import * as migration_20260915_094522_hero_object_fit from './20260915_094522_hero_object_fit';
 import * as migration_20260916_152042_strip_section_layout_cards_refactor from './20260916_152042_strip_section_layout_cards_refactor';
 import * as migration_20261001_151523_show_motif_toggle from './20261001_151523_show_motif_toggle';
+import * as migration_20261003_114909_show_dividers_toggle from './20261003_114909_show_dividers_toggle';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20261001_151523_show_motif_toggle.up,
     down: migration_20261001_151523_show_motif_toggle.down,
-    name: '20261001_151523_show_motif_toggle'
+    name: '20261001_151523_show_motif_toggle',
+  },
+  {
+    up: migration_20261003_114909_show_dividers_toggle.up,
+    down: migration_20261003_114909_show_dividers_toggle.down,
+    name: '20261003_114909_show_dividers_toggle'
   },
 ];

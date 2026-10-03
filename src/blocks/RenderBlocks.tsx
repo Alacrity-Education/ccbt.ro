@@ -43,20 +43,34 @@ const blockComponents = {
 }
 
 /**
- * Full width and dividers are not an editor's choice any more: two blocks get the
- * treatment and the rest never do. The timeline always; the CTA only in its base
- * variant, which is the one built as a band. What an editor still picks is the
- * pattern and colours, which live on the block (see fields/sectionDividers).
+ * Running full width is not an editor's choice: two blocks get the treatment and
+ * the rest never do. The timeline always; the CTA only in its base variant,
+ * which is the one built as a band. What an editor picks is the pattern and
+ * colours (see fields/sectionDividers), and on the timeline whether the edges
+ * are drawn at all.
  */
 type BlockLayout = {
   variant?: string | null
   showMotif?: boolean | null
+  showDividers?: boolean | null
   dividerTop?: SectionDividerProps
   dividerBottom?: SectionDividerProps
 }
 
 const isBanded = (blockType: string, block: BlockLayout): boolean =>
   blockType === 'timeline' || (blockType === 'cta' && block.variant === 'base')
+
+/**
+ * Banded and edged are separate questions. The band — full measure, own fill —
+ * is what makes the section read as a break and stays either way; the dividers
+ * only finish it, and the timeline can turn them off (see blocks/Timeline).
+ *
+ * `!== false` rather than a truth test: the CTA has no such toggle and rows
+ * written before the timeline gained one hold no value, and both must keep the
+ * edges they have always drawn.
+ */
+const hasDividers = (blockType: string, block: BlockLayout): boolean =>
+  isBanded(blockType, block) && block.showDividers !== false
 
 export const RenderBlocks: React.FC<{
   blocks: NonNullable<Page['layout']>
@@ -78,6 +92,7 @@ export const RenderBlocks: React.FC<{
               const flush = FLUSH_BLOCKS.has(blockType)
               const layout = block as BlockLayout
               const banded = isBanded(blockType, layout)
+              const edged = hasDividers(blockType, layout)
 
               return (
                 <div
@@ -104,7 +119,7 @@ export const RenderBlocks: React.FC<{
                   )}
                   key={index}
                 >
-                  {banded && (
+                  {edged && (
                     <SectionDivider {...layout.dividerTop} uid={`${index}-top`} />
                   )}
 
@@ -116,7 +131,7 @@ export const RenderBlocks: React.FC<{
                     <Block {...block} disableInnerContainer />
                   </div>
 
-                  {banded && (
+                  {edged && (
                     <SectionDivider
                       {...layout.dividerBottom}
                       uid={`${index}-bottom`}

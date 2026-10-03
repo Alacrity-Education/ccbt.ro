@@ -48,7 +48,18 @@ export const Timeline: Block = {
         }),
       ],
     },
-    ...sectionDividers(),
+    // The band itself is not optional — the timeline always runs full width on
+    // its own fill. This only decides whether that band is finished with the
+    // cut edges or meets the page squarely.
+    {
+      name: "showDividers",
+      type: "checkbox",
+      label: "Show dividers",
+      defaultValue: true,
+    },
+    // Unset on rows that predate the toggle, which read as on (see
+    // blocks/RenderBlocks) — hence `!== false` rather than a truth test.
+    ...sectionDividers((_, sibling) => sibling?.showDividers !== false),
       sectionBackground,
   ],
 };

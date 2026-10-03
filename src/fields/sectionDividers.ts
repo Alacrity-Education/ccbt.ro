@@ -44,12 +44,13 @@ const dividerFields: Field[] = [
 /**
  * The top and bottom dividers a full-width section is finished with.
  *
- * Only two blocks carry these — the base CTA and the timeline — and for those
- * two the dividers are not optional: the block always runs full width and always
- * draws both edges, because the band needs finishing either way. What is left to
+ * Only two blocks carry these — the base CTA and the timeline. Running full
+ * width is not an editor's choice for either; drawing the edges is one for the
+ * timeline alone, which has its own `showDividers`. Otherwise what is left to
  * the editor is which pattern and which colours, which is what these fields are.
  *
- * `condition` exists for the CTA, where the treatment belongs to one variant.
+ * `condition` hides the pair: on the CTA when the variant is not the banded one,
+ * on the timeline when its toggle is off.
  */
 export const sectionDividers = (
   condition?: (data: unknown, siblingData: Record<string, unknown>) => boolean,

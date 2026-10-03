@@ -1040,6 +1040,7 @@ export interface TimelineBlock {
         id?: string | null;
       }[]
     | null;
+  showDividers?: boolean | null;
   dividerTop?: {
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
@@ -1810,6 +1811,7 @@ export interface TimelineBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  showDividers?: T;
   dividerTop?:
     | T
     | {
