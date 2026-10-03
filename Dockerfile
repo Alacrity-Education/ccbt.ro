@@ -41,19 +41,10 @@ COPY . .
 # next.config.js reads NEXT_PUBLIC_SERVER_URL at build time and throws without it.
 ARG NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 # NEXT_PUBLIC_* is inlined into the client bundle here, at build time. Setting
-# these on the container later only reaches server-side code — the browser gets
-# whatever was frozen in now. It also means they are readable from the published
-# image, so never pass a real secret this way. A Mapbox public token is fine; a
-# PAYLOAD_SECRET or a real DATABASE_URI is not.
-ARG NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-ARG NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT
-ARG NEXT_PUBLIC_MAPBOX_STYLE_MONO
-ARG NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK
-ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL \
-    NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=$NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN \
-    NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT=$NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT \
-    NEXT_PUBLIC_MAPBOX_STYLE_MONO=$NEXT_PUBLIC_MAPBOX_STYLE_MONO \
-    NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK=$NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK
+# it on the container later only reaches server-side code — the browser gets
+# whatever was frozen in now. It is also readable from the published image, so
+# never pass a real secret this way.
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
 RUN npm run build
 
 # -------------------------------------------------------------------- runtime

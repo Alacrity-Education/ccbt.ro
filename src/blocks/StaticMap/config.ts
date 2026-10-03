@@ -15,9 +15,9 @@ export const StaticMap: Block = {
       label: "Map Variant",
       defaultValue: "default",
       options: [
-        { label: "Default", value: "default" },
-        { label: "Mono", value: "mono" },
-        { label: "Mono Black", value: "mono-black" },
+        { label: "Light", value: "default" },
+        { label: "Light, no labels", value: "mono" },
+        { label: "Dark", value: "mono-black" },
       ],
     },
     {

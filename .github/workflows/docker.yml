@@ -8,20 +8,18 @@
 # image, gated before the app starts.
 #
 # Repository configuration:
-#   vars.NEXT_PUBLIC_SERVER_URL               - public URL of this deployment
-#   vars.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN      - optional; the map block
-#   vars.NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT     - optional; style URLs
-#   vars.NEXT_PUBLIC_MAPBOX_STYLE_MONO        - optional
-#   vars.NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK  - optional
-#   secrets.COOLIFY_WEBHOOK                   - optional; deploy webhook from
-#                                               Configuration > Webhooks
-#   secrets.COOLIFY_TOKEN                     - optional; API token with deploy
-#                                               rights
+#   vars.NEXT_PUBLIC_SERVER_URL - public URL of this deployment
+#   secrets.COOLIFY_WEBHOOK     - optional; deploy webhook from the
+#                                 application's Configuration > Webhooks
+#   secrets.COOLIFY_TOKEN       - optional; API token with deploy rights
 #
-# The NEXT_PUBLIC_* values are repository *variables*, not secrets: they are
-# inlined into the client bundle and published in the image, so treating them as
-# secret would be theatre. Never pass PAYLOAD_SECRET or a real DATABASE_URI as a
-# build arg — the image is readable and so are its build args.
+# The map needs no key: it draws on CARTO's basemaps, which are served without
+# an account (see blocks/StaticMap).
+#
+# NEXT_PUBLIC_SERVER_URL is a repository *variable*, not a secret: it is inlined
+# into the client bundle and published in the image, so treating it as secret
+# would be theatre. Never pass PAYLOAD_SECRET or a real DATABASE_URI as a build
+# arg — the image is readable and so are its build args.
 #
 # Pushing uses the built-in GITHUB_TOKEN; no registry credentials needed.
 name: Docker image
@@ -80,10 +78,6 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }}
-            NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=${{ vars.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN }}
-            NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT=${{ vars.NEXT_PUBLIC_MAPBOX_STYLE_DEFAULT }}
-            NEXT_PUBLIC_MAPBOX_STYLE_MONO=${{ vars.NEXT_PUBLIC_MAPBOX_STYLE_MONO }}
-            NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK=${{ vars.NEXT_PUBLIC_MAPBOX_STYLE_MONO_BLACK }}
 
       # The standalone runtime image has no Payload CLI, so migrations ship as a
       # separate image built from the `migrator` stage. Run it as a one-shot
