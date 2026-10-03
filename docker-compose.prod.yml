@@ -1,0 +1,62 @@
+# Deployment compose: pulls the images the Docker workflow publishes, runs the
+# migrations to completion, then starts the app.
+#
+# Named .prod.yml rather than .yml because docker-compose.yaml in this repo is
+# the local development stack (app + postgres). Point Coolify at this file.
+#
+# Required:
+#   DATABASE_URI            postgres connection string
+#   PAYLOAD_SECRET          signs tokens; changing it invalidates sessions
+# Expected:
+#   NEXT_PUBLIC_SERVER_URL  public URL — must match the value the image was
+#                           built with, since it is frozen into the client
+#                           bundle at build time
+#   CRON_SECRET             authenticates scheduled jobs
+#   PREVIEW_SECRET          validates draft preview links
+services:
+  # The runtime image is a traced standalone bundle with no Payload CLI, so
+  # migrations run from a separate image built from the `migrator` stage.
+  migrate:
+    image: '${MIGRATOR_IMAGE:-ghcr.io/alacrity-education/ccbt.ro:main-migrator}'
+    pull_policy: always
+    restart: 'no'
+    environment:
+      DATABASE_URI: '${DATABASE_URI:?}'
+      PAYLOAD_SECRET: '${PAYLOAD_SECRET:?}'
+
+  app:
+    image: '${APP_IMAGE:-ghcr.io/alacrity-education/ccbt.ro:main}'
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URI: '${DATABASE_URI:?}'
+      PAYLOAD_SECRET: '${PAYLOAD_SECRET:?}'
+      NEXT_PUBLIC_SERVER_URL: '${NEXT_PUBLIC_SERVER_URL}'
+      CRON_SECRET: '${CRON_SECRET}'
+      PREVIEW_SECRET: '${PREVIEW_SECRET}'
+    ports:
+      - '3000:3000'
+    volumes:
+      # Uploads live on disk, not in Postgres — losing this volume loses every
+      # image the site has ever served.
+      - 'ccbt-media:/app/public/media'
+    healthcheck:
+      # node, not wget or curl: the runtime image is node:22-bookworm-slim and
+      # carries neither. A wget healthcheck here never passes, which leaves the
+      # container permanently unhealthy and Coolify restarting it.
+      test:
+        - CMD-SHELL
+        - "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  # Coolify prefixes this with the project id, so the real volume is
+  # <prefix>-ccbt-media. Carry the existing uploads across with
+  # scripts/migrate-media-volume.sh before the first deploy.
+  ccbt-media: null
