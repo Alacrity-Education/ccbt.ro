@@ -47,9 +47,17 @@ services:
       # node, not wget or curl: the runtime image is node:22-bookworm-slim and
       # carries neither. A wget healthcheck here never passes, which leaves the
       # container permanently unhealthy and Coolify restarting it.
+      #
+      # A static file, never `/`. This asks one question — is the server
+      # serving? — and favicon.ico is answered from public/ without touching
+      # Postgres. `/` renders on demand and queries Payload, so probing it
+      # would fail the container for any database problem, and an unhealthy
+      # container is one the proxy drops: the whole site becomes Traefik's
+      # "no available server" with nothing to read. Kept this way, a database
+      # fault shows up as the app's own error, which can be diagnosed.
       test:
         - CMD-SHELL
-        - "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+        - "node -e \"fetch('http://127.0.0.1:3000/favicon.ico').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
       interval: 30s
       timeout: 10s
       retries: 5
