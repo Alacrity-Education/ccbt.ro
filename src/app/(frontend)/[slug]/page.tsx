@@ -9,7 +9,6 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
-import { PageMotif } from '@/components/PageMotif'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -74,16 +73,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       <RenderHero {...hero} />
 
-      {/* The motif starts where the hero ends and runs to the foot of the page,
-          one element spanning every block rather than one per section — which is
-          what stops it being clipped at each section boundary.
-
-          The page's bottom padding belongs to this box rather than the article:
-          the ribbon is sized to it, so left outside it the motif stopped short
-          and left a gap above the footer. Here it runs the last stretch too and
-          ends flush where the footer begins. */}
+      {/* The ribbons are drawn per run of blocks that show them, inside
+          RenderBlocks, which is the only place that knows which blocks those
+          are. This box just establishes the stacking context they sit behind
+          and carries the page's bottom padding. */}
       <div className="relative isolate pb-24" data-motif-lane>
-        <PageMotif />
         <RenderBlocks blocks={layout ?? []} />
       </div>
     </article>
