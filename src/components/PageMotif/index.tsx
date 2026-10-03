@@ -1,5 +1,7 @@
 import React from "react";
 
+import { cn } from "@/utilities/ui";
+
 import { TeamMotif } from "@/blocks/Team/Motif";
 
 /**
@@ -23,15 +25,27 @@ import { TeamMotif } from "@/blocks/Team/Motif";
  * Below `lg` the lane costs more width than the ribbons are worth, and the
  * blocks that want a motif there draw their own.
  */
-export const PageMotif: React.FC = () => (
+export const PageMotif: React.FC<{ meetsAbove?: boolean }> = ({
+  meetsAbove = false,
+}) => (
   <div
     aria-hidden
-    // Spans its run exactly. `top-0`, not a negative top: the first run begins
-    // where the hero ends, and pulling the rail above it puts the ribbon over
-    // the hero's purple transition strip. The small bottom overhang covers the
-    // hairline the clip would otherwise leave at the run's last edge; anything
-    // more reaches into the gap below the run, which is what used to show.
-    className="pointer-events-none absolute top-0 -bottom-1 right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]"
+    className={cn(
+      "pointer-events-none absolute right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]",
+      // Reaches past its run by the gap between blocks, so the ribbon is cut by
+      // the edge of whatever comes next instead of stopping in open space. Cut
+      // against a block it reads as passing behind it; cut in the white between
+      // two, it reads as snapped off. The overhang is BLOCK_MARGIN exactly (see
+      // blocks/RenderBlocks) — the last block's margin is what separates a run
+      // from the next block, and below the last run it is the lane's own bottom
+      // padding, which is the same measure and ends at the footer.
+      "-bottom-24",
+      // `top-0` for the first run, which begins where the hero ends: pulling
+      // the rail above it would put the ribbon over the hero's purple
+      // transition strip. Any later run has an opaque block above it to be cut
+      // against, so it reaches up the same way it reaches down.
+      meetsAbove ? "-top-24" : "top-0",
+    )}
   >
     <TeamMotif uid="page" className="h-auto w-full" />
   </div>

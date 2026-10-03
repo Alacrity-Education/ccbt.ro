@@ -172,7 +172,7 @@ export const RenderBlocks: React.FC<{
           // One ribbon per run, spanning exactly the blocks that show it.
           // See components/PageMotif for why it is scoped this way.
           <div className="relative" key={`run-${i}`}>
-            <PageMotif />
+            <PageMotif meetsAbove={i > 0} />
             {run.nodes}
           </div>
         ),
