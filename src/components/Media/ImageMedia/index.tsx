@@ -8,10 +8,7 @@ import React from 'react'
 
 import type { Props as MediaProps } from '../types'
 
-import { cssVariables } from '@/cssVariables'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-
-const { breakpoints } = cssVariables
 
 // A base64 encoded image to use as a placeholder while the image is loading
 const placeholderBlur =
@@ -49,12 +46,18 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
-  const sizes = sizeFromProps
-    ? sizeFromProps
-    : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
-        .join(', ')
+  /**
+   * How wide the image will actually be drawn, which is what the browser picks
+   * a srcset candidate from.
+   *
+   * This used to be generated from the breakpoints as `(max-width: 1920px)
+   * 3840w, ...`. `sizes` takes lengths, not the `w` descriptors a srcset takes,
+   * so none of it parsed and every browser fell back to `100vw` — on a 1440px
+   * window that meant a ~1-2MB download for a card drawn 317px wide. `100vw` is
+   * the same fallback, now said honestly, and a caller that knows better should
+   * say so: anything laid out in a grid or a column is the one that can.
+   */
+  const sizes = sizeFromProps ?? '100vw'
 
   // Next's `fill` requires the parent (<picture>) to be positioned. If the caller
   // didn't already set a position (e.g. absolute for full-bleed heroes), default
@@ -71,7 +74,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         placeholder="blur"
         blurDataURL={placeholderBlur}
         priority={priority}
-        quality={100}
+        // 100 re-encodes photographs at several times the bytes of 80 for a
+        // difference that does not survive being looked at. Listed in
+        // next.config.js — Next answers 400 for a quality it was not given.
+        quality={80}
         loading={loading}
         sizes={sizes}
         src={src}

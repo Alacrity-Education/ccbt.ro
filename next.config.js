@@ -10,10 +10,10 @@ const nextConfig = {
   output: 'standalone',
   images: {
     dangerouslyAllowLocalIP:true,
-    // ImageMedia requests quality 100. Next only serves qualities listed here and
-    // answers 400 for anything else, so omitting it breaks every image that
-    // component renders — not just a warning.
-    qualities: [75, 100],
+    // ImageMedia requests quality 80. Next only serves qualities listed here and
+    // answers 400 for anything else, so omitting the one it asks for breaks
+    // every image that component renders — not just a warning.
+    qualities: [75, 80],
     remotePatterns: [
 
       ...[process.env.NEXT_PUBLIC_SERVER_URL].map((item) => {
