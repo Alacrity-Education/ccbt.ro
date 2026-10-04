@@ -6,6 +6,7 @@ import type { TeamBlock as TeamBlockProps } from "@/payload-types";
 import { CMSLink } from "@/components/Link";
 import { Media } from "@/components/Media";
 import { brandSurface, type BrandColor } from "@/utilities/brand";
+import { headingId } from "@/utilities/headingId";
 import { cn } from "@/utilities/ui";
 
 import { TeamMotif } from "./Motif";
@@ -100,19 +101,27 @@ const MemberCard: React.FC<{ member: Member; color?: string | null }> = ({
  * The department's label: a solid pill in the department's colour. It used to
  * carry a second rectangle offset behind it, the same two-layer treatment as the
  * site's button; that layer is gone and the pill stands on its own.
+ *
+ * It carries the same kind of id a rich text heading does (see
+ * utilities/headingId), so a single department can be linked to rather than
+ * only the page it sits on. The label is written by hand here rather than by
+ * the lexical converter, so it has to ask for one itself.
  */
 const DepartmentLabel: React.FC<{ name: string; color?: string | null }> = ({
   name,
   color,
 }) => {
   const { surface } = pairFor(color);
+  const id = headingId(name);
 
   return (
     <p
       className={cn(
-        "font-barlow-semi mb-6 inline-block rounded-sm px-8 py-1.5 text-lg font-semibold sm:text-xl",
+        // scroll-mt-24 clears the fixed header when linked to directly.
+        "font-barlow-semi mb-6 inline-block scroll-mt-24 rounded-sm px-8 py-1.5 text-lg font-semibold sm:text-xl",
         brandSurface(surface),
       )}
+      id={id || undefined}
     >
       {name}
     </p>
