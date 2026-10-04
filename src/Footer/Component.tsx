@@ -24,7 +24,10 @@ export async function Footer() {
 
   return (
     <footer className="text-primary bg-base-300 z-10 ">
-      <div className="container mx-auto px-6 py-16 lg:py-20">
+      {/* No top padding: the page motif is cut by this footer's top edge, and
+          an empty band above the first row made that cut look arbitrary — the
+          ribbon now runs into the content rather than into blank fill. */}
+      <div className="container mx-auto px-6 pb-16 lg:pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand and first section under it */}
           <div className="space-y-10">
