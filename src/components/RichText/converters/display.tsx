@@ -1,6 +1,7 @@
 import type { JSXConvertersFunction } from "@payloadcms/richtext-lexical/react";
 
 import { baseConverters, type NodeTypes } from "./base";
+import { headingId, nodeText } from "@/utilities/headingId";
 
 /**
  * The Archive "Text" variant's intro column, which used to be three separate
@@ -27,8 +28,16 @@ export const displayConverters: JSXConvertersFunction<NodeTypes> = (args) => {
     heading: ({ node, nodesToJSX }) => {
       const children = nodesToJSX({ nodes: node.children });
 
+      // The eyebrow is a label rather than a destination, so it gets no id.
       if (node.tag === "h3") return <p className={EYEBROW}>{children}</p>;
-      if (node.tag === "h2") return <h2 className={DISPLAY_TITLE}>{children}</h2>;
+      if (node.tag === "h2") {
+        const id = headingId(nodeText(node.children));
+        return (
+          <h2 className={`${DISPLAY_TITLE} scroll-mt-24`} id={id || undefined}>
+            {children}
+          </h2>
+        );
+      }
 
       const Tag = node.tag;
       return <Tag>{children}</Tag>;

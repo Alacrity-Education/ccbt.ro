@@ -23,6 +23,7 @@ import { CallToActionBlock } from "@/blocks/CallToAction/Component";
 import { MediaBlock } from "@/blocks/MediaBlock/Component";
 import { StaticMapBlock } from "@/blocks/StaticMap/Component";
 import { CMSLink } from "@/components/Link";
+import { headingId, nodeText } from "@/utilities/headingId";
 
 import { TextStateJSXConverter } from "./textState";
 
@@ -72,6 +73,28 @@ export const baseConverters: JSXConvertersFunction<NodeTypes> = ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   ...TextStateJSXConverter,
+  /**
+   * A heading, carrying the fragment it can be linked to.
+   *
+   * Two headings with the same words get the same id and the browser goes to
+   * the first. That is deliberate over a counted suffix, which would have to be
+   * numbered during the render and so could come out differently in the
+   * server's pass and the client's — a hydration mismatch rather than a nicer
+   * link.
+   *
+   * `scroll-mt-24` is what the fixed header costs: without it the browser puts
+   * the heading at the very top of the viewport, behind the header.
+   */
+  heading: ({ node, nodesToJSX }) => {
+    const Tag = node.tag;
+    const id = headingId(nodeText(node.children));
+
+    return (
+      <Tag className="scroll-mt-24" id={id || undefined}>
+        {nodesToJSX({ nodes: node.children })}
+      </Tag>
+    );
+  },
   blocks: {
     banner: ({ node }) => (
       <BannerBlock className="col-start-2 mb-4" {...node.fields} />
