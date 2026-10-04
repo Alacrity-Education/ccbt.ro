@@ -75,9 +75,14 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {/* The ribbons are drawn per run of blocks that show them, inside
           RenderBlocks, which is the only place that knows which blocks those
-          are. This box just establishes the stacking context they sit behind
-          and carries the page's bottom padding. */}
-      <div className="relative isolate pb-24" data-motif-lane>
+          are. This box just establishes the stacking context they sit behind.
+
+          No bottom padding: it existed to give the ribbon room to reach the
+          footer, which it now does by overhanging its own run. Left on, it was
+          a second block-margin of dead white between the last block and the
+          footer, and the last block's margin already spaces the two the same
+          as any other pair. */}
+      <div className="relative isolate" data-motif-lane>
         <RenderBlocks blocks={layout ?? []} />
       </div>
     </article>

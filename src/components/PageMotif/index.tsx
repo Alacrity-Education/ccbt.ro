@@ -25,27 +25,23 @@ import { TeamMotif } from "@/blocks/Team/Motif";
  * Below `lg` the lane costs more width than the ribbons are worth, and the
  * blocks that want a motif there draw their own.
  */
-export const PageMotif: React.FC<{
-  meetsAbove?: boolean;
-  endsPage?: boolean;
-}> = ({ meetsAbove = false, endsPage = false }) => (
+export const PageMotif: React.FC<{ meetsAbove?: boolean }> = ({
+  meetsAbove = false,
+}) => (
   <div
     aria-hidden
     className={cn(
       "pointer-events-none absolute right-0 -z-10 hidden w-[200px] overflow-hidden lg:block xl:w-[250px]",
-      // Reaches past its run, so the ribbon is cut by the edge of whatever comes
-      // next instead of stopping in open space. Cut against a block it reads as
-      // passing behind it; cut in the white between two, it reads as snapped
-      // off.
+      // Reaches past its run by one BLOCK_MARGIN (see blocks/RenderBlocks), so
+      // the ribbon is cut by the edge of whatever comes next instead of
+      // stopping in open space. Cut against a block it reads as passing behind
+      // it; cut in the white between two, it reads as snapped off.
       //
-      // A run in the body of the page is one BLOCK_MARGIN from the next block
-      // (see blocks/RenderBlocks). The last run is further from the footer than
-      // that: the last block's margin *and* the lane's own bottom padding lie
-      // between them, which is the same measure again (see the page template).
-      // Reaching only one of the two is what left the ribbon short of the
-      // footer. Overshooting costs nothing — the footer is opaque and cuts it —
-      // so erring long here is deliberate.
-      endsPage ? "-bottom-48" : "-bottom-24",
+      // One measure is enough everywhere, including the last run: a block
+      // margin is all that separates the last block from the footer too, now
+      // that the lane carries no bottom padding of its own (see the page
+      // template).
+      "-bottom-24",
       // `top-0` for the first run, which begins where the hero ends: pulling
       // the rail above it would put the ribbon over the hero's purple
       // transition strip. Any later run has an opaque block above it to be cut
