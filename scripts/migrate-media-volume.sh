@@ -64,12 +64,19 @@ if [ "$dst_count" -ne 0 ] && [ "$FORCE" != "--force" ]; then
 fi
 
 echo "copying…"
-# cp -a preserves ownership and timestamps; the app runs as uid 1001 (nextjs)
-# and cannot write into files owned by root.
+# cp -a preserves timestamps — and ownership, which is the catch. The app runs
+# as uid 1001 (nextjs, see the Dockerfile) and cannot write into a directory
+# owned by root, so a faithful copy produces a site that serves every existing
+# upload and refuses every new one with EACCES. Handing the volume over
+# afterwards is what makes it usable, not just present.
 docker run --rm \
   -v "$SRC":/from:ro \
   -v "$DST":/to \
   busybox sh -c 'cp -a /from/. /to/'
+
+echo "handing the volume to uid 1001…"
+"$(dirname "$0")/fix-media-permissions.sh" "$DST" >/dev/null \
+  || die "copied, but could not give the volume to uid 1001 — run scripts/fix-media-permissions.sh $DST"
 
 final_count=$(count_files "$DST")
 echo "destination : $DST  — $final_count files, $(size_of "$DST")"
