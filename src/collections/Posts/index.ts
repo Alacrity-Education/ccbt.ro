@@ -82,17 +82,90 @@ export const Posts: CollectionConfig<'posts'> = {
       tabs: [
         {
           fields: [
+            /**
+             * The post's hero, as one or more slides.
+             *
+             * One slide is an ordinary post hero and looks exactly as it always
+             * has; more than one cycles between them. The post's own title,
+             * categories, author and date stay put across the whole run — a
+             * post is one article, so only what sits behind it changes.
+             *
+             * The two single-image fields below predate this and still render
+             * when no slide has been added, so no post had to be touched to
+             * keep working. A post that has slides ignores them.
+             */
+            {
+              name: 'heroSlides',
+              label: 'Hero slides',
+              type: 'array',
+              minRows: 0,
+              maxRows: 10,
+              admin: {
+                initCollapsed: true,
+                description:
+                  'One slide renders as a normal hero; add more to make it cycle. Leave empty to use the single hero image below.',
+              },
+              fields: [
+                {
+                  name: 'media',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Image — desktop',
+                },
+                {
+                  name: 'mediaMobile',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Image — mobile',
+                  admin: {
+                    description:
+                      'Optional portrait crop for phones; the desktop image is used when empty.',
+                  },
+                },
+                {
+                  name: 'overlayColor',
+                  type: 'select',
+                  label: 'Overlay colour',
+                  defaultValue: 'purple',
+                  options: [
+                    ...brandOptions(HERO_COLORS),
+                    { label: 'None — no overlay', value: 'none' },
+                  ],
+                  admin: {
+                    description:
+                      'The wash that keeps the title legible, or none to leave the image untinted.',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'heroSlideTimeout',
+              type: 'number',
+              label: 'Time per slide',
+              min: 4000,
+              max: 16000,
+              defaultValue: 6000,
+              admin: {
+                description: 'Milliseconds. Only used when there is more than one slide.',
+              },
+            },
             {
               name: 'heroImageMD',
               label: 'Hero Image (Desktop)',
               type: 'upload',
               relationTo: 'media',
+              admin: {
+                description: 'Used only when no hero slides have been added.',
+              },
             },
             {
               name: 'heroImageSM',
               label: 'Hero Image (Mobile)',
               type: 'upload',
               relationTo: 'media',
+              admin: {
+                description: 'Used only when no hero slides have been added.',
+              },
             },
             {
               name: 'content',
@@ -183,10 +256,11 @@ export const Posts: CollectionConfig<'posts'> = {
       type: 'select',
       label: 'Hero overlay colour',
       defaultValue: 'purple',
-      options: brandOptions(HERO_COLORS),
+      options: [...brandOptions(HERO_COLORS), { label: 'None — no overlay', value: 'none' }],
       admin: {
         position: 'sidebar',
-        description: 'The wash over the hero image that keeps the title legible.',
+        description:
+          'The wash over the hero image that keeps the title legible. Used only when no hero slides have been added — a slide carries its own.',
       },
     },
     {

@@ -2,7 +2,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import type { Page } from "@/payload-types";
 import { CMSLink } from "@/components/Link";
-import { resolveColor, type HeroColor } from "@/heros/heroColor";
+import { resolveColor, type HeroOverlay } from "@/heros/heroColor";
 import { HeroScrim } from "@/heros/HeroScrim";
 import { HeroBackdrop } from "@/heros/HeroBackdrop";
 
@@ -21,7 +21,7 @@ type SlideControls = {
   timeout?: number | null;
 };
 
-export const SlidingHero: React.FC<Page["hero"] & { color?: HeroColor }> = ({
+export const SlidingHero: React.FC<Page["hero"] & { color?: HeroOverlay }> = ({
   slides,
   timeout,
   color = "purple",
@@ -117,13 +117,13 @@ const Slide = ({
   priority = false,
 }: {
   slide: slideType;
-  fallbackColor: HeroColor;
+  fallbackColor: HeroOverlay;
   priority?: boolean;
 }) => {
   const { media, mediaMobile, objectFit, title, subtitle, cta } = slide;
   // Each slide sets its own gradient color; fall back to the hero-level color.
   const { bg, dark } = resolveColor(
-    (slide.color as HeroColor) ?? fallbackColor,
+    (slide.color as HeroOverlay) ?? fallbackColor,
   );
 
   return (

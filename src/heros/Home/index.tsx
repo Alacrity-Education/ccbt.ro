@@ -6,14 +6,18 @@ import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
 import { HeroScrim } from "@/heros/HeroScrim";
 import { HeroBackdrop } from "@/heros/HeroBackdrop";
-import { resolveColor, type HeroColor } from "@/heros/heroColor";
+import {
+  resolveColor,
+  type HeroColor,
+  type HeroOverlay,
+} from "@/heros/heroColor";
 
 export type HeroImpact = "high" | "medium" | "low";
 export type { HeroColor };
 
 type HeroProps = Page["hero"] & {
   impact: HeroImpact;
-  color: HeroColor;
+  color: HeroOverlay;
 };
 
 type HeroContent = {

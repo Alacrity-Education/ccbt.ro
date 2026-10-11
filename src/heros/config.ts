@@ -20,6 +20,17 @@ const SELECTABLE_COLOR = ['homeHero', 'highImpactHero']
  * background showing around it — which is what a poster or a logo needs, since
  * cropping those cuts into the artwork.
  */
+/**
+ * The wash drawn over a hero's media to keep its copy legible.
+ *
+ * `none` leaves the media bare, which is what a picture that is already dark
+ * enough — or one that must not be tinted at all — needs. It is offered only
+ * where the colour is used as an overlay: the Medium and Low Impact heroes
+ * paint it as their surface instead, and read `none` as the neutral base (see
+ * heros/RenderHero).
+ */
+const OVERLAY_NONE = { label: 'None — no overlay', value: 'none' }
+
 const OBJECT_FIT_OPTIONS = [
   { label: 'Cover — fill the frame, cropping the edges', value: 'cover' },
   { label: 'Contain — fit the whole image, letterboxed', value: 'contain' },
@@ -66,10 +77,10 @@ export const hero: Field = {
       type: 'select',
       label: 'Background color',
       defaultValue: 'base',
-      options: brandOptions(HERO_COLORS),
+      options: [...brandOptions(HERO_COLORS), OVERLAY_NONE],
       admin: {
         description:
-          'Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact).',
+          'Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact). "None" removes the gradient; Medium Impact falls back to the neutral base.',
         condition: (_, { type } = {}) => SELECTABLE_COLOR.includes(type),
       },
     },
@@ -164,8 +175,10 @@ export const hero: Field = {
           type: 'select',
           label: 'Background color',
           defaultValue: 'purple',
-          options: brandOptions(GRADIENT_COLORS),
-          admin: { description: 'Gradient color for this slide.' },
+          options: [...brandOptions(GRADIENT_COLORS), OVERLAY_NONE],
+          admin: {
+            description: 'Gradient color for this slide, or none for no overlay.',
+          },
         },
         {
           name: 'media',

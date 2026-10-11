@@ -34,6 +34,21 @@ const normalizePath = (value: string) => {
   return trimmed === "/home" ? "/" : trimmed;
 };
 
+/**
+ * Closes whichever desktop dropdown is open.
+ *
+ * These are daisyUI dropdowns, which stay open while something inside them has
+ * focus. Clicking a link puts focus on that link, so the menu was still hanging
+ * open over the page it had just navigated to. Dropping focus is what closes
+ * it — the same gesture also closes one dropdown when a different one is
+ * clicked, since focus can only be in one of them.
+ */
+const closeDropdowns = () => {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+};
+
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || [];
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -85,6 +100,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               <div
                 tabIndex={0}
                 role="button"
+                onClick={closeDropdowns}
                 className="font-barlow text-primary flex items-center gap-1 text-[22px] font-semibold hover:cursor-pointer"
               >
                 <FiChevronRight
@@ -95,6 +111,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               </div>
               <ul
                 tabIndex={0}
+                onClick={closeDropdowns}
                 className="menu dropdown-content rounded-box bg-base-100 z-10 mt-3 w-60 p-1 shadow-sm before:absolute before:inset-x-0 before:-top-3 before:h-3 before:content-['']"
               >
                 {(subItems || []).map((sub: any, idx: number) => (
@@ -187,7 +204,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               if (itemType === "parent") {
                 return (
                   <li key={i}>
-                    <details>
+                    <details name="mobile-nav">
                       <summary className="font-barlow justify-start pl-6 text-left text-[22px] font-semibold text-black">
                         {link?.label || "Menu"}
                       </summary>

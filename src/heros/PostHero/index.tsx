@@ -5,17 +5,35 @@ import type { Post } from "@/payload-types";
 
 import { Media } from "@/components/Media";
 import { formatAuthors } from "@/utilities/formatAuthors";
-import { resolveColor, type HeroColor } from "@/heros/heroColor";
+import { resolveColor, type HeroOverlay } from "@/heros/heroColor";
 import { HeroScrim } from "@/heros/HeroScrim";
-import {cn} from "@/utilities/ui";
+import { PostHeroSlides } from "./PostHeroSlides";
+import { cn } from "@/utilities/ui";
 
 export const PostHero: React.FC<{
   post: Post;
 }> = ({ post }) => {
-  const { categories, heroImageMD,heroImageSM, populatedAuthors, publishedAt, title, subtitle, heroOverlayColor } = post;
+  const {
+    categories,
+    heroImageMD,
+    heroImageSM,
+    populatedAuthors,
+    publishedAt,
+    title,
+    subtitle,
+    heroOverlayColor,
+    heroSlides,
+    heroSlideTimeout,
+  } = post;
 
   // Same wash the page heroes use, so a post reads as part of the same family.
-  const { bg } = resolveColor((heroOverlayColor as HeroColor) ?? "purple");
+  const { bg } = resolveColor((heroOverlayColor as HeroOverlay) ?? "purple");
+
+  // A slide with no picture in it would cycle to a blank frame, so an empty row
+  // left behind in the admin is not one.
+  const slides = (heroSlides ?? []).filter(
+    (slide) => slide.media || slide.mediaMobile,
+  );
 
   const hasAuthors =
     populatedAuthors &&
@@ -35,10 +53,14 @@ export const PostHero: React.FC<{
   // cost it that much visible height.
   const heightClass = "min-h-[80svh]";
 
-
   return (
-    <div className={cn(heightClass, "relative flex w-full items-end overflow-hidden")}>
-      <div className="relative z-10 container pb-8 z-10 text-white lg:grid lg:grid-cols-[1fr_48rem_1fr]">
+    <div
+      className={cn(
+        heightClass,
+        "relative flex w-full items-end overflow-hidden",
+      )}
+    >
+      <div className="relative z-10 container pb-8 text-white lg:grid lg:grid-cols-[1fr_48rem_1fr]">
         <div className="col-span-1 col-start-1 md:col-span-2 md:col-start-2">
           <div className="mb-6 text-sm uppercase">
             {categories?.map((category, index) => {
@@ -63,9 +85,13 @@ export const PostHero: React.FC<{
           <div className="">
             <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{title}</h1>
           </div>
-          {subtitle && <div className="">
-            <h1 className="mb-6 text-xl md:text-3xl lg:text-4xl">{subtitle}</h1>
-          </div>}
+          {subtitle && (
+            <div className="">
+              <h1 className="mb-6 text-xl md:text-3xl lg:text-4xl">
+                {subtitle}
+              </h1>
+            </div>
+          )}
           <div className="flex flex-col gap-4 md:flex-row md:gap-16">
             {hasAuthors && (
               <div className="flex flex-col gap-4">
@@ -88,34 +114,42 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className="absolute inset-0 h-full w-full select-none">
+      {/* Slides, when the post has any. The two single-image fields below are
+          what every post used before slides existed and still render for the
+          ones that have not been moved over — see collections/Posts. */}
+      {slides.length > 0 && (
+        <PostHeroSlides slides={slides} timeout={heroSlideTimeout} />
+      )}
 
-        {/* MD Image: Shows on md+ screens if both exist, otherwise shows everywhere */}
-        {hasMD && (
-          <Media
-            fill
-            priority
-            className={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
-            imgClassName="z-0 object-cover"
-            pictureClassName={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
-            resource={heroImageMD}
-          />
-        )}
+      {slides.length === 0 && (
+        <div className="absolute inset-0 h-full w-full select-none">
+          {/* MD Image: Shows on md+ screens if both exist, otherwise shows everywhere */}
+          {hasMD && (
+            <Media
+              fill
+              priority
+              className={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
+              imgClassName="z-0 object-cover"
+              pictureClassName={`h-full w-full ${hasSM ? "hidden md:block" : "block"}`}
+              resource={heroImageMD}
+            />
+          )}
 
-        {/* SM Image: Shows on mobile if both exist, otherwise shows everywhere */}
-        {hasSM && (
-          <Media
-            fill
-            priority
-            className={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
-            imgClassName="z-0 object-cover"
-            pictureClassName={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
-            resource={heroImageSM}
-          />
-        )}
+          {/* SM Image: Shows on mobile if both exist, otherwise shows everywhere */}
+          {hasSM && (
+            <Media
+              fill
+              priority
+              className={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
+              imgClassName="z-0 object-cover"
+              pictureClassName={`h-full w-full ${hasMD ? "block md:hidden" : "block"}`}
+              resource={heroImageSM}
+            />
+          )}
 
-        <HeroScrim color={bg} />
-      </div>
+          <HeroScrim color={bg} />
+        </div>
+      )}
     </div>
   );
 };

@@ -13,21 +13,27 @@ import React from "react";
  * whole way: carried to 100% the wash greys the entire image, and the half of the
  * frame with no text over it has nothing to be legible against.
  */
-export const HeroScrim: React.FC<{ color: string }> = ({ color }) => (
-  <>
-    <div
-      aria-hidden
-      className="absolute inset-0 z-0 sm:hidden"
-      style={{
-        background: `linear-gradient(to top, ${color} 0%, color-mix(in srgb, ${color} 60%, transparent) 32%, transparent 62%)`,
-      }}
-    />
-        <div
-      aria-hidden
-      className="absolute inset-0 z-0 hidden sm:block"
-      style={{
-        background: `linear-gradient(to top, ${color} 0%, color-mix(in srgb, ${color} 40%, transparent) 32%, transparent 62%)`,
-      }}
-    />
-  </>
-);
+export const HeroScrim: React.FC<{ color?: string }> = ({ color }) => {
+  // The hero's colour can be "none", which resolves to nothing to paint with.
+  // The media then carries the hero unwashed — see heros/heroColor.
+  if (!color) return null;
+
+  return (
+    <>
+      <div
+        aria-hidden
+        className="absolute inset-0 z-0 sm:hidden"
+        style={{
+          background: `linear-gradient(to top, ${color} 0%, color-mix(in srgb, ${color} 60%, transparent) 32%, transparent 62%)`,
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 z-0 hidden sm:block"
+        style={{
+          background: `linear-gradient(to top, ${color} 0%, color-mix(in srgb, ${color} 40%, transparent) 32%, transparent 62%)`,
+        }}
+      />
+    </>
+  );
+};

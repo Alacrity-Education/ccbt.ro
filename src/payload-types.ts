@@ -13,9 +13,9 @@
 export type Slides =
   | {
       /**
-       * Gradient color for this slide.
+       * Gradient color for this slide, or none for no overlay.
        */
-      color?: ('purple' | 'coral' | 'cyan') | null;
+      color?: ('purple' | 'coral' | 'cyan' | 'none') | null;
       media?: (number | null) | Media;
       /**
        * Optional portrait crop for phones; the desktop image is used when empty.
@@ -225,9 +225,9 @@ export interface Page {
   hero: {
     type: 'none' | 'homeHero' | 'highImpactHero' | 'lowImpact' | 'slidingHero';
     /**
-     * Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact).
+     * Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact). "None" removes the gradient; Medium Impact falls back to the neutral base.
      */
-    bgColor?: ('base' | 'purple' | 'coral' | 'cyan') | null;
+    bgColor?: ('base' | 'purple' | 'coral' | 'cyan' | 'none') | null;
     title?: string | null;
     subtitle?: string | null;
     body?: string | null;
@@ -314,7 +314,34 @@ export interface Post {
   id: number;
   title: string;
   subtitle?: string | null;
+  /**
+   * One slide renders as a normal hero; add more to make it cycle. Leave empty to use the single hero image below.
+   */
+  heroSlides?:
+    | {
+        media?: (number | null) | Media;
+        /**
+         * Optional portrait crop for phones; the desktop image is used when empty.
+         */
+        mediaMobile?: (number | null) | Media;
+        /**
+         * The wash that keeps the title legible, or none to leave the image untinted.
+         */
+        overlayColor?: ('base' | 'purple' | 'coral' | 'cyan' | 'none') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Milliseconds. Only used when there is more than one slide.
+   */
+  heroSlideTimeout?: number | null;
+  /**
+   * Used only when no hero slides have been added.
+   */
   heroImageMD?: (number | null) | Media;
+  /**
+   * Used only when no hero slides have been added.
+   */
   heroImageSM?: (number | null) | Media;
   content: {
     root: {
@@ -342,9 +369,9 @@ export interface Post {
     description?: string | null;
   };
   /**
-   * The wash over the hero image that keeps the title legible.
+   * The wash over the hero image that keeps the title legible. Used only when no hero slides have been added — a slide carries its own.
    */
-  heroOverlayColor?: ('base' | 'purple' | 'coral' | 'cyan') | null;
+  heroOverlayColor?: ('base' | 'purple' | 'coral' | 'cyan' | 'none') | null;
   /**
    * Purple strip between the hero and the article, plus the woven ribbon running down beside it. On by default; switch off to hide it for this post.
    */
@@ -1871,6 +1898,15 @@ export interface TeamBlockSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
+  heroSlides?:
+    | T
+    | {
+        media?: T;
+        mediaMobile?: T;
+        overlayColor?: T;
+        id?: T;
+      };
+  heroSlideTimeout?: T;
   heroImageMD?: T;
   heroImageSM?: T;
   content?: T;
