@@ -26,6 +26,15 @@ import { brandSurface, type SurfaceColor } from "@/utilities/brand";
  * The 3D is written inline rather than in utilities: `transform-style` and
  * `backface-visibility` have to agree across three elements, and spelling that
  * out here keeps the whole mechanism in one place.
+ *
+ * `backface-visibility` alone is not trusted to do the hiding. It is quietly
+ * ignored whenever something in the ancestry flattens the 3D context — an
+ * `overflow`, a `filter`, an `opacity` — and when it is ignored the two faces
+ * are simply stacked: the front shows through the back, mirrored, with both
+ * icons and both titles on screen at once. So each face is also faded out and
+ * made `invisible` when it is the one facing away, which hides it whether or
+ * not the 3D context survived. The fade is timed to the half-turn, so the swap
+ * happens while the card is edge-on and is never seen.
  */
 export const FlipCard: React.FC<{
   title?: string | null;
@@ -46,7 +55,18 @@ export const FlipCard: React.FC<{
   const colorClass = brandSurface(color, "coral");
 
   const face =
-    "absolute inset-0 flex flex-col overflow-hidden rounded-box p-6 text-left";
+    "absolute inset-0 flex flex-col overflow-hidden rounded-box p-6 text-left transition-[opacity,visibility] duration-0";
+
+  /** Hides the face that is turned away, without relying on the 3D context. */
+  const faceState = (showing: boolean): React.CSSProperties => ({
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+    opacity: showing ? 1 : 0,
+    visibility: showing ? "visible" : "hidden",
+    // Swap at the half-turn, when the card is edge-on and neither face is
+    // legible — so the change is never visible, only its result.
+    transitionDelay: "250ms",
+  });
 
   return (
     <button
@@ -68,7 +88,7 @@ export const FlipCard: React.FC<{
         <div
           aria-hidden={flipped}
           className={cn(face, colorClass)}
-          style={{ backfaceVisibility: "hidden" }}
+          style={faceState(!flipped)}
         >
           {backgroundImage && (
             <div
@@ -100,10 +120,7 @@ export const FlipCard: React.FC<{
         <div
           aria-hidden={!flipped}
           className={cn(face, colorClass)}
-          style={{
-            backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-          }}
+          style={{ ...faceState(flipped), transform: "rotateY(180deg)" }}
         >
           <div className="relative z-10 flex items-start justify-end">
             <FiRotateCw
