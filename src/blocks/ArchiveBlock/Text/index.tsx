@@ -37,7 +37,7 @@ export const TextArchiveBlock: React.FC<
     const fetchedPosts = await payload.find({
       collection: "posts",
       depth: 1,
-      sort: "-eventDate",
+      sort: "-publishedAt",
       limit,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? { where: { categories: { in: flattenedCategories } } }

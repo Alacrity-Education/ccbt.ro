@@ -7,6 +7,7 @@ import RichText from "@/components/RichText";
 import type { MediaBlock as MediaBlockProps } from "@/payload-types";
 
 import { Media } from "../../components/Media";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 
 type Props = MediaBlockProps & {
   breakout?: boolean;
@@ -29,8 +30,22 @@ export const MediaBlock: React.FC<Props> = (props) => {
     disableInnerContainer,
   } = props;
 
+  const { youtubeUrl } = props as { youtubeUrl?: string | null };
+
   let caption;
   if (media && typeof media === "object") caption = media.caption;
+
+  // A link beats an upload: the field only appears when the other is empty, but
+  // a block edited before that condition existed could hold both.
+  if (youtubeUrl) {
+    return (
+      <div className="w-full">
+        <div className="container mx-auto">
+          <YouTubeEmbed url={youtubeUrl} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

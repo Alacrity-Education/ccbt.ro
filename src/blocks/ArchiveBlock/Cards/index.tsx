@@ -44,7 +44,7 @@ export const CardsArchiveBlock: React.FC<
     const fetchedPosts = await payload.find({
       collection: "posts",
       depth: 1,
-      sort:"-eventDate",
+      sort: "-publishedAt",
       limit,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
@@ -158,9 +158,9 @@ export const CardsArchiveBlock: React.FC<
                       </div>
                     )}
 
-                    {post.eventDate && (
+                    {post.publishedAt && (
                       <div className="not-prose w-full text-start text-sm mb-4">
-                        {new Date(post.eventDate).toLocaleDateString('en-GB')}
+                        {new Date(post.publishedAt).toLocaleDateString('en-GB')}
                       </div>
                     )}
 

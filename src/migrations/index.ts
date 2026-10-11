@@ -11,6 +11,7 @@ import * as migration_20260916_152042_strip_section_layout_cards_refactor from '
 import * as migration_20261001_151523_show_motif_toggle from './20261001_151523_show_motif_toggle';
 import * as migration_20261003_114909_show_dividers_toggle from './20261003_114909_show_dividers_toggle';
 import * as migration_20261011_191233_hero_overlay_none_and_post_slides from './20261011_191233_hero_overlay_none_and_post_slides';
+import * as migration_20261011_205631_card_variants_flip_youtube_drop_event from './20261011_205631_card_variants_flip_youtube_drop_event';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20261011_191233_hero_overlay_none_and_post_slides.up,
     down: migration_20261011_191233_hero_overlay_none_and_post_slides.down,
-    name: '20261011_191233_hero_overlay_none_and_post_slides'
+    name: '20261011_191233_hero_overlay_none_and_post_slides',
+  },
+  {
+    up: migration_20261011_205631_card_variants_flip_youtube_drop_event.up,
+    down: migration_20261011_205631_card_variants_flip_youtube_drop_event.down,
+    name: '20261011_205631_card_variants_flip_youtube_drop_event'
   },
 ];

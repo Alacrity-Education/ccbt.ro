@@ -9,10 +9,26 @@ import { brandSurface, type SurfaceColor } from "@/utilities/brand";
 
 export type PillarCardColor = SurfaceColor;
 
-// One shape for every card. Aspect sets it; max-h caps how tall a card gets in a
-// wide grid cell. The horizontal variant is gone — two shapes for the same object
-// only ever made a grid of them look unresolved.
-const CARD_SHAPE = "aspect-3/2 max-h-72";
+/**
+ * The two shapes a card can take, chosen once for a whole block rather than per
+ * card — a grid mixing both reads as a mistake, which is why the old per-card
+ * horizontal option was dropped.
+ *
+ * `default` caps its height: in a wide grid cell a 3:2 card would otherwise
+ * grow until it read as a banner. `vertical` is A4's ratio and wants no cap —
+ * the point of it is the height.
+ */
+export const CARD_SHAPES = {
+  default: "aspect-3/2 max-h-72",
+  vertical: "aspect-[210/297]",
+} as const;
+
+export type CardShape = keyof typeof CARD_SHAPES;
+
+export const cardShape = (variant?: string | null): string =>
+  CARD_SHAPES[
+    (variant as CardShape) in CARD_SHAPES ? (variant as CardShape) : "default"
+  ];
 
 type PillarCardProps = {
   title?: string | null;
@@ -25,6 +41,8 @@ type PillarCardProps = {
   /** Body content (rich text, paragraph, etc.). */
   children?: React.ReactNode;
   className?: string;
+  /** Which of CARD_SHAPES the card takes; the block decides for all of them. */
+  shape?: string | null;
 };
 
 /**
@@ -41,14 +59,16 @@ export const PillarCard: React.FC<PillarCardProps> = ({
   backgroundOpacity,
   children,
   className,
+  shape,
 }) => {
   const colorClass = brandSurface(color, "coral");
   const hasHref = withLink && (link?.url || link?.reference);
+  const shapeClass = cardShape(shape);
 
   const inner = (
     <div
       className={cn(
-        "rounded-box relative flex h-full w-full min-h-40 flex-col overflow-hidden p-6",
+        "rounded-box relative flex h-full min-h-40 w-full flex-col overflow-hidden p-6",
         colorClass,
         className,
       )}
@@ -68,7 +88,9 @@ export const PillarCard: React.FC<PillarCardProps> = ({
         </div>
       )}
       <div className="relative z-10 flex items-start justify-between gap-3">
-        {title && <h3 className="text-lg font-semibold sm:text-2xl">{title}</h3>}
+        {title && (
+          <h3 className="text-lg font-semibold sm:text-2xl">{title}</h3>
+        )}
         {hasHref && (
           <FiArrowUpRight
             aria-hidden
@@ -94,7 +116,7 @@ export const PillarCard: React.FC<PillarCardProps> = ({
         appearance="inline"
         className={cn(
           "group block h-full transition-transform duration-200 hover:-translate-y-1",
-          CARD_SHAPE,
+          shapeClass,
         )}
       >
         {inner}
@@ -102,5 +124,5 @@ export const PillarCard: React.FC<PillarCardProps> = ({
     );
   }
 
-  return <div className={cn("h-full", CARD_SHAPE)}>{inner}</div>;
+  return <div className={cn("h-full", shapeClass)}>{inner}</div>;
 };

@@ -376,8 +376,6 @@ export interface Post {
    * Purple strip between the hero and the article, plus the woven ribbon running down beside it. On by default; switch off to hide it for this post.
    */
   showMotif?: boolean | null;
-  isEvent?: boolean | null;
-  eventDate?: string | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   populatedAuthors?:
@@ -843,6 +841,10 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  /**
+   * Paste any YouTube link — watch, youtu.be, embed or Shorts. Leave empty to show the uploaded file instead.
+   */
+  youtubeUrl?: string | null;
   media?: (number | null) | Media;
   showMotif?: boolean | null;
   id?: string | null;
@@ -928,6 +930,7 @@ export interface FormBlock {
  */
 export interface CardBlock {
   title?: string | null;
+  variant?: ('default' | 'vertical') | null;
   cards?:
     | {
         title: string;
@@ -951,6 +954,10 @@ export interface CardBlock {
          * Enable to add a link to the card
          */
         withLink?: boolean | null;
+        /**
+         * The description moves to the back of the card and is revealed by clicking it.
+         */
+        flippable?: boolean | null;
         link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -1701,6 +1708,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  youtubeUrl?: T;
   media?: T;
   showMotif?: T;
   id?: T;
@@ -1749,6 +1757,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface CardBlockSelect<T extends boolean = true> {
   title?: T;
+  variant?: T;
   cards?:
     | T
     | {
@@ -1756,6 +1765,7 @@ export interface CardBlockSelect<T extends boolean = true> {
         description?: T;
         color?: T;
         withLink?: T;
+        flippable?: T;
         link?:
           | T
           | {
@@ -1921,8 +1931,6 @@ export interface PostsSelect<T extends boolean = true> {
       };
   heroOverlayColor?: T;
   showMotif?: T;
-  isEvent?: T;
-  eventDate?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
