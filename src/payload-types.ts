@@ -707,6 +707,10 @@ export interface Form {
                 }[]
               | null;
             required?: boolean | null;
+            /**
+             * Lets the visitor tick several options instead of picking one.
+             */
+            hasMany?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'select';
@@ -739,6 +743,16 @@ export interface Form {
             id?: string | null;
             blockName?: string | null;
             blockType: 'textarea';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'phone';
           }
       )[]
     | null;
@@ -2174,6 +2188,7 @@ export interface FormsSelect<T extends boolean = true> {
                     id?: T;
                   };
               required?: T;
+              hasMany?: T;
               id?: T;
               blockName?: T;
             };
@@ -2199,6 +2214,17 @@ export interface FormsSelect<T extends boolean = true> {
               blockName?: T;
             };
         textarea?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        phone?:
           | T
           | {
               name?: T;

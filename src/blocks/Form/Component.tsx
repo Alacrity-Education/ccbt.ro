@@ -68,9 +68,20 @@ export const FormBlock: React.FC<
       const submitForm = async () => {
         setError(undefined);
 
+        // A submission's value column is a single required string, so two
+        // shapes have to be flattened before they leave here.
+        //
+        // An array — a multiple-choice select — is joined with ", " so it
+        // reads the same in the admin list, in the notification email and in
+        // an export.
+        //
+        // Null is the one a visitor actually hits: an optional select that
+        // nobody touched reports null, the collection rejects it, and the
+        // whole submission comes back as an opaque 500 — every other answer
+        // lost along with it. An empty string saves fine.
         const dataToSend = Object.entries(data).map(([name, value]) => ({
           field: name,
-          value,
+          value: Array.isArray(value) ? value.join(", ") : (value ?? ""),
         }));
 
         // delay loading indicator by 1s
@@ -158,8 +169,18 @@ export const FormBlock: React.FC<
       // Not the checkbox: daisyUI draws that one itself.
       "[&_input:not([type=checkbox])]:bg-base-100 [&_input:not([type=checkbox])]:text-base-content [&_input:not([type=checkbox])]:border-transparent",
       "[&_textarea]:bg-base-100 [&_textarea]:text-base-content [&_textarea]:border-transparent",
-      "[&_[role=combobox]]:border-transparent",
+      // The combobox is the single-choice select's trigger; the group is
+      // the multiple-choice list. Both are white boxes that need no outline
+      // against a saturated panel.
+      "[&_[role=combobox]]:border-transparent [&_[role=group]]:border-transparent",
       "[&_.text-red-500]:text-white!",
+      // Message fields are rich text, and rich text brings its own palette:
+      // body copy in the ink base-content, headings in purple. All three are
+      // near-invisible on these panels, so the whole subtree is pinned to the
+      // panel's own colour. The `!` is needed because the prose modifiers that
+      // set those colours are utilities too.
+      "[&_.payload-richtext]:text-inherit!",
+      "[&_.payload-richtext_*]:text-inherit!",
     ],
   );
 
