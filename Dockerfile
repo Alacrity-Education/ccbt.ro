@@ -64,6 +64,28 @@ RUN mkdir .next && chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Output file tracing does not follow sharp's native binding all the way down:
+# it copies @img/sharp-libvips-linux-x64/lib/index.js and leaves
+# libvips-cpp.so.8.18.3 beside it behind. Without that shared object the
+# require throws, and sharp falls back — silently — to @img/sharp-wasm32.
+#
+# That fallback works, which is what makes it expensive: it needs roughly 1.7x
+# the memory of the native path for the same resize (measured: 220MB vs 127MB
+# peak RSS generating this collection's seven derivatives from a 24MP JPEG) and
+# holds it in one contiguous emscripten heap. On a host with little free memory
+# that heap cannot grow, and every upload dies inside sharp.metadata() as an
+# opaque "There was a problem while uploading the file."
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/@img ./node_modules/@img
+
+# And fail the build rather than ship that fallback again. It costs a second
+# here and it is the only moment the difference is cheap to see.
+RUN node -e "require('/app/node_modules/sharp'); \
+  if (Object.keys(require.cache).some((k) => k.includes('sharp-wasm32'))) { \
+    console.error('sharp resolved to the WASM backend — the native binding did not load'); \
+    process.exit(1); \
+  } \
+  console.log('sharp: native binding OK');"
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000 HOSTNAME=0.0.0.0
