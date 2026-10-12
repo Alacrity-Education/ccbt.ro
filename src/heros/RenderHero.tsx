@@ -55,8 +55,11 @@ export const RenderHero: React.FC<RenderHeroProps> = (props) => {
   return (
     <>
       {hero}
-      {/* Purple transition strip between the hero and the sections below. */}
-      <div className="h-10 w-full bg-primary" />
+      {/* Purple transition strip between the hero and the sections below.
+          Raised deliberately: the first motif run starts one strip-height above
+          the blocks, so without this the ribbon would be drawn across the strip
+          rather than disappearing behind it (see components/PageMotif). */}
+      <div className="relative z-10 h-10 w-full bg-primary" />
     </>
   )
 }

@@ -39,13 +39,6 @@ const STRAIGHT_RUN = 600;
 /** Distance from one crossing to the next. */
 const PITCH = TILE_H + STRAIGHT_RUN;
 
-/**
- * The straight stretch drawn above the first crossing, so the pattern starts on
- * the vertical ribbons rather than mid-weave. Shorter than a full run: the point
- * is to fill the top, not to push the first crossing out of sight.
- */
-const LEAD_RUN = STRAIGHT_RUN / 2;
-
 const RIBBON_W = 73;
 
 /**
@@ -114,7 +107,7 @@ export const TeamMotif: React.FC<{ className?: string; uid: string }> = ({
   return (
     <svg
       className={className}
-      viewBox={`0 0 ${VIEW_W} ${LEAD_RUN + PITCH * TILES}`}
+      viewBox={`0 0 ${VIEW_W} ${PITCH * TILES}`}
       preserveAspectRatio="xMidYMin meet"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -133,30 +126,8 @@ export const TeamMotif: React.FC<{ className?: string; uid: string }> = ({
         </g>
       </defs>
 
-      {/* A straight run before the first crossing.
-          Without it the artwork opens mid-weave, where the ribbons are still
-          travelling diagonally — so the top of the lane is white wedges and the
-          pattern only reads as solid some way down. Against a fixed header that
-          looks like the motif failing to reach it, even though the element is
-          flush. Starting on the vertical stretch puts ribbon in the very first
-          row of pixels.
-
-          The colours are the ones an upright crossing expects to be handed,
-          which is what a mirrored one puts out — the same pairing every other
-          join in the tiling uses. */}
-      {RUN_AFTER_MIRRORED.map((r) => (
-        <rect
-          key={`lead-${r.fill}`}
-          x={r.x}
-          y={0}
-          width={RIBBON_W}
-          height={LEAD_RUN + 0.5}
-          fill={r.fill}
-        />
-      ))}
-
       {Array.from({ length: TILES }, (_, i) => {
-        const top = LEAD_RUN + i * PITCH;
+        const top = i * PITCH;
         const upright = i % 2 === 0;
 
         return (

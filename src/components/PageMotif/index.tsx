@@ -42,11 +42,19 @@ export const PageMotif: React.FC<{ meetsAbove?: boolean }> = ({
       // that the lane carries no bottom padding of its own (see the page
       // template).
       "-bottom-24",
-      // `top-0` for the first run, which begins where the hero ends: pulling
-      // the rail above it would put the ribbon over the hero's purple
-      // transition strip. Any later run has an opaque block above it to be cut
-      // against, so it reaches up the same way it reaches down.
-      meetsAbove ? "-top-24" : "top-0",
+      // The first run starts above its own top rather than at it.
+      //
+      // The lane is already flush with what precedes it, but the artwork inside
+      // is not: the pattern opens mid-weave, so its first rows are thinner than
+      // the full ribbon and read as the motif stopping short of the header.
+      // Starting higher puts those rows behind whatever sits above — the fixed
+      // header on a page with no hero, the hero's purple strip otherwise — so
+      // what shows below is already the full weave.
+      //
+      // Exactly the strip's own height, so it can never reach past it into the
+      // hero itself. The strip is raised above this (see heros/RenderHero), or
+      // the ribbon would cross it instead of passing behind.
+      meetsAbove ? "-top-24" : "-top-10",
     )}
   >
     <TeamMotif uid="page" className="h-auto w-full" />
