@@ -31,7 +31,7 @@ export const Select: React.FC<
   defaultValue,
 }) => {
   return (
-    <Width width={width} className="bg-base-100 text-black">
+    <Width width={width}>
       <Label htmlFor={name}>
         {label}
         {required && (
@@ -52,7 +52,7 @@ export const Select: React.FC<
               onValueChange={(val) => onChange(val)}
               value={controlledValue?.value}
             >
-              <SelectTrigger className="w-full" id={name}>
+              <SelectTrigger className="bg-base-100 w-full text-black" id={name}>
                 <SelectValue placeholder={label} />
               </SelectTrigger>
               <SelectContent className="bg-base-100 text-black">

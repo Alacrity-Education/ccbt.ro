@@ -12,6 +12,7 @@ import * as migration_20261001_151523_show_motif_toggle from './20261001_151523_
 import * as migration_20261003_114909_show_dividers_toggle from './20261003_114909_show_dividers_toggle';
 import * as migration_20261011_191233_hero_overlay_none_and_post_slides from './20261011_191233_hero_overlay_none_and_post_slides';
 import * as migration_20261011_205631_card_variants_flip_youtube_drop_event from './20261011_205631_card_variants_flip_youtube_drop_event';
+import * as migration_20261012_064051_form_block_variant from './20261012_064051_form_block_variant';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20261011_205631_card_variants_flip_youtube_drop_event.up,
     down: migration_20261011_205631_card_variants_flip_youtube_drop_event.down,
-    name: '20261011_205631_card_variants_flip_youtube_drop_event'
+    name: '20261011_205631_card_variants_flip_youtube_drop_event',
+  },
+  {
+    up: migration_20261012_064051_form_block_variant.up,
+    down: migration_20261012_064051_form_block_variant.down,
+    name: '20261012_064051_form_block_variant'
   },
 ];

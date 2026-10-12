@@ -13,6 +13,23 @@ export const FormBlock: Block = {
       relationTo: 'forms',
       required: false,
     },
+    /**
+     * How the form's panel is drawn. The two coloured ones are solid brand
+     * surfaces, which means the controls inside have to change with them — the
+     * component inverts the labels, fields and button rather than leaving dark
+     * text on a dark panel (see Component.tsx).
+     */
+    {
+      name: 'variant',
+      type: 'select',
+      label: 'Variant',
+      defaultValue: 'default',
+      options: [
+        { label: 'Default — outlined', value: 'default' },
+        { label: 'Purple', value: 'purple' },
+        { label: 'Coral', value: 'coral' },
+      ],
+    },
     {
       name: 'showTitle',
       type: 'checkbox',

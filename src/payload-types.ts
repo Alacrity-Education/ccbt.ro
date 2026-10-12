@@ -902,6 +902,7 @@ export interface ArchiveBlock {
  */
 export interface FormBlock {
   form?: (number | null) | Form;
+  variant?: ('default' | 'purple' | 'coral') | null;
   showTitle?: boolean | null;
   enableIntro?: boolean | null;
   introContent?: {
@@ -1744,6 +1745,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  */
 export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
+  variant?: T;
   showTitle?: T;
   enableIntro?: T;
   introContent?: T;

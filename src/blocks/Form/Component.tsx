@@ -13,6 +13,8 @@ import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
 
 import { fields } from "./fields";
 import { getClientSideURL } from "@/utilities/getURL";
+import { cn } from "@/utilities/ui";
+import { brandSurface } from "@/utilities/brand";
 
 export type FormBlockType = {
   blockName?: string;
@@ -130,6 +132,37 @@ export const FormBlock: React.FC<
     [router, formID, redirect, confirmationType],
   );
 
+  const { variant } = props as { variant?: string | null };
+  const onBrand = variant === "purple" || variant === "coral";
+
+  /**
+   * The panel.
+   *
+   * The two brand variants are solid, saturated surfaces, so every control on
+   * them has to be re-stated: a label in the body colour, a field with the
+   * page's own border, and a coral button on a coral panel all disappear. The
+   * fields become white boxes — the most legible thing on either colour, and
+   * the one treatment that reads the same on both — and the error text goes
+   * white, since red on coral is barely a colour change.
+   *
+   * Written as descendant selectors rather than threading a variant through
+   * every field component: the fields are shared with the rest of the site and
+   * have no reason to know what they are sitting on.
+   */
+  const panelClass = cn(
+    "rounded-box p-4 lg:p-6",
+    !onBrand && "border-primary/30 border",
+    onBrand && brandSurface(variant, "purple"),
+    onBrand && [
+      "[&_label]:text-inherit",
+      // Not the checkbox: daisyUI draws that one itself.
+      "[&_input:not([type=checkbox])]:bg-base-100 [&_input:not([type=checkbox])]:text-base-content [&_input:not([type=checkbox])]:border-transparent",
+      "[&_textarea]:bg-base-100 [&_textarea]:text-base-content [&_textarea]:border-transparent",
+      "[&_[role=combobox]]:border-transparent",
+      "[&_.text-red-500]:text-white!",
+    ],
+  );
+
   return (
     <div className="container mx-auto border-0 lg:max-w-3xl">
       {showTitle && formTitle && !hasSubmitted && (
@@ -137,7 +170,12 @@ export const FormBlock: React.FC<
         // card, not above a page section. It also comes from the related form
         // document rather than the block, which is why it survived the removal
         // of the blocks' own title fields.
-        <h2 className="text-primary mb-4 text-center text-lg font-semibold md:text-xl">
+        <h2
+          className={cn(
+            "mb-4 text-center text-lg font-semibold md:text-xl",
+            onBrand ? "text-inherit" : "text-primary",
+          )}
+        >
           {formTitle}
         </h2>
       )}
@@ -148,10 +186,13 @@ export const FormBlock: React.FC<
           enableGutter={false}
         />
       )}
-      <div className="border-border rounded-[0.8rem] border p-4 lg:p-6">
+      <div className={panelClass}>
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === "message" && (
-            <RichText className={"text-base-content"} data={confirmationMessage} />
+            <RichText
+              className={onBrand ? "**:text-inherit!" : "text-base-content"}
+              data={confirmationMessage}
+            />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
           {error && (
@@ -159,7 +200,16 @@ export const FormBlock: React.FC<
           )}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
-              <div className="text-neutral mb-4 last:mb-0">
+              {/* The fields carry the page's dark body colour by default. On a
+                  brand panel that is the one thing they must not do, so the
+                  colour comes from the panel instead and the labels inherit
+                  white. */}
+              <div
+                className={cn(
+                  "mb-4 last:mb-0",
+                  !onBrand && "text-neutral",
+                )}
+              >
                 {formFromProps &&
                   formFromProps.fields &&
                   formFromProps.fields?.map((field, index) => {
@@ -184,7 +234,15 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="brand" size="clear">
+              {/* A coral button on a coral panel is invisible, and the purple
+                  one is nearly so on purple — the inverted button is white on
+                  both. */}
+              <Button
+                form={formID}
+                type="submit"
+                variant={onBrand ? "brandInvert" : "brand"}
+                size="clear"
+              >
                 {submitButtonLabel}
               </Button>
             </form>
