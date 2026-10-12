@@ -37,6 +37,7 @@ export const AdminBar: React.FC<{
   const { adminBarProps } = props || {}
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
+  const barRef = React.useRef<HTMLDivElement>(null)
   const collection = (
     collectionLabels[segments?.[1] as keyof typeof collectionLabels] ? segments[1] : 'pages'
   ) as keyof typeof collectionLabels
@@ -46,8 +47,39 @@ export const AdminBar: React.FC<{
     setShow(Boolean(user?.id))
   }, [])
 
+  /**
+   * Publishes this bar's height, so the fixed header can sit below it.
+   *
+   * The bar is in normal flow and the header is `fixed top-0`, which means the
+   * header is drawn over the bar while the bar still takes up its own height
+   * further down the page. Everything below ends up pushed by exactly that
+   * much, and the result is a band of page background between the header and
+   * the content — the bar's space, with the bar itself hidden behind the
+   * header. Only someone logged in ever sees it, which is what made it so hard
+   * to pin down.
+   *
+   * Measured rather than hardcoded: the bar's height follows its own contents
+   * and its padding, and a number written here would be wrong the first time
+   * either changed.
+   */
+  React.useEffect(() => {
+    const root = document.documentElement
+    const apply = () => {
+      const h = show ? (barRef.current?.offsetHeight ?? 0) : 0
+      root.style.setProperty('--admin-bar-height', `${h}px`)
+    }
+
+    apply()
+    if (!show) return
+
+    const observer = new ResizeObserver(apply)
+    if (barRef.current) observer.observe(barRef.current)
+    return () => observer.disconnect()
+  }, [show])
+
   return (
     <div
+      ref={barRef}
       className={cn(baseClass, 'py-2 bg-black text-white', {
         block: show,
         hidden: !show,
