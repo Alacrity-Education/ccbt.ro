@@ -6,8 +6,9 @@ import type { Header as HeaderType } from "@/payload-types";
 
 import { CMSLink } from "@/components/Link";
 import { MenuButton } from "@/Header/MenuButton";
+import { cn } from "@/utilities/ui";
 import { usePathname } from "next/navigation";
-import { FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 /** Mirrors the href CMSLink builds, so we can tell which item is the current page. */
 const resolveHref = (link: any): string | null => {
@@ -49,9 +50,42 @@ const closeDropdowns = () => {
   }
 };
 
+/** Matches the sidebar's own slide, so panel and drawer feel like one motion. */
+const PANEL_SLIDE = "transition-transform duration-300 ease-out";
+
+/**
+ * A submenu panel, parked off the right edge until its parent is tapped.
+ *
+ * Panels tile rather than overlap — the top level reaches -100% exactly as the
+ * incoming panel reaches 0 — so neither needs a background of its own, and the
+ * sidebar shows through unbroken.
+ */
+const PANEL_OVERLAY = "absolute inset-0 overflow-x-hidden overflow-y-auto";
+
+/**
+ * Rows the top-level menu is padded out to, pinning the decorative chevrons
+ * below it at the height they would sit at with a full menu.
+ */
+const MIN_ROWS = 6;
+
+const ROW_TYPE = "font-barlow justify-start text-left font-semibold";
+
+/** Invisible rows that pad the menu to MIN_ROWS. */
+const FillerRows: React.FC<{ count: number }> = ({ count }) => (
+  <>
+    {Array.from({ length: Math.max(0, count) }).map((_, i) => (
+      <li key={`filler-${i}`} aria-hidden className="invisible">
+        <span className={cn(ROW_TYPE, "pl-6 text-[22px]")}>&nbsp;</span>
+      </li>
+    ))}
+  </>
+);
+
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || [];
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  /** Index of the parent that has taken over the sidebar, or null for the top level. */
+  const [openPanel, setOpenPanel] = useState<number | null>(null);
   const pathname = usePathname();
 
   /** True when a nav link points at the page we're currently on. */
@@ -62,28 +96,53 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
     );
   };
 
+  const openSidebar = () => {
+    /* Reset on open, not on close: at close time the sidebar is still sliding
+       out, so snapping back to the top level happens in full view. */
+    setOpenPanel(null);
+    setIsSidebarOpen(true);
+  };
+
   /* Close the sidebar whenever we navigate away. */
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
 
-  /* Lock the page behind the sidebar and allow Escape to dismiss it. */
+  /* Lock the page behind the sidebar. Kept apart from the Escape handler below
+     so it only runs on open/close: re-running it while already locked would
+     capture "hidden" as the overflow to restore. */
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isSidebarOpen]);
+
+  /* Escape backs out one step at a time: out of a sub-panel first, and only
+     then out of the sidebar. */
   useEffect(() => {
     if (!isSidebarOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsSidebarOpen(false);
+      if (event.key !== "Escape") return;
+      if (openPanel !== null) setOpenPanel(null);
+      else setIsSidebarOpen(false);
     };
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isSidebarOpen, openPanel]);
 
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isSidebarOpen]);
+  /* Only parents with somewhere to go get a panel. */
+  const panels = navItems
+    .map((item, index) => ({ item: item as any, index }))
+    .filter(
+      ({ item }) => item.itemType === "parent" && (item.subItems || []).length,
+    );
 
   return (
     <nav className="flex items-center gap-5">
@@ -148,7 +207,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         className="m-1 lg:hidden"
         expanded={isSidebarOpen}
         controls="mobile-sidebar"
-        onClick={() => setIsSidebarOpen(true)}
+        onClick={openSidebar}
       />
 
       {/* Mobile sidebar */}
@@ -197,65 +256,139 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             />
           </div>
 
-          {/* px-4 here + pl-6 on each row lines the labels up with the logo mark */}
-          <ul className="menu w-full shrink-0 gap-1 px-4 py-0">
-            {navItems.map((item, i) => {
-              const { itemType, link, subItems } = item as any;
-              if (itemType === "parent") {
-                return (
-                  <li key={i}>
-                    <details name="mobile-nav">
-                      <summary className="font-barlow justify-start pl-6 text-left text-[22px] font-semibold text-black">
-                        {link?.label || "Menu"}
-                      </summary>
-                      <ul className="p-1">
-                        {(subItems || []).map((sub: any, idx: number) => (
-                          <li key={idx} onClick={() => setIsSidebarOpen(false)}>
-                            <CMSLink
-                              {...sub.link}
-                              appearance="inline"
-                              className={`font-barlow w-full justify-start pl-6 text-left text-[18px] font-semibold ${
-                                isCurrentPage(sub.link)
-                                  ? "text-[#E84935]!"
-                                  : "text-black!"
-                              }`}
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  </li>
-                );
-              }
+          {/* The menu area. Tapping a parent slides its sub-items in over the
+              top level instead of unfolding them underneath it, so a long
+              submenu never pushes the rest of the menu off the screen.
+
+              The top level stays in the flow and is what gives this box its
+              height; the submenu panels are laid over it. That keeps the
+              chevrons below from moving as panels slide past, which padding
+              the panels to equal row counts would not: sub-items are set two
+              points smaller, so equal rows are not equal heights. */}
+          <div className="relative shrink-0 overflow-hidden">
+            {/* Top level. `inert` as well as the transform, so a panel that has
+                slid off is not still reachable by tab or screen reader. */}
+            <div
+              className={cn(
+                PANEL_SLIDE,
+                openPanel === null ? "translate-x-0" : "-translate-x-full",
+              )}
+              inert={openPanel !== null}
+            >
+              {/* px-4 here + pl-6 on each row lines the labels up with the logo mark */}
+              <ul className="menu w-full gap-1 px-4 py-0">
+                {navItems.map((item, i) => {
+                  const { itemType, link, subItems } = item as any;
+                  if (itemType === "parent") {
+                    if (!(subItems || []).length) return null;
+
+                    return (
+                      <li key={i}>
+                        <button
+                          type="button"
+                          onClick={() => setOpenPanel(i)}
+                          // flex, because daisyUI lays menu rows out as a
+                          // grid of max-content columns — where `grow` does
+                          // nothing and the chevron sits against the label
+                          // instead of out at the edge.
+                          className={cn(
+                            ROW_TYPE,
+                            "flex w-full items-center pl-6 text-[22px] text-black",
+                          )}
+                        >
+                          <span className="grow truncate">
+                            {link?.label || "Menu"}
+                          </span>
+                          <FiChevronRight
+                            aria-hidden
+                            className="h-5 w-5 shrink-0"
+                          />
+                        </button>
+                      </li>
+                    );
+                  }
+                  return (
+                    <li key={i} onClick={() => setIsSidebarOpen(false)}>
+                      <CMSLink
+                        {...link}
+                        appearance="inline"
+                        className={`font-barlow w-full justify-start pl-6 text-left text-[22px] font-semibold ${
+                          isCurrentPage(link)
+                            ? "text-[#E84935]!"
+                            : "text-black!"
+                        }`}
+                      />
+                    </li>
+                  );
+                })}
+
+                <FillerRows count={MIN_ROWS - navItems.length} />
+              </ul>
+            </div>
+
+            {/* One panel per parent. All stay mounted: the menu is a handful of
+                links, and a panel that mounts on tap has nothing to slide in
+                from. */}
+            {panels.map(({ item, index }) => {
+              const subItems = (item.subItems || []) as any[];
+
               return (
-                <li key={i} onClick={() => setIsSidebarOpen(false)}>
-                  <CMSLink
-                    {...link}
-                    appearance="inline"
-                    className={`font-barlow w-full justify-start pl-6 text-left text-[22px] font-semibold ${
-                      isCurrentPage(link) ? "text-[#E84935]!" : "text-black!"
-                    }`}
-                  />
-                </li>
+                <div
+                  key={index}
+                  className={cn(
+                    PANEL_OVERLAY,
+                    PANEL_SLIDE,
+                    openPanel === index ? "translate-x-0" : "translate-x-full",
+                  )}
+                  inert={openPanel !== index}
+                >
+                  <ul className="menu w-full gap-1 px-4 py-0">
+                    {/* The parent's own row becomes the way back. It travels
+                        with the panel rather than sitting above the menu area,
+                        so nothing shifts as the panel arrives. */}
+                    <li>
+                      <button
+                        type="button"
+                        onClick={() => setOpenPanel(null)}
+                        aria-label={`Înapoi la meniul principal, din ${
+                          item.link?.label || "Menu"
+                        }`}
+                        className={cn(
+                          ROW_TYPE,
+                          "text-primary w-full gap-1 pl-0 text-[22px]",
+                        )}
+                      >
+                        <FiChevronLeft
+                          aria-hidden
+                          className="h-5 w-5 shrink-0"
+                        />
+                        <span className="truncate">
+                          {item.link?.label || "Menu"}
+                        </span>
+                      </button>
+                    </li>
+
+                    {subItems.map((sub: any, idx: number) => (
+                      <li key={idx} onClick={() => setIsSidebarOpen(false)}>
+                        <CMSLink
+                          {...sub.link}
+                          appearance="inline"
+                          className={`font-barlow w-full justify-start pl-6 text-left text-[18px] font-semibold ${
+                            isCurrentPage(sub.link)
+                              ? "text-[#E84935]!"
+                              : "text-black!"
+                          }`}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               );
             })}
+          </div>
 
-            {/* Invisible filler rows so the list always occupies at least six
-                rows' worth of height. That pins the decorative chevrons at the
-                position they'd sit at with six nav items: fewer items can no
-                longer pull them upwards, more items still push them down. */}
-            {Array.from({ length: Math.max(0, 6 - navItems.length) }).map(
-              (_, i) => (
-                <li key={`filler-${i}`} aria-hidden className="invisible">
-                  <span className="font-barlow pl-6 text-[22px] font-semibold">
-                    &nbsp;
-                  </span>
-                </li>
-              ),
-            )}
-          </ul>
-
-          {/* Decorative chevron column, clipped where it runs off the screen */}
+          {/* Decorative chevron column, clipped where it runs off the screen.
+              Outside the sliding area on purpose, so it stays put. */}
           <div
             aria-hidden
             className="pointer-events-none relative mt-auto min-h-40 flex-1 overflow-hidden"
