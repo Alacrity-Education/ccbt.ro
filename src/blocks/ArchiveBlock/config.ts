@@ -29,6 +29,9 @@ export const Archive: Block = {
     // The button used to live here as its own field, pinned below the intro and
     // only available to the Text style. It is a Button block inside introContent
     // now, so both styles can have one and the editor places it.
+    // Cards only. The Text style sets its posts as a short run of coloured
+    // plates beside an intro, and a date heading between them breaks the run
+    // into pieces — see ArchiveBlock/Text.
     {
       name: "groupByDate",
       type: "checkbox",
@@ -36,7 +39,8 @@ export const Archive: Block = {
       defaultValue: true,
       admin: {
         description:
-          'Files the posts under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.',
+          'Files the cards under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.',
+        condition: (_, siblingData) => siblingData.style === "cards",
       },
     },
     {

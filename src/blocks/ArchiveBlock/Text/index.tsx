@@ -9,14 +9,14 @@ import RichText from "@/components/RichText";
 import { brandSurface } from "@/utilities/brand";
 import { cn } from "@/utilities/ui";
 
-import { groupPostsByMonth } from "../groupByMonth";
-import { MonthHeading } from "../MonthHeading";
-
 /**
- * One entry in the list. The two brand surfaces alternate down the whole
- * archive rather than restarting at each month, so `index` is the running
- * position across every group — a month with an odd number of posts would
- * otherwise put two cards of the same colour against each other at the join.
+ * One entry in the list. The two brand surfaces alternate down the list, so
+ * `index` is its position in that list.
+ *
+ * No month headings here: this style sets the posts as a short run of
+ * coloured plates beside an intro, where a date heading between them breaks
+ * the run into pieces. The months belong to the Cards style — see
+ * ArchiveBlock/config, which is why the toggle only shows there.
  */
 const PostRow: React.FC<{ post: Post; index: number }> = ({ post, index }) => (
   <Link
@@ -45,7 +45,6 @@ export const TextArchiveBlock: React.FC<
     limit: limitFromProps,
     populateBy,
     selectedDocs,
-    groupByDate,
   } = props;
 
   const limit = limitFromProps || 4;
@@ -76,17 +75,6 @@ export const TextArchiveBlock: React.FC<
       .filter(Boolean) as Post[];
   }
 
-  // `!== false` rather than a truth test: the toggle defaults to on, and blocks
-  // saved before it existed hold no value at all — they get the months too.
-  const grouped = groupByDate !== false;
-  const { groups, undated } = grouped
-    ? groupPostsByMonth(posts)
-    : { groups: [], undated: posts };
-
-  // The running position across every month, so the alternating surfaces carry
-  // through the joins (see PostRow).
-  let position = 0;
-
   return (
     <div className="container mx-auto" id={`block-${id}`}>
       <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
@@ -104,35 +92,13 @@ export const TextArchiveBlock: React.FC<
 
         {/* Event list */}
         {posts.length > 0 && (
-          <div className="flex flex-col gap-10">
-            {groups.map((group) => (
-              <div className="flex flex-col gap-5" key={group.key}>
-                <MonthHeading>{group.label}</MonthHeading>
-                {group.posts.map((post) => (
-                  <PostRow
-                    key={post.id ?? `${group.key}-${position}`}
-                    post={post}
-                    index={position++}
-                  />
-                ))}
-              </div>
+          <div className="flex flex-col gap-5">
+            {posts.map((post, i) => (
+              <PostRow key={post.id ?? i} post={post} index={i} />
             ))}
-
-            {/* Whatever had no date to file under — kept rather than dropped,
-                and with no heading, because there is no month to name. */}
-            {undated.length > 0 && (
-              <div className="flex flex-col gap-5">
-                {undated.map((post, i) => (
-                  <PostRow
-                    key={post.id ?? `undated-${i}`}
-                    post={post}
-                    index={position++}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         )}
+
       </div>
     </div>
   );

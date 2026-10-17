@@ -898,7 +898,7 @@ export interface ArchiveBlock {
   } | null;
   style?: ('text' | 'cards') | null;
   /**
-   * Files the posts under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.
+   * Files the cards under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.
    */
   groupByDate?: boolean | null;
   populateBy?: ('collection' | 'selection') | null;
