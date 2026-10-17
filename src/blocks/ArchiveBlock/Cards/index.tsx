@@ -63,6 +63,11 @@ const PostCard: React.FC<{
           {metaImage && typeof metaImage === "object" && (
             <Media
               resource={metaImage}
+              // The thumbnail is 160px wide from `sm` and the card's width
+              // below it — never the viewport. Without this the default is
+              // `100vw`, and the browser was picking the 3840w candidate for a
+              // box drawn at 160: several megabytes a card.
+              size="(min-width: 640px) 160px, 100vw"
               imgClassName="h-full w-full object-cover rounded-lg overflow-clip object-center shadow-xl absolute inset-0"
               pictureClassName="h-full w-full rounded-lg overflow-clip object-center bg-base-200 shadow-lg"
               fill

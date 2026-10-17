@@ -59,13 +59,24 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
    */
   const sizes = sizeFromProps ?? '100vw'
 
-  // Next's `fill` requires the parent (<picture>) to be positioned. If the caller
-  // didn't already set a position (e.g. absolute for full-bleed heroes), default
-  // it to relative so `fill` has a valid, sized parent.
+  // Next's `fill` makes the image `position: absolute; inset: 0`, so the
+  // <picture> around it has to be both positioned and sized or the image comes
+  // out 0x0 — which is what it did.
+  //
+  // `relative` satisfies the first and not the second. A <picture> is
+  // `display: inline` by default, and width and height do not apply to an
+  // inline box, so `h-full w-full` on it is ignored; it is also wrapped in a
+  // plain <div> here (see components/Media), which then has nothing to take a
+  // height from and collapses. The image resolved against a 0-high picture.
+  //
+  // `absolute inset-0` fixes both at once: out of flow the picture blockifies,
+  // the collapsed wrapper stops mattering, and the insets size it from the
+  // nearest positioned ancestor — the box the caller meant it to fill. Every
+  // call site that already works writes exactly this by hand.
   const hasPositionClass = /\b(absolute|fixed|relative|sticky)\b/.test(pictureClassName ?? "")
 
   return (
-    <picture className={cn(fill && !hasPositionClass && "relative", pictureClassName)}>
+    <picture className={cn(fill && !hasPositionClass && "absolute inset-0", pictureClassName)}>
       <NextImage
         alt={alt || ''}
         className={cn(imgClassName)}

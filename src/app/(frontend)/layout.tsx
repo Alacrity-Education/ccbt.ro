@@ -16,6 +16,7 @@ import { Footer } from "@/Footer/Component";
 import { Header } from "@/Header/Component";
 import { Providers } from "@/providers";
 import { InitTheme } from "@/providers/Theme/InitTheme";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/utilities/siteMeta";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
 import { draftMode } from "next/headers";
 
@@ -105,6 +106,10 @@ export const metadata: Metadata = {
   openGraph: mergeOpenGraph(),
   twitter: {
     card: "summary_large_image",
-    creator: "@payloadcms",
+    // No `creator`: it was the Payload starter's own handle, and the field
+    // takes an @handle rather than a name, so there is nothing to put here
+    // until the centre's account is known.
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
   },
 };

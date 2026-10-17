@@ -14,9 +14,13 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { SITE_NAME } from '@/utilities/siteMeta'
 
+// What the SEO plugin pre-fills the admin's Meta Title with. It reads from the
+// same constant as the page titles and the Open Graph defaults, so an editor
+// who leaves it alone gets the suffix the rest of the site already uses.
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+  return doc?.title ? `${doc.title} | ${SITE_NAME}` : SITE_NAME
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
