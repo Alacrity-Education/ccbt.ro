@@ -30,6 +30,16 @@ export const Archive: Block = {
     // only available to the Text style. It is a Button block inside introContent
     // now, so both styles can have one and the editor places it.
     {
+      name: "groupByDate",
+      type: "checkbox",
+      label: "Group by month and year",
+      defaultValue: true,
+      admin: {
+        description:
+          'Files the posts under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.',
+      },
+    },
+    {
       name: "populateBy",
       type: "select",
       defaultValue: "collection",
@@ -105,7 +115,6 @@ export const Archive: Block = {
           options: [
             { label: "Primary", value: "primary" },
             { label: "Secondary", value: "secondary" },
-            { label: "Starry", value: "starry" },
             { label: "Transparent", value: "transparent" },
           ],
         },
@@ -117,7 +126,6 @@ export const Archive: Block = {
           options: [
             { label: "Primary", value: "primary" },
             { label: "Secondary", value: "secondary" },
-            { label: "Starry", value: "starry" },
             { label: "Transparent", value: "transparent" },
           ],
         },
@@ -125,11 +133,10 @@ export const Archive: Block = {
           name: "card3",
           type: "select",
           label: "Card 3 Style",
-          defaultValue: "starry",
+          defaultValue: "transparent",
           options: [
             { label: "Primary", value: "primary" },
             { label: "Secondary", value: "secondary" },
-            { label: "Starry", value: "starry" },
             { label: "Transparent", value: "transparent" },
           ],
         },
@@ -137,11 +144,12 @@ export const Archive: Block = {
           name: "card4",
           type: "select",
           label: "Card 4 Style",
-          defaultValue: "transparent",
+          // Not "primary": the four cycle, so card 4 sits against card 1 at
+          // every wrap and the two would be the same fill.
+          defaultValue: "secondary",
           options: [
             { label: "Primary", value: "primary" },
             { label: "Secondary", value: "secondary" },
-            { label: "Starry", value: "starry" },
             { label: "Transparent", value: "transparent" },
           ],
         },

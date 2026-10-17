@@ -11,6 +11,11 @@ const WITH_MEDIA = ['homeHero', 'highImpactHero']
 const WITH_SUBTITLE = ['homeHero', 'highImpactHero']
 // Sliding hero uses a per-slide color instead of one hero-wide background color.
 const SELECTABLE_COLOR = ['homeHero', 'highImpactHero']
+// The two heroes that lay their copy over a full-bleed image, where which side
+// it sits on is a real choice — the subject of the photograph decides it. The
+// Medium and Low Impact heroes put their copy in a column of its own, so there
+// is nothing for it to move across.
+const ALIGNABLE = ['homeHero', 'slidingHero']
 
 /**
  * How the hero image fills its frame.
@@ -82,6 +87,21 @@ export const hero: Field = {
         description:
           'Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact). "None" removes the gradient; Medium Impact falls back to the neutral base.',
         condition: (_, { type } = {}) => SELECTABLE_COLOR.includes(type),
+      },
+    },
+    {
+      name: 'align',
+      type: 'select',
+      label: 'Text alignment',
+      defaultValue: 'left',
+      options: [
+        { label: 'Left', value: 'left' },
+        { label: 'Right', value: 'right' },
+      ],
+      admin: {
+        description:
+          'Which side of the hero the title, subtitle and button sit on. Move them to the right when the subject of the image is on the left. On the Sliding Hero it applies to every slide.',
+        condition: (_, { type } = {}) => ALIGNABLE.includes(type),
       },
     },
     {

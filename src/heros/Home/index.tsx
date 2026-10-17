@@ -6,6 +6,7 @@ import { CMSLink } from "@/components/Link";
 import { cn } from "@/utilities/ui";
 import { HeroScrim } from "@/heros/HeroScrim";
 import { HeroBackdrop } from "@/heros/HeroBackdrop";
+import { heroAlignment, type HeroAlign } from "@/heros/heroAlign";
 import {
   resolveColor,
   type HeroColor,
@@ -27,6 +28,7 @@ type HeroContent = {
   media?: any;
   mediaMobile?: any;
   ctaLink?: any;
+  align?: HeroAlign | null;
 };
 
 // Re-exported so existing importers keep working; it lives in heros/heroColor
@@ -47,8 +49,13 @@ const HeroCta: React.FC<{ ctaLink: any; dark: boolean }> = ({
 
 export const Hero: React.FC<HeroProps> = (props) => {
   const { impact, color } = props;
-  const { title, subtitle, body, media, mediaMobile, ctaLink, objectFit } =
+  const { title, subtitle, body, media, mediaMobile, ctaLink, objectFit, align } =
     props as unknown as HeroContent & { objectFit?: "cover" | "contain" | null };
+
+  // Only the high impact hero lays its copy over the image; the other two put
+  // it in a column of its own, so there is nothing for it to move across and
+  // the admin does not offer the choice (see heros/config).
+  const { column, line } = heroAlignment(align);
 
   const { bg, dark } = resolveColor(color);
 
@@ -67,14 +74,24 @@ export const Hero: React.FC<HeroProps> = (props) => {
         data-theme={dark ? "dark" : undefined}
       >
         <div className="font-base relative z-20 container mx-auto pt-24 pb-14 sm:pb-16">
-          <div className="max-w-4xl md:text-start">
+          <div className={cn("max-w-4xl", column)}>
             {title && (
-              <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95] lg:max-w-1/2 lg:text-7xl xl:text-7xl">
+              <h1
+                className={cn(
+                  "mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95] lg:max-w-1/2 lg:text-7xl xl:text-7xl",
+                  line,
+                )}
+              >
                 {title}
               </h1>
             )}
             {subtitle && (
-              <p className="mb-6 max-w-2xl text-lg text-balance sm:text-xl md:text-2xl xl:text-3xl">
+              <p
+                className={cn(
+                  "mb-6 max-w-2xl text-lg text-balance sm:text-xl md:text-2xl xl:text-3xl",
+                  line,
+                )}
+              >
                 {subtitle}
               </p>
             )}
@@ -83,6 +100,7 @@ export const Hero: React.FC<HeroProps> = (props) => {
                 className={cn(
                   "mb-8 max-w-xl text-sm sm:text-base md:text-lg",
                   bodyClass,
+                  line,
                 )}
               >
                 {body}

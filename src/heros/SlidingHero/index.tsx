@@ -5,6 +5,8 @@ import { CMSLink } from "@/components/Link";
 import { resolveColor, type HeroOverlay } from "@/heros/heroColor";
 import { HeroScrim } from "@/heros/HeroScrim";
 import { HeroBackdrop } from "@/heros/HeroBackdrop";
+import { heroAlignment, type HeroAlign } from "@/heros/heroAlign";
+import { cn } from "@/utilities/ui";
 
 type pageType = Page["hero"];
 
@@ -25,6 +27,7 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroOverlay }> = ({
   slides,
   timeout,
   color = "purple",
+  align,
 }) => {
   const [visibleSlide, setVisibleSlide] = useState<number>(0);
   const sliderLength = slides?.length || 0;
@@ -87,6 +90,7 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroOverlay }> = ({
               <Slide
                 slide={slide}
                 fallbackColor={color}
+                align={align}
                 // The first slide is what the page paints on load, so it is the
                 // LCP image and must not be deferred. The rest can wait.
                 priority={index === 0}
@@ -114,10 +118,12 @@ export const SlidingHero: React.FC<Page["hero"] & { color?: HeroOverlay }> = ({
 const Slide = ({
   slide,
   fallbackColor,
+  align,
   priority = false,
 }: {
   slide: slideType;
   fallbackColor: HeroOverlay;
+  align?: HeroAlign | null;
   priority?: boolean;
 }) => {
   const { media, mediaMobile, objectFit, title, subtitle, cta } = slide;
@@ -125,6 +131,10 @@ const Slide = ({
   const { bg, dark } = resolveColor(
     (slide.color as HeroOverlay) ?? fallbackColor,
   );
+  // One choice for the whole hero rather than one per slide: the slides sit in
+  // the same frame and cross-fade through each other, so copy that jumped side
+  // between them would read as the layout breaking rather than as a decision.
+  const { column, line } = heroAlignment(align);
 
   return (
     <div
@@ -134,14 +144,24 @@ const Slide = ({
       data-theme={dark ? "dark" : undefined}
     >
       <div className="font-base relative z-20 container mx-auto pt-24 pb-24 sm:pb-28">
-        <div className="max-w-4xl md:text-start">
+        <div className={cn("max-w-4xl", column)}>
           {title && (
-            <h1 className="mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95]">
+            <h1
+              className={cn(
+                "mb-5 max-w-[15ch] text-4xl leading-[0.98] font-semibold tracking-tight text-balance sm:text-5xl md:text-7xl md:leading-[0.95]",
+                line,
+              )}
+            >
               {title}
             </h1>
           )}
           {subtitle && (
-            <p className="mb-6 max-w-2xl text-lg text-balance sm:text-xl md:text-2xl xl:text-3xl">
+            <p
+              className={cn(
+                "mb-6 max-w-2xl text-lg text-balance sm:text-xl md:text-2xl xl:text-3xl",
+                line,
+              )}
+            >
               {subtitle}
             </p>
           )}
@@ -192,7 +212,7 @@ const SlideIndicators = ({
   timeout,
 }: SlideControls) => {
   return (
-    <div className="pointer-events-auto flex w-max flex-row gap-4 sm:gap-3">
+    <div className="pointer-events-auto flex w-max flex-row gap-2 sm:gap-3">
       {slides?.map((slide, index) => {
         const isCurrent = index === visibleSlide;
         const slideTimeout = timeout || 4000;
@@ -201,11 +221,14 @@ const SlideIndicators = ({
           <div
             key={"index_slide" + index}
             onClick={() => setVisibleSlide(index)}
-            // The container acts as the track
-            className="relative h-4 cursor-pointer overflow-hidden rounded-lg bg-white/40 shadow-lg transition-all duration-300 sm:h-3"
-            style={{
-              width: isCurrent ? "6rem " : "1.5rem",
-            }}
+            // The container acts as the track. Sized in classes rather than
+            // inline styles so the phone can have its own: at the desktop size
+            // the bar is a sixth of a narrow screen and reads as a component of
+            // the layout rather than as an indicator.
+            className={cn(
+              "relative h-2 cursor-pointer overflow-hidden rounded-lg bg-white/40 shadow-lg transition-all duration-300 sm:h-3",
+              isCurrent ? "w-14 sm:w-24" : "w-3 sm:w-6",
+            )}
           >
             {/* The inner div acts as the animated fill */}
             <div

@@ -67,14 +67,20 @@ const isBanded = (blockType: string, block: BlockLayout): boolean =>
 /**
  * Banded and edged are separate questions. The band — full measure, own fill —
  * is what makes the section read as a break and stays either way; the dividers
- * only finish it, and the timeline can turn them off (see blocks/Timeline).
+ * only finish it, and both banded blocks can turn them off.
  *
- * `!== false` rather than a truth test: the CTA has no such toggle and rows
- * written before the timeline gained one hold no value, and both must keep the
- * edges they have always drawn.
+ * The two toggles answer opposite defaults, which is why this is not one test.
+ * The timeline has drawn the edges since before it had a toggle, so a row
+ * holding no value has to keep them — `!== false`. The CTA's toggle is the
+ * newer of the two and starts off, so there absent means no: the band already
+ * reads as a break on its own fill and its own motif, and the edges on top of
+ * that were the first thing the section said.
  */
-const hasDividers = (blockType: string, block: BlockLayout): boolean =>
-  isBanded(blockType, block) && block.showDividers !== false;
+const hasDividers = (blockType: string, block: BlockLayout): boolean => {
+  if (!isBanded(blockType, block)) return false;
+  if (blockType === "timeline") return block.showDividers !== false;
+  return block.showDividers === true;
+};
 
 export const RenderBlocks: React.FC<{
   blocks: NonNullable<Page["layout"]>;

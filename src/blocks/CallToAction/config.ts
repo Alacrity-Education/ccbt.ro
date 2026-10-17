@@ -80,7 +80,24 @@ export const CallToAction: Block = {
         },
       },
     }),
-    ...sectionDividers((_, sibling) => isBase(sibling?.variant as string)),
+    // Off unless asked for. The band carries the section on its own fill and
+    // its own motif; the cut edges are a finish on top of that, and drawn by
+    // default they were the loudest thing in the block.
+    {
+      name: "showDividers",
+      type: "checkbox",
+      label: "Show dividers",
+      defaultValue: false,
+      admin: {
+        description:
+          "Finishes the band with the cut top and bottom edges. Left off, the section meets the page squarely.",
+        condition: (_, sibling) => isBase(sibling?.variant as string),
+      },
+    },
+    ...sectionDividers(
+      (_, sibling) =>
+        isBase(sibling?.variant as string) && sibling?.showDividers === true,
+    ),
       sectionBackground,
   ],
   labels: {

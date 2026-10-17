@@ -14,6 +14,8 @@ import * as migration_20261011_191233_hero_overlay_none_and_post_slides from './
 import * as migration_20261011_205631_card_variants_flip_youtube_drop_event from './20261011_205631_card_variants_flip_youtube_drop_event';
 import * as migration_20261012_064051_form_block_variant from './20261012_064051_form_block_variant';
 import * as migration_20261012_085710_form_phone_and_multi_select from './20261012_085710_form_phone_and_multi_select';
+import * as migration_20261017_103905_hero_align_cta_dividers_archive_months from './20261017_103905_hero_align_cta_dividers_archive_months';
+import * as migration_20261017_104348_archive_cards_drop_starry from './20261017_104348_archive_cards_drop_starry';
 
 export const migrations = [
   {
@@ -94,6 +96,16 @@ export const migrations = [
   {
     up: migration_20261012_085710_form_phone_and_multi_select.up,
     down: migration_20261012_085710_form_phone_and_multi_select.down,
-    name: '20261012_085710_form_phone_and_multi_select'
+    name: '20261012_085710_form_phone_and_multi_select',
+  },
+  {
+    up: migration_20261017_103905_hero_align_cta_dividers_archive_months.up,
+    down: migration_20261017_103905_hero_align_cta_dividers_archive_months.down,
+    name: '20261017_103905_hero_align_cta_dividers_archive_months',
+  },
+  {
+    up: migration_20261017_104348_archive_cards_drop_starry.up,
+    down: migration_20261017_104348_archive_cards_drop_starry.down,
+    name: '20261017_104348_archive_cards_drop_starry'
   },
 ];

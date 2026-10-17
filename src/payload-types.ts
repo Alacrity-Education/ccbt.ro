@@ -228,6 +228,10 @@ export interface Page {
      * Color for this hero — applied to the gradient (High Impact & Sliding) or the surface background (Medium Impact). "None" removes the gradient; Medium Impact falls back to the neutral base.
      */
     bgColor?: ('base' | 'purple' | 'coral' | 'cyan' | 'none') | null;
+    /**
+     * Which side of the hero the title, subtitle and button sit on. Move them to the right when the subject of the image is on the left. On the Sliding Hero it applies to every slide.
+     */
+    align?: ('left' | 'right') | null;
     title?: string | null;
     subtitle?: string | null;
     body?: string | null;
@@ -611,6 +615,10 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Finishes the band with the cut top and bottom edges. Left off, the section meets the page squarely.
+   */
+  showDividers?: boolean | null;
   dividerTop?: {
     pattern?: ('a' | 'b' | 'c' | 'd') | null;
     bars?: ('default' | 'purple' | 'coral' | 'cyan' | 'green') | null;
@@ -889,6 +897,10 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   style?: ('text' | 'cards') | null;
+  /**
+   * Files the posts under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.
+   */
+  groupByDate?: boolean | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
   categories?: (number | Category)[] | null;
@@ -900,10 +912,10 @@ export interface ArchiveBlock {
       }[]
     | null;
   longCardStyles?: {
-    card1?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
-    card2?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
-    card3?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
-    card4?: ('primary' | 'secondary' | 'starry' | 'transparent') | null;
+    card1?: ('primary' | 'secondary' | 'transparent') | null;
+    card2?: ('primary' | 'secondary' | 'transparent') | null;
+    card3?: ('primary' | 'secondary' | 'transparent') | null;
+    card4?: ('primary' | 'secondary' | 'transparent') | null;
   };
   showMotif?: boolean | null;
   id?: string | null;
@@ -1572,6 +1584,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         type?: T;
         bgColor?: T;
+        align?: T;
         title?: T;
         subtitle?: T;
         body?: T;
@@ -1674,6 +1687,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  showDividers?: T;
   dividerTop?:
     | T
     | {
@@ -1736,6 +1750,7 @@ export interface MediaBlockSelect<T extends boolean = true> {
 export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   style?: T;
+  groupByDate?: T;
   populateBy?: T;
   relationTo?: T;
   categories?: T;
