@@ -7,6 +7,7 @@ import type { Media as MediaType } from "@/payload-types";
 import { Media } from "@/components/Media";
 import { cn } from "@/utilities/ui";
 import { brandSurface, type SurfaceColor } from "@/utilities/brand";
+import { cardImageFit, cardShape } from "@/components/Card/PillarCard";
 
 /**
  * A card that turns over when it is clicked or tapped.
@@ -43,6 +44,8 @@ export const FlipCard: React.FC<{
   backgroundOpacity?: number | null;
   children?: React.ReactNode;
   className?: string;
+  /** Which of CARD_SHAPES the card takes; the block decides for all of them. */
+  shape?: string | null;
 }> = ({
   title,
   color,
@@ -50,9 +53,15 @@ export const FlipCard: React.FC<{
   backgroundOpacity,
   children,
   className,
+  shape,
 }) => {
   const [flipped, setFlipped] = useState(false);
   const colorClass = brandSurface(color, "coral");
+  // Taken from the shape rather than passed in, the same way PillarCard does
+  // it, so the two cards cannot end up disagreeing about what a vertical card
+  // looks like.
+  const shapeClass = cardShape(shape);
+  const fitClass = cardImageFit(shape);
 
   const face =
     "absolute inset-0 flex flex-col overflow-hidden rounded-box p-6 text-left transition-[opacity,visibility] duration-0";
@@ -74,7 +83,7 @@ export const FlipCard: React.FC<{
       aria-pressed={flipped}
       aria-label={title ? `${title} — turn the card over` : "Turn the card over"}
       onClick={() => setFlipped((f) => !f)}
-      className={cn("group relative block h-full w-full", className)}
+      className={cn("group relative block h-full w-full", shapeClass, className)}
       style={{ perspective: "1200px" }}
     >
       <div
@@ -100,7 +109,7 @@ export const FlipCard: React.FC<{
                 fill
                 resource={backgroundImage}
                 pictureClassName="absolute inset-0 h-full w-full"
-                imgClassName="object-cover"
+                imgClassName={fitClass}
               />
             </div>
           )}

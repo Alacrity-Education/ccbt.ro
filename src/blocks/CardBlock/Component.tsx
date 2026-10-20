@@ -2,7 +2,7 @@ import React from "react";
 import type { CardBlock as CardBlockProps } from "@/payload-types";
 
 import RichText from "@/components/RichText";
-import { PillarCard, cardShape } from "@/components/Card/PillarCard";
+import { PillarCard } from "@/components/Card/PillarCard";
 import { FlipCard } from "@/components/Card/FlipCard";
 
 export const CardBlock: React.FC<CardBlockProps> = ({
@@ -56,7 +56,7 @@ export const CardBlock: React.FC<CardBlockProps> = ({
                   color={card.color}
                   backgroundImage={card.backgroundImage}
                   backgroundOpacity={card.backgroundOpacity}
-                  className={cardShape(variant)}
+                  shape={variant}
                 >
                   {body}
                 </FlipCard>

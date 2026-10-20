@@ -25,6 +25,29 @@ export const CARD_SHAPES = {
 
 export type CardShape = keyof typeof CARD_SHAPES;
 
+/**
+ * How a card's background image meets its box.
+ *
+ * `default` covers. There the image is a backdrop behind a title, the card is
+ * landscape like most photographs, and cropping it loses nothing that was
+ * being read.
+ *
+ * `vertical` contains, and that is the whole point of the shape. An A4 card is
+ * for a poster or a publication cover, and covering an A4 box with artwork
+ * that is not quite A4 crops the sides — on the live Publicații page a 501x533
+ * poster lost a quarter of its width and the title was cut mid-word. Contained,
+ * the sheet is whole and the card's own colour fills what is left.
+ */
+export const CARD_IMAGE_FITS = {
+  default: "object-cover",
+  vertical: "object-contain",
+} as const;
+
+export const cardImageFit = (variant?: string | null): string =>
+  CARD_IMAGE_FITS[
+    (variant as CardShape) in CARD_IMAGE_FITS ? (variant as CardShape) : "default"
+  ];
+
 export const cardShape = (variant?: string | null): string =>
   CARD_SHAPES[
     (variant as CardShape) in CARD_SHAPES ? (variant as CardShape) : "default"
@@ -64,6 +87,7 @@ export const PillarCard: React.FC<PillarCardProps> = ({
   const colorClass = brandSurface(color, "coral");
   const hasHref = withLink && (link?.url || link?.reference);
   const shapeClass = cardShape(shape);
+  const fitClass = cardImageFit(shape);
 
   const inner = (
     <div
@@ -83,7 +107,7 @@ export const PillarCard: React.FC<PillarCardProps> = ({
             fill
             resource={backgroundImage}
             pictureClassName="absolute inset-0 h-full w-full"
-            imgClassName="object-cover"
+            imgClassName={fitClass}
           />
         </div>
       )}
