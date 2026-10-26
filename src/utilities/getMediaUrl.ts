@@ -1,4 +1,4 @@
-import { getClientSideURL } from '@/utilities/getURL'
+import { cmsOrigin } from '@/utilities/cmsOrigin'
 
 /**
  * Processes media resource URL to ensure proper formatting
@@ -18,7 +18,7 @@ export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | 
     return cacheTag ? `${url}?${cacheTag}` : url
   }
 
-  // Otherwise prepend client-side URL
-  const baseUrl = getClientSideURL()
+  // Otherwise prepend the origin that serves media
+  const baseUrl = cmsOrigin()
   return cacheTag ? `${baseUrl}${url}?${cacheTag}` : `${baseUrl}${url}`
 }

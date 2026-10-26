@@ -1,8 +1,8 @@
 import type { Post, ArchiveBlock as ArchiveBlockProps } from "@/payload-types";
 
-import configPromise from "@payload-config";
-import { getPayload } from "payload";
 import React from "react";
+
+import { getReader } from "@/utilities/frontendData";
 import Link from "next/link";
 
 import RichText from "@/components/RichText";
@@ -52,7 +52,7 @@ export const TextArchiveBlock: React.FC<
   let posts: Post[] = [];
 
   if (populateBy === "collection") {
-    const payload = await getPayload({ config: configPromise });
+    const payload = await getReader();
 
     const flattenedCategories = categories?.map((category) =>
       typeof category === "object" ? category.id : category,

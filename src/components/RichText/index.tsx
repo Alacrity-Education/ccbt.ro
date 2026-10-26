@@ -1,9 +1,102 @@
-import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
+import type {
+  DefaultTypedEditorState,
+  SerializedUploadNode,
+} from "@payloadcms/richtext-lexical";
+import type { JSXConvertersFunction } from "@payloadcms/richtext-lexical/react";
 import { RichText as ConvertRichText } from "@payloadcms/richtext-lexical/react";
 
+import type { Media } from "@/payload-types";
+
+import { getMediaUrl } from "@/utilities/getMediaUrl";
 import { cn } from "@/utilities/ui";
 
-import { PRESETS, type PresetName } from "./converters";
+import { PRESETS, type NodeTypes, type PresetName } from "./converters";
+
+/**
+ * The derivatives that are the same picture at a smaller size. `square` and
+ * `og` are crops, so offering them as candidates for the same slot lets the
+ * browser show a portrait photograph with its subject cut off.
+ */
+const RESIZED = ["thumbnail", "small", "medium", "large", "xlarge"] as const;
+
+/**
+ * An image or file dropped into a rich text field.
+ *
+ * Payload's default upload converter emits `src` and every `<source srcSet>`
+ * exactly as the API returned them — relative to the Payload instance that
+ * answered. On ccbt.ro that resolves against the static site, which serves no
+ * uploads, so each one 404s. This is the default's markup with `getMediaUrl`
+ * applied, and the crops left out.
+ */
+const uploadConverter = ({ node }: { node: SerializedUploadNode }) => {
+  if (!node.value || typeof node.value !== "object") return null;
+
+  const doc = node.value as Media;
+  const alt = (node.fields as { alt?: string } | undefined)?.alt || doc.alt || "";
+  const url = getMediaUrl(doc.url, doc.updatedAt);
+
+  if (!doc.mimeType?.startsWith("image")) {
+    return (
+      <a href={url} rel="noopener noreferrer">
+        {doc.filename}
+      </a>
+    );
+  }
+
+  const sources = RESIZED.flatMap((name) => {
+    const size = doc.sizes?.[name];
+
+    return size?.url && size.width && size.mimeType
+      ? [
+          <source
+            key={name}
+            media={`(max-width: ${size.width}px)`}
+            srcSet={getMediaUrl(size.url, doc.updatedAt)}
+            type={size.mimeType}
+          />,
+        ]
+      : [];
+  });
+
+  const img = (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      key="image"
+      alt={alt}
+      height={doc.height ?? undefined}
+      src={url}
+      width={doc.width ?? undefined}
+    />
+  );
+
+  return sources.length ? (
+    <picture>
+      {sources}
+      {img}
+    </picture>
+  ) : (
+    img
+  );
+};
+
+/**
+ * Each preset's converters with the upload override folded in.
+ *
+ * Where the uploads live is a property of the deployment, not of the preset,
+ * so it is applied here to all of them rather than written into each converter
+ * set. Built once at module scope because `ConvertRichText` takes the function
+ * itself: wrapping inline would hand it a new identity on every render.
+ */
+const withUploads =
+  (converters: JSXConvertersFunction<NodeTypes>): JSXConvertersFunction<NodeTypes> =>
+  (args) => ({ ...converters(args), upload: uploadConverter });
+
+const CONVERTERS = Object.fromEntries(
+  (Object.keys(PRESETS) as PresetName[]).map((name) => [
+    name,
+    withUploads(PRESETS[name].converters),
+  ]),
+) as Record<PresetName, JSXConvertersFunction<NodeTypes>>;
 
 /**
  * The type scale every rich text field renders at.
@@ -57,7 +150,7 @@ export default function RichText(props: Props) {
 
   return (
     <ConvertRichText
-      converters={config.converters}
+      converters={CONVERTERS[preset]}
       className={cn(
         "payload-richtext",
         {

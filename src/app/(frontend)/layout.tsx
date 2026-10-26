@@ -18,10 +18,11 @@ import { Providers } from "@/providers";
 import { InitTheme } from "@/providers/Theme/InitTheme";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/utilities/siteMeta";
 import { mergeOpenGraph } from "@/utilities/mergeOpenGraph";
-import { draftMode } from "next/headers";
 
 import "./globals.css";
-import { getServerSideURL } from "@/utilities/getURL";
+import { SITE_URL } from "@/utilities/siteMetadata";
+import { isDraftMode } from "@/utilities/frontendData";
+import { isStaticExport } from "@/utilities/siteMode";
 import Script from "next/script";
 
 const montserrat = Montserrat({
@@ -57,7 +58,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isEnabled } = await draftMode();
+  const isEnabled = await isDraftMode();
 
   return (
     <html
@@ -69,7 +70,7 @@ export default async function RootLayout({
         barlowSemiCondensed.variable,
         GeistMono.variable,
       )}
-      lang="en"
+      lang="ro"
       suppressHydrationWarning
     >
       <head>
@@ -79,11 +80,18 @@ export default async function RootLayout({
       </head>
       <body>
         <Providers>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+          {/* The admin bar talks to the CMS session, and the static site has
+              none: its cookie is scoped to cms.ccbt.ro, so cross-origin the
+              bar would ask who is logged in, be told nobody, and stay hidden
+              for ever. Its exit-preview link points at a route the export
+              does not contain either. */}
+          {!isStaticExport && (
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
+          )}
 
           <Header />
           {children}
@@ -102,7 +110,11 @@ export default async function RootLayout({
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
+  // The site's own address, not NEXT_PUBLIC_SERVER_URL. That variable says
+  // which origin this build talks to, and in the static build it is the CMS —
+  // a canonical pointing there would tell search engines cms.ccbt.ro is the
+  // real site and the one people visit is a copy of it.
+  metadataBase: new URL(SITE_URL),
   openGraph: mergeOpenGraph(),
   twitter: {
     card: "summary_large_image",

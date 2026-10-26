@@ -12,7 +12,8 @@
 # starts.
 #
 # Repository configuration:
-#   vars.NEXT_PUBLIC_SERVER_URL - public URL of this deployment
+#   vars.CMS_SERVER_URL        - public URL of this deployment (the CMS,
+#                                e.g. https://cms.ccbt.ro)
 #   secrets.COOLIFY_WEBHOOK     - optional; deploy webhook from the
 #                                 application's Configuration > Webhooks
 #   secrets.COOLIFY_TOKEN       - optional; API token with deploy rights
@@ -20,7 +21,14 @@
 # The map needs no key: it draws on CARTO's basemaps, which are served without
 # an account (see blocks/StaticMap).
 #
-# NEXT_PUBLIC_SERVER_URL is a repository *variable*, not a secret: it is inlined
+# Its own variable rather than NEXT_PUBLIC_SERVER_URL, which the static-site
+# workflow also needs and sets to the public address, https://ccbt.ro. Both
+# builds inline their value under the same name at build time, so one shared
+# variable cannot carry both — the image would advertise the static site's
+# address as its own API, and media and form posts would go to a host with no
+# API on it.
+#
+# CMS_SERVER_URL is a repository *variable*, not a secret: it is inlined
 # into the client bundle and published in the image, so treating it as secret
 # would be theatre. Never pass PAYLOAD_SECRET or a real DATABASE_URI as a build
 # arg — the image is readable and so are its build args.
@@ -81,7 +89,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL }}
+            NEXT_PUBLIC_SERVER_URL=${{ vars.CMS_SERVER_URL }}
 
       # The standalone runtime image has no Payload CLI, so migrations ship as a
       # separate image built from the `migrator` stage. Run it as a one-shot

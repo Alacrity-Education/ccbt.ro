@@ -1,26 +1,34 @@
 import type { Metadata } from 'next/types'
 
 import { SITE_NAME } from '@/utilities/siteMeta'
+import { SITE_URL } from '@/utilities/siteMetadata'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { connection } from 'next/server'
 import React from 'react'
+
+import { getReader } from '@/utilities/frontendData'
+import { POSTS_PER_PAGE } from './perPage'
+import { isStaticExport } from '@/utilities/siteMode'
 import PageClient from './page.client'
 
-// Renders on demand: the post index takes no route parameter, so a static
-// render would mean querying the database while building the image.
-export const dynamic = 'force-dynamic'
-
 export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
+  // Rendered on request by the server build, so its Docker image builds
+  // without a database — the index takes no route parameter, so nothing else
+  // would stop Next prerendering it. Written as `connection()` rather than
+  // `export const dynamic = 'force-dynamic'` because the export rejects that
+  // outright and route segment config has to be a literal, leaving no way to
+  // switch it off. The export prerenders this from the REST API.
+  if (!isStaticExport) await connection()
+
+  const payload = await getReader()
 
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
-    limit: 12,
+    limit: POSTS_PER_PAGE,
     overrideAccess: false,
     select: {
       title: true,
@@ -43,7 +51,7 @@ export default async function Page() {
         <PageRange
           collection="posts"
           currentPage={posts.page}
-          limit={12}
+          limit={POSTS_PER_PAGE}
           totalDocs={posts.totalDocs}
         />
       </div>
@@ -62,5 +70,6 @@ export default async function Page() {
 export function generateMetadata(): Metadata {
   return {
     title: `Articole — ${SITE_NAME}`,
+    alternates: { canonical: `${SITE_URL}/posts` },
   }
 }

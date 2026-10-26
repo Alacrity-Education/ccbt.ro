@@ -9,6 +9,17 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { isStaticExport } from '@/utilities/siteMode'
+
+/**
+ * The derivatives that are the same picture at a smaller size, narrowest
+ * first (see collections/Media for the widths).
+ *
+ * `square` and `og` are crops, not resizes — handing the browser a 500x500 or a
+ * 1200x630 cut of a portrait photograph as a candidate for the same slot means
+ * it may pick one, and the image comes out with its subject sliced off.
+ */
+const RESIZED = ['thumbnail', 'small', 'medium', 'large', 'xlarge'] as const
 
 // A base64 encoded image to use as a placeholder while the image is loading
 const placeholderBlur =
@@ -74,9 +85,54 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   // nearest positioned ancestor — the box the caller meant it to fill. Every
   // call site that already works writes exactly this by hand.
   const hasPositionClass = /\b(absolute|fixed|relative|sticky)\b/.test(pictureClassName ?? "")
+  const pictureClasses = cn(fill && !hasPositionClass && "absolute inset-0", pictureClassName)
+
+  /**
+   * The static export has no image optimiser, so `images.unoptimized` is on —
+   * and that does more than skip resizing. Next then returns the bare `src`
+   * with no `srcSet` and no `sizes` at all, which makes every `sizes` string in
+   * this app dead text and sends the browser after the original upload: a
+   * 160px archive thumbnail downloading a 24MP photograph.
+   *
+   * The CMS already made the smaller copies at upload, so the fix is to offer
+   * them directly and let the browser choose, with `sizes` back in play.
+   *
+   * SVGs are excluded: there are no derivatives of a vector, and it is already
+   * the smallest thing it can be.
+   */
+  const doc = typeof resource === "object" ? resource : null
+  const copies =
+    isStaticExport && !srcFromProps && doc?.sizes && doc.mimeType !== "image/svg+xml"
+      ? RESIZED.flatMap((name) => {
+          const copy = doc.sizes?.[name]
+          return copy?.url && copy.width
+            ? [{ url: getMediaUrl(copy.url, doc.updatedAt), width: copy.width }]
+            : []
+        })
+      : []
+
+  if (copies.length && typeof src === "string") {
+    return (
+      <picture className={pictureClasses}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt={alt || ''}
+          className={cn(fill && "absolute inset-0 size-full", imgClassName)}
+          src={src}
+          srcSet={copies.map((copy) => `${copy.url} ${copy.width}w`).join(', ')}
+          sizes={sizes}
+          width={!fill ? width : undefined}
+          height={!fill ? height : undefined}
+          loading={priority ? 'eager' : loading}
+          fetchPriority={priority ? 'high' : undefined}
+          decoding="async"
+        />
+      </picture>
+    )
+  }
 
   return (
-    <picture className={cn(fill && !hasPositionClass && "absolute inset-0", pictureClassName)}>
+    <picture className={pictureClasses}>
       <NextImage
         alt={alt || ''}
         className={cn(imgClassName)}

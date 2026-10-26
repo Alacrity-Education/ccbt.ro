@@ -1,84 +1,50 @@
 import type { Metadata } from 'next/types'
 
-import { SITE_NAME } from '@/utilities/siteMeta'
+import React, { Suspense } from 'react'
+import { connection } from 'next/server'
 
-import { CollectionArchive } from '@/components/CollectionArchive'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import React from 'react'
+import { SITE_NAME } from '@/utilities/siteMeta'
+import { SITE_URL } from '@/utilities/siteMetadata'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
-import { CardPostData } from '@/components/Card'
+import { SearchResults } from './SearchResults'
+import { isStaticExport } from '@/utilities/siteMode'
 
-type Args = {
-  searchParams: Promise<{
-    q: string
-  }>
-}
-export default async function Page({ searchParams: searchParamsPromise }: Args) {
-  const { q: query } = await searchParamsPromise
-  const payload = await getPayload({ config: configPromise })
-
-  const posts = await payload.find({
-    collection: 'search',
-    depth: 1,
-    limit: 12,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-    },
-    // pagination: false reduces overhead if you don't need totalDocs
-    pagination: false,
-    ...(query
-      ? {
-          where: {
-            or: [
-              {
-                title: {
-                  like: query,
-                },
-              },
-              {
-                'meta.description': {
-                  like: query,
-                },
-              },
-              {
-                'meta.title': {
-                  like: query,
-                },
-              },
-              {
-                slug: {
-                  like: query,
-                },
-              },
-            ],
-          },
-        }
-      : {}),
-  })
+/**
+ * A static shell. The query is read and answered in the browser — see
+ * SearchResults for why, and note that this page used to take `searchParams`,
+ * which is a dynamic API: awaiting it during a prerender is what made the
+ * route impossible to export.
+ *
+ * Still rendered on request by the server build, though. Taking the query out
+ * made this page static, and a static page is prerendered while the Docker
+ * image is built — where the layout's Header and Footer globals have no
+ * database to come from. `connection()` holds it back there; the export, which
+ * reads over REST, prerenders it as intended.
+ */
+export default async function Page() {
+  if (!isStaticExport) await connection()
 
   return (
     <div className="pt-24 pb-24">
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">Search</h1>
+          <h1 className="mb-8 lg:mb-16">Căutare</h1>
 
           <div className="max-w-[50rem] mx-auto">
-            <Search />
+            {/* Both read `?q=`, and `useSearchParams` needs a Suspense
+                boundary above it to prerender at all. */}
+            <Suspense fallback={<div className="h-14" />}>
+              <Search />
+            </Suspense>
           </div>
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
-      ) : (
-        <div className="container">No results found.</div>
-      )}
+      <Suspense fallback={null}>
+        <SearchResults />
+      </Suspense>
     </div>
   )
 }
@@ -86,5 +52,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 export function generateMetadata(): Metadata {
   return {
     title: `Căutare — ${SITE_NAME}`,
+    alternates: { canonical: `${SITE_URL}/search` },
   }
 }

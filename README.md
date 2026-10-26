@@ -234,6 +234,63 @@ The seed script will also create a demo user for demonstration purposes only:
 
 > NOTICE: seeding the database is destructive because it drops your current database to populate a fresh one from the seed template. Only run this command if you are starting a new project or can afford to lose your current data.
 
+## Two builds from one branch
+
+`main` builds two different sites from the same code:
+
+| Site | What it is | Build | Deployed by |
+| --- | --- | --- | --- |
+| cms.ccbt.ro | The Payload admin, the REST and GraphQL API, and a server-rendered copy of the site | Next.js standalone server in a Docker image, reads PostgreSQL directly | `.github/workflows/docker.yml` pushes images to GHCR; Coolify runs them |
+| ccbt.ro | The public site visitors see | Static export: `NEXT_PUBLIC_STATIC_EXPORT=true` and `output: 'export'`, reads all content from the CMS over its REST API at build time | `.github/workflows/static.yml` builds and checks `out/` |
+
+Editors work in the admin at `cms.ccbt.ro/admin`. Publishing a document there does not change ccbt.ro on its own: the static site only changes when the **Static site** workflow runs again and re-reads the API. Images are served by the CMS on both sites, so media is never copied into the export.
+
+Which data source a page uses is decided in `src/utilities/siteMode.ts` and `src/utilities/frontendData.ts`: pages ask `getReader()` for their content, and that is Payload's Local API on the server build and the REST API in the export. Anything that cannot work without a request — cookies, headers, search params read on the server, draft preview, the admin bar — must either check `isStaticExport` or live in one of the routes the export deletes.
+
+### Environment variables
+
+| Variable | Used by | Meaning |
+| --- | --- | --- |
+| `NEXT_PUBLIC_STATIC_EXPORT` | static | Set to `true` to build the static export. Unset or anything else builds the server app |
+| `NEXT_PUBLIC_PAYLOAD_API_URL` | static | The CMS REST API the export reads, **including** the `/api` suffix, for example `https://cms.ccbt.ro/api` |
+| `NEXT_PUBLIC_SERVER_URL` | both | Public URL of the site being built, with no trailing slash. It is also what canonical links and the image optimizer's allow-list are derived from, so each build needs its own value: `https://cms.ccbt.ro` for the CMS, `https://ccbt.ro` for the static site |
+
+Every `NEXT_PUBLIC_*` value is **inlined at build time**, not read at runtime. Next substitutes the literal string into the bundle while building, so changing one of these on a running container only reaches server-side code; the browser bundle keeps whatever was set when the image or the export was built. Changing a `NEXT_PUBLIC_*` value means rebuilding, not restarting. For the same reason none of them is a secret: they are published in the output.
+
+For the static build these are repository *variables* (Settings → Secrets and variables → Actions → Variables), not secrets.
+
+### Building the static export locally
+
+The export reads a running CMS over HTTP, so it needs no database and no `.env`. It mirrors what the workflow does, and the workflow starts by **deleting** the routes that cannot be prerendered. That deletion is destructive and is not undone afterwards, so **run this in a scratch copy of the repository, never in your working tree**:
+
+```sh
+# `git clone .` copies the last commit; use `cp -a . /tmp/ccbt-export` instead
+# if you want to export work you have not committed yet.
+git clone . /tmp/ccbt-export && cd /tmp/ccbt-export
+npm ci
+
+# Payload's admin and API, and the preview/seed handlers, cannot be exported.
+# The sitemap and robots routes are left alone: the export is meant to emit them.
+rm -rf "src/app/(payload)" "src/app/(frontend)/next"
+
+NEXT_PUBLIC_STATIC_EXPORT=true \
+NEXT_PUBLIC_PAYLOAD_API_URL=https://cms.ccbt.ro/api \
+NEXT_PUBLIC_SERVER_URL=https://ccbt.ro \
+npx next build
+```
+
+Use `npx next build`, not `npm run build`: the `build` script has a `postbuild` hook that runs `next-sitemap`, which is configured for the server build and has no business touching the export.
+
+The site is written to `out/`, including `sitemap.xml` and `robots.txt`. Check it the way CI does:
+
+```sh
+node scripts/ci/check-static-output.mjs out
+```
+
+That script fails on a page missing its title, description, canonical link, share image or footer, on an internal link pointing at a page that was not exported, and on a CMS image that no longer responds — all things a successful `next build` will happily produce. Set `SKIP_REMOTE=1` to skip the image requests when working offline, and `SITE_URL` if you built against an origin other than `https://ccbt.ro`.
+
+To serve the result locally, any static file server will do, for example `npx serve out`.
+
 ## Production
 
 To run Payload in production, you need to build and start the Admin panel. To do so, follow these steps:

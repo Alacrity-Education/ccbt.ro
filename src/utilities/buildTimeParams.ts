@@ -1,35 +1,37 @@
+import { isStaticExport } from './siteMode'
+
 /**
- * Wraps a `generateStaticParams` body so a missing database does not fail the
- * build.
+ * The body of a `generateStaticParams`, for a codebase that builds twice.
  *
- * The Docker image is built in CI with no Postgres to reach: there is no
- * tunnel, no service container and no credentials, which is deliberate — the
- * image should not need production data to exist. Payload only connects when a
- * query runs, so everything is fine until `generateStaticParams` asks for the
- * slugs and the connection is refused, which fails the whole build with
- * "Failed to collect page data".
+ * The two builds want opposite things from it, which is why this exists rather
+ * than the query sitting in the route:
  *
- * Returning no params is the right answer there. Every one of these routes
- * carries `revalidate`, so an unlisted path is rendered on demand at runtime and
- * cached from then on — the pages still exist, they are simply not prerendered.
+ * The server build wants nothing. Its Docker image is built in CI with no
+ * Postgres to reach — no tunnel, no service container, no credentials, which
+ * is deliberate: the image should not need production data to exist. Payload
+ * only connects when a query runs, so asking for the slugs here is what would
+ * fail the build with "Failed to collect page data". Returning no params
+ * costs nothing, because every one of these routes carries `revalidate` and
+ * renders on demand the first time it is asked for.
  *
- * A build that *can* reach the database is unaffected and prerenders as before.
+ * The export wants all of them, and cannot tolerate a failure. `output:
+ * 'export'` rejects a dynamic route that produced no paths, and it cannot
+ * tell an empty list from a missing function — so a swallowed connection
+ * error would surface as "Page is missing generateStaticParams()", naming the
+ * wrong problem. The error is left to escape instead.
+ *
+ * `placeholder` covers the one case where emptiness is legitimate: a
+ * collection with nothing published yet. Without it the first build of an
+ * empty site fails. The path it generates renders the not-found body, which
+ * is the price of the build completing at all.
  */
-export async function paramsOrNone<T>(
+export async function staticParams<T>(
   load: () => Promise<T[]>,
-  label: string,
+  placeholder: T,
 ): Promise<T[]> {
-  try {
-    return await load()
-  } catch (error) {
-    // Never swallow this silently: a prerender that quietly produced nothing
-    // because of a typo in DATABASE_URI looks identical to one that had no
-    // database on purpose.
-    console.warn(
-      `[generateStaticParams] ${label}: no params prerendered — ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    )
-    return []
-  }
+  if (!isStaticExport) return []
+
+  const params = await load()
+
+  return params.length > 0 ? params : [placeholder]
 }

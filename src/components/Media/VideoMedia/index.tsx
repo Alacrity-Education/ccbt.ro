@@ -24,7 +24,20 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   }, [])
 
   if (resource && typeof resource === 'object') {
-    const { filename } = resource
+    const { filename, url, updatedAt } = resource
+
+    /**
+     * The upload's own URL, not `/media/<filename>`.
+     *
+     * `public/media` is where Payload writes uploads on the machine running
+     * the CMS. It is gitignored and lives on that container's volume, so it is
+     * not part of either deployment's static files — on ccbt.ro the directory
+     * does not exist at all. The API route Payload serves uploads from is the
+     * only address that works from both sites, and `getMediaUrl` points it at
+     * the CMS origin. The filename fallback is for a resource read at a depth
+     * that left `url` off.
+     */
+    const source = getMediaUrl(url || `/api/media/file/${filename}`, updatedAt)
 
     return (
       <video
@@ -37,7 +50,7 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
         playsInline
         ref={videoRef}
       >
-        <source src={getMediaUrl(`/media/${filename}`)} />
+        <source src={source} />
       </video>
     )
   }

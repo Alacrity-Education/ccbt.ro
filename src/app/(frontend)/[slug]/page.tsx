@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
-import { draftMode } from 'next/headers'
+import { type RequiredDataFromCollectionSlug } from 'payload'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
@@ -12,11 +10,12 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { paramsOrNone } from '@/utilities/buildTimeParams'
+import { staticParams } from '@/utilities/buildTimeParams'
+import { getReader, isDraftMode } from '@/utilities/frontendData'
 export const revalidate = 120 // revalidate at most every hour
 export async function generateStaticParams() {
-  return paramsOrNone(async () => {
-    const payload = await getPayload({ config: configPromise })
+  return staticParams(async () => {
+    const payload = await getReader()
     const pages = await payload.find({
       collection: 'pages',
       draft: false,
@@ -31,7 +30,7 @@ export async function generateStaticParams() {
     return pages.docs
       .filter((doc) => doc.slug !== 'home')
       .map(({ slug }) => ({ slug }))
-  }, 'pages')
+  }, { slug: 'no-pages' })
 }
 
 type Args = {
@@ -41,7 +40,7 @@ type Args = {
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
+  const draft = await isDraftMode()
   const { slug = 'home' } = await paramsPromise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
@@ -101,9 +100,9 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  const draft = await isDraftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getReader()
 
   const result = await payload.find({
     collection: 'pages',

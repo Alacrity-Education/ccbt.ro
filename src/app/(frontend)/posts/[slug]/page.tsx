@@ -2,9 +2,6 @@ import type { Metadata } from 'next'
 
 //import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 
@@ -15,11 +12,12 @@ import { PostMotif, PostStrip } from '@/heros/PostHero/PostMotif'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { paramsOrNone } from '@/utilities/buildTimeParams'
+import { staticParams } from '@/utilities/buildTimeParams'
+import { getReader, isDraftMode } from '@/utilities/frontendData'
 export const revalidate = 600
 export async function generateStaticParams() {
-  return paramsOrNone(async () => {
-    const payload = await getPayload({ config: configPromise })
+  return staticParams(async () => {
+    const payload = await getReader()
     const posts = await payload.find({
       collection: 'posts',
       draft: false,
@@ -32,7 +30,7 @@ export async function generateStaticParams() {
     })
 
     return posts.docs.map(({ slug }) => ({ slug }))
-  }, 'posts')
+  }, { slug: 'no-posts' })
 }
 
 type Args = {
@@ -42,7 +40,7 @@ type Args = {
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
+  const draft = await isDraftMode()
   const { slug = '' } = await paramsPromise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
@@ -92,13 +90,13 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug })
 
-  return generateMeta({ doc: post })
+  return generateMeta({ collection: 'posts', doc: post })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  const draft = await isDraftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getReader()
 
   const result = await payload.find({
     collection: 'posts',

@@ -60,6 +60,25 @@ const linkSize: Record<string, string> = {
   sm: "btn-sm",
 }
 
+/**
+ * The address a link to a document points at.
+ *
+ * The home page is the one document whose slug is not its path: it answers at
+ * `/`, and `/[slug]`'s own `generateStaticParams` filters it out for exactly
+ * that reason. Without this a link an editor made to it came out as `/home` —
+ * which the server build quietly answered anyway, by routing it through
+ * `[slug]` and serving the same page at a second address, and which the
+ * static site cannot answer at all, because no `/home` was ever written.
+ */
+const referenceHref = (
+  relationTo: "pages" | "posts",
+  slug: string,
+): string => {
+  if (relationTo !== "pages") return `/${relationTo}/${slug}`
+
+  return slug === "home" ? "/" : `/${slug}`
+}
+
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
@@ -77,9 +96,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     type === "reference" &&
     typeof reference?.value === "object" &&
     reference.value.slug
-      ? `${reference?.relationTo !== "pages" ? `/${reference?.relationTo}` : ""}/${
-          reference.value.slug
-        }`
+      ? referenceHref(reference.relationTo, reference.value.slug)
       : url;
 
   if (!href) return null;

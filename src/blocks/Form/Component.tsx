@@ -13,6 +13,7 @@ import type { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
 
 import { fields } from "./fields";
 import { getClientSideURL } from "@/utilities/getURL";
+import { cmsOrigin } from "@/utilities/cmsOrigin";
 import { cn } from "@/utilities/ui";
 import { brandSurface } from "@/utilities/brand";
 
@@ -21,7 +22,8 @@ export type FormBlockType = {
   blockType?: "formBlock";
   enableIntro: boolean;
   showTitle?: boolean;
-  form: FormType;
+  /** The plugin's own type predates the slug we add in plugins/index. */
+  form: FormType & { slug?: string };
   introContent?: DefaultTypedEditorState;
 };
 
@@ -36,6 +38,10 @@ export const FormBlock: React.FC<
     form: formFromProps,
     form: {
       id: formID,
+      // The public endpoint addresses a form by name rather than by numeric
+      // id, so the static build carries no CMS primary keys. The plugin's own
+      // Form type predates the field, hence the cast — see plugins/index.
+      slug: formSlug,
       title: formTitle,
       confirmationMessage,
       confirmationType,
@@ -56,6 +62,10 @@ export const FormBlock: React.FC<
   } = formMethods;
 
   const [isLoading, setIsLoading] = useState(false);
+  // The honeypot's value. Held in state rather than read off the DOM so the
+  // submit handler has it without reaching for a ref — people never type in
+  // it, so a re-render per keystroke costs nothing.
+  const [honeypot, setHoneypot] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState<boolean>();
   const [error, setError] = useState<
     { message: string; status?: string } | undefined
@@ -79,23 +89,27 @@ export const FormBlock: React.FC<
         // nobody touched reports null, the collection rejects it, and the
         // whole submission comes back as an opaque 500 — every other answer
         // lost along with it. An empty string saves fine.
-        const dataToSend = Object.entries(data).map(([name, value]) => ({
-          field: name,
-          value: Array.isArray(value) ? value.join(", ") : (value ?? ""),
-        }));
-
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
           setIsLoading(true);
         }, 1000);
 
         try {
+          // The CMS, not this site. On ccbt.ro the page is static files on a
+          // host with no API at all, so posting to its own origin is a 404 —
+          // which is exactly how both reference projects' forms are broken.
+          // On cms.ccbt.ro the two resolve to the same place.
           const req = await fetch(
-            `${getClientSideURL()}/api/form-submissions`,
+            `${cmsOrigin()}/api/public/forms/${formSlug}`,
             {
+              // The endpoint takes the answers as they were asked, and does
+              // the rest itself: it joins multi-value answers, coerces an
+              // untouched optional field to an empty string, and refuses
+              // names the form does not declare. `hp` is the honeypot — a
+              // field people never see and bots fill in.
               body: JSON.stringify({
-                form: formID,
-                submissionData: dataToSend,
+                data,
+                hp: honeypot,
               }),
               headers: {
                 "Content-Type": "application/json",
@@ -112,8 +126,12 @@ export const FormBlock: React.FC<
             setIsLoading(false);
 
             setError({
-              message: res.errors?.[0]?.message || "Internal Server Error",
-              status: res.status,
+              message:
+                res.errors?.[0]?.message ||
+                (res.error === "rate_limited"
+                  ? "Prea multe încercări. Încearcă din nou peste câteva minute."
+                  : "A apărut o eroare. Încearcă din nou."),
+              status: String(req.status),
             });
 
             return;
@@ -140,7 +158,7 @@ export const FormBlock: React.FC<
 
       void submitForm();
     },
-    [router, formID, redirect, confirmationType],
+    [router, formSlug, redirect, confirmationType, honeypot],
   );
 
   const { variant } = props as { variant?: string | null };
@@ -221,6 +239,28 @@ export const FormBlock: React.FC<
           )}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+              {/* The honeypot. Hidden from people and from screen readers,
+                  left in the markup for anything that fills a form by reading
+                  it — the endpoint answers a filled one with a success and
+                  saves nothing, because telling a bot it was caught only
+                  teaches it to leave the field alone.
+
+                  Not `display: none`: some bots skip what they cannot see.
+                  `tabIndex={-1}` and `autoComplete="off"` keep it away from
+                  keyboard users and from the browser's own autofill, which
+                  would otherwise be the one thing that falsely trips it. */}
+              <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+                <label htmlFor={`${formID}-hp`}>Lasă acest câmp gol</label>
+                <input
+                  autoComplete="off"
+                  id={`${formID}-hp`}
+                  name="hp"
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  type="text"
+                  value={honeypot}
+                />
+              </div>
               {/* The fields carry the page's dark body colour by default. On a
                   brand panel that is the one thing they must not do, so the
                   colour comes from the panel instead and the labels inherit
