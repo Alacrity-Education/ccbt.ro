@@ -16,6 +16,7 @@ import { Header } from "./Header/config";
 import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { getServerSideURL } from "./utilities/getURL";
+import { email } from "./email";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -65,6 +66,8 @@ export default buildConfig({
   editor: defaultLexical,
   db,
   collections: [Pages, Posts, Media, Categories, Users],
+  // SMTP, or nothing at all when it is not configured — see src/email.
+  email,
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
