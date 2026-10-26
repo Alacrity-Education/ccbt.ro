@@ -8,6 +8,7 @@ import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { slugField } from 'payload'
 import { searchFields } from '@/search/fieldOverrides'
 import { phoneBlock, selectOverride } from './formFields'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
@@ -123,7 +124,11 @@ export const plugins: Plugin[] = [
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
+        // A slug, so the static site can post to a name it can read rather
+        // than to a numeric id it would have to look up at build time and
+        // would silently point at the wrong form if one were ever recreated.
+        // Same field the pages use, generated from the title.
+        return [slugField(), ...defaultFields].map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,

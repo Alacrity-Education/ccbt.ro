@@ -17,6 +17,8 @@ declare global {
       SMTP_PASS?: string
       SMTP_FROM_ADDRESS?: string
       SMTP_FROM_NAME?: string
+      /** Comma-separated origins allowed to post a form. See utilities/publicOrigins. */
+      PUBLIC_FORM_ORIGINS?: string
     }
   }
 }

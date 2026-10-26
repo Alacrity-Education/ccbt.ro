@@ -1,6 +1,9 @@
 import { RequiredDataFromCollectionSlug } from 'payload'
 
 export const contactForm: RequiredDataFromCollectionSlug<'forms'> = {
+  // Forms are addressed by slug now, so the static site can post to a name
+  // rather than a numeric id — see endpoints/publicFormSubmit.
+  slug: 'contact',
   confirmationMessage: {
     root: {
       type: 'root',

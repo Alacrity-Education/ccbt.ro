@@ -17,6 +17,8 @@ import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { getServerSideURL } from "./utilities/getURL";
 import { email } from "./email";
+import { publicFormSubmit } from "./endpoints/publicFormSubmit";
+import { publicOrigins } from "./utilities/publicOrigins";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -68,7 +70,11 @@ export default buildConfig({
   collections: [Pages, Posts, Media, Categories, Users],
   // SMTP, or nothing at all when it is not configured — see src/email.
   email,
-  cors: [getServerSideURL()].filter(Boolean),
+  // This host, plus wherever the static site is served from — ccbt.ro posts
+  // its forms here and the browser will not let it read the reply otherwise
+  // (see utilities/publicOrigins).
+  cors: [getServerSideURL(), ...publicOrigins()].filter(Boolean),
+  endpoints: [publicFormSubmit],
   globals: [Header, Footer],
   plugins: [
     ...plugins,

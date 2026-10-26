@@ -640,6 +640,11 @@ export interface CallToActionBlock {
  */
 export interface Form {
   id: number;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   title: string;
   fields?:
     | (
@@ -2134,6 +2139,8 @@ export interface RedirectsSelect<T extends boolean = true> {
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
+  generateSlug?: T;
+  slug?: T;
   title?: T;
   fields?:
     | T
