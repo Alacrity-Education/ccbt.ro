@@ -9,21 +9,44 @@ import Link from "next/link";
 /**
  * The three monochrome basemaps the variants resolve to.
  *
- * CARTO serves these without an account or a token, which is why they replaced
- * the Mapbox styles: those needed a key present at build time, inlined into the
- * client bundle, and a Mapbox account behind it — for a map that only ever shows
- * one pin. Monochrome also keeps the map from competing with the brand colours,
- * so the marker is the only saturated thing on it.
+ * Monochrome keeps the map from competing with the brand colours, so the
+ * marker is the only saturated thing on it. The variant values are unchanged,
+ * so existing blocks keep rendering; only what each one points at has moved.
  *
- * The variant values are unchanged, so existing blocks keep rendering; only what
- * each one points at has moved.
+ * Two providers, chosen by whether a Stadia key is configured:
+ *
+ * - **Stadia Maps** when `NEXT_PUBLIC_STADIA_API_KEY` is set. Stadia signs a
+ *   data processing agreement, which is what lets the privacy policy name a
+ *   processor under Article 28 GDPR rather than merely a recipient.
+ * - **CARTO** otherwise. It serves these styles with no account and no token,
+ *   which is why it was here first and why it stays as the fallback — a
+ *   missing key leaves a working map rather than a blank frame.
+ *
+ * Whichever is used, the visitor's browser requests the tiles *directly*, so
+ * that provider sees their IP address. The privacy policy has to name the one
+ * actually in use: see docs/politica-de-confidentialitate.md, clause 4.3. A
+ * key present in the build and a key absent are two different documents, so
+ * this is not a detail to leave to chance — if the key is not set in
+ * production, clause 4.3 must say CARTO.
  */
+const STADIA_KEY = process.env.NEXT_PUBLIC_STADIA_API_KEY;
+
+const stadia = (style: string): string =>
+  `https://tiles.stadiamaps.com/styles/${style}.json?api_key=${STADIA_KEY}`;
+
 const VARIANT_TO_STYLE: Record<NonNullable<StaticMapBlock["variant"]>, string> =
-  {
-    default: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-    mono: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
-    "mono-black": "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-  };
+  STADIA_KEY
+    ? {
+        default: stadia("alidade_smooth"),
+        mono: stadia("stamen_toner_lite"),
+        "mono-black": stadia("alidade_smooth_dark"),
+      }
+    : {
+        default: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        mono: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
+        "mono-black":
+          "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+      };
 
 export const StaticMapBlockComponent: React.FC<StaticMapBlock> = (props) => {
   const { variant, initialView, markers } = props || {};

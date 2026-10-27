@@ -26,6 +26,12 @@
 #                                      https://cms.ccbt.ro/api
 #   vars.NEXT_PUBLIC_SERVER_URL      - public URL of the static site, no
 #                                      trailing slash, e.g. https://ccbt.ro
+#   vars.NEXT_PUBLIC_STADIA_API_KEY  - optional; Stadia Maps key for the map
+#                                      tiles. A variable, not a secret: it is
+#                                      inlined into the public bundle like
+#                                      every NEXT_PUBLIC_* value, so restrict
+#                                      it by domain in the Stadia dashboard.
+#                                      Unset, maps fall back to CARTO.
 #
 # The Pages project must be a *direct upload* project (created by this
 # workflow's first run, or with `wrangler pages project create`), and its
@@ -132,6 +138,10 @@ jobs:
           NEXT_PUBLIC_STATIC_EXPORT: 'true'
           NEXT_PUBLIC_PAYLOAD_API_URL: ${{ vars.NEXT_PUBLIC_PAYLOAD_API_URL }}
           NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
+          # Unset, maps fall back to CARTO — which changes who the privacy
+          # policy must name as the tile provider. See clause 4.3 of
+          # docs/politica-de-confidentialitate.md.
+          NEXT_PUBLIC_STADIA_API_KEY: ${{ vars.NEXT_PUBLIC_STADIA_API_KEY }}
 
       # A build against an unreachable or empty API still exits 0: the pages
       # that take a route parameter simply prerender nothing. Without this

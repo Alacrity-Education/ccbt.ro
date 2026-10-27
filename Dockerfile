@@ -45,6 +45,12 @@ ARG NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 # whatever was frozen in now. It is also readable from the published image, so
 # never pass a real secret this way.
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+# Optional. Unset, the map falls back to CARTO, which changes who the privacy
+# policy has to name as the tile provider — see clause 4.3 of
+# docs/politica-de-confidentialitate.md. Domain-restricted and published in the
+# bundle, so it is a build arg rather than a secret.
+ARG NEXT_PUBLIC_STADIA_API_KEY=
+ENV NEXT_PUBLIC_STADIA_API_KEY=$NEXT_PUBLIC_STADIA_API_KEY
 RUN npm run build
 
 # -------------------------------------------------------------------- runtime

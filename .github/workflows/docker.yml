@@ -90,6 +90,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             NEXT_PUBLIC_SERVER_URL=${{ vars.CMS_SERVER_URL }}
+            NEXT_PUBLIC_STADIA_API_KEY=${{ vars.NEXT_PUBLIC_STADIA_API_KEY }}
 
       # The standalone runtime image has no Payload CLI, so migrations ship as a
       # separate image built from the `migrator` stage. Run it as a one-shot

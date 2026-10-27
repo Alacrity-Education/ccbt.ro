@@ -83,12 +83,6 @@ atribuții sunt duse la îndeplinire fiind inseparabilă de acestea.
 
 ### 4.2. Măsurarea audienței
 
-> **Clauză condiționată — a se vedea secțiunea „Înainte de publicare".** La data
-> redactării, pe Site **nu este instalat niciun instrument de măsurare a
-> audienței**. Păstrați această clauză numai dacă instalați Umami; în caz
-> contrar, eliminați-o în întregime, împreună cu rândul corespunzător din
-> tabelele de la secțiunile 5, 6 și 8.
-
 4.2.1. Măsurăm utilizarea Site-ului prin intermediul aplicației Umami,
 [administrată de noi pe propria infrastructură, situată în [LOCAȚIE] / furnizată
 de Umami Software, Inc. și găzduită pe teritoriul Uniunii Europene].
@@ -123,15 +117,17 @@ acestei prelucrări.
 4.3.1. Anumite pagini ale Site-ului pot afișa o hartă. Harta este randată în
 navigatorul vizitatorului prin intermediul bibliotecii MapLibre GL JS, servită
 de pe domeniul nostru. Imaginile cartografice sunt solicitate de navigatorul
-vizitatorului direct de la **CARTO** (CARTO Inc., furnizorul serviciului
-`basemaps.cartocdn.com`), pe măsură ce harta este afișată.
+vizitatorului direct de la **Stadia Maps AB** („**Stadia Maps**"), pe măsură ce
+harta este afișată.
 
-4.3.2. Ca urmare a acestei cereri directe, CARTO primește adresa IP a
+4.3.2. Ca urmare a acestei cereri directe, Stadia Maps primește adresa IP a
 vizitatorului, identificatorul aplicației client și identificatorii imaginilor
 cartografice solicitate, care indică zona geografică afișată. Nu transmitem
-către CARTO nicio altă dată și nu primim în schimb nicio informație privind
-vizitatorul. Politica de confidențialitate a CARTO este disponibilă la
-https://carto.com/privacy/.
+către Stadia Maps nicio altă dată și nu primim în schimb nicio informație
+privind vizitatorul. Stadia Maps acționează în calitate de persoană
+împuternicită de operator, în temeiul unui acord încheiat potrivit articolului
+28 din RGPD. Politica sa de confidențialitate este disponibilă la
+https://stadiamaps.com/privacy-policy/.
 
 4.3.3. Harta se încarcă la deschiderea paginii care o conține, iar nu la
 interacțiunea cu aceasta.
@@ -169,10 +165,22 @@ plasarea de cookie-uri până la inițierea redării. Transmiterea către Google
 datelor menționate la punctul 4.4.2 are loc însă **la afișarea paginii**,
 independent de inițierea redării de către vizitator.
 
-4.4.4. **Temei juridic.** [A SE DECIDE — a se vedea secțiunea „Înainte de
-publicare". Această clauză nu poate fi completată în mod corect până când nu se
-decide dacă playerul se încarcă în continuare automat sau numai la cererea
-vizitatorului.]
+4.4.4. **Temei juridic.** Articolul 6 alineatul (1) litera (e) din RGPD,
+transmiterea menționată la punctul 4.4.3 fiind necesară pentru punerea la
+dispoziția publicului a materialelor audiovizuale privind patrimoniul cultural
+și activitatea Centrului, atribuție ce îi revine acestuia. În privința stocării
+de informații în echipamentul terminal al vizitatorului și a accesării
+informațiilor stocate în acesta, cerința consimțământului prevăzută la
+articolul 4 alineatul (5) din Legea nr. 506/2004 este îndeplinită prin
+inițierea redării de către vizitator, aceasta fiind acțiunea prin care
+cookie-urile și identificatorii similari menționați la punctul 4.4.2 ajung să
+fie plasați.
+
+4.4.5. Vizitatorul care nu dorește ca datele menționate la punctul 4.4.2 să fie
+transmise către Google poate consulta pagina fără a iniția redarea, situație în
+care nu este plasat niciun cookie, sau poate bloca domeniul
+`youtube-nocookie.com` din setările navigatorului său. Dreptul de opoziție
+prevăzut la punctul 9.1 litera f) rămâne aplicabil.
 
 ### 4.5. Formulare transmise prin intermediul Site-ului
 
@@ -270,9 +278,9 @@ paginile ce conțin conținut video provin din playerul YouTube, iar nu din Site
 | `payload-theme` (memorie locală) | Primară | Reținerea variantei de afișare alese | Până la ștergerea datelor de navigare | Nu (strict necesar) |
 | Preferințe de accesibilitate (memorie locală sau cookie) | Primară | Reținerea setărilor de accesibilitate alese de vizitator | [●] zile / până la ștergerea datelor de navigare | Nu (strict necesar) |
 | `payload-token` (cookie) | Primară | Autentificarea personalului editorial în sistemul de administrare a conținutului. Plasat exclusiv la autentificarea persoanelor autorizate, niciodată în privința vizitatorilor Site-ului | [SESIUNE / 7 zile] | Nu (strict necesar) |
-| Cereri de imagini cartografice | CARTO | Afișarea hărților | Nu se aplică (nu se stochează informații în echipamentul terminal) | Nu |
+| Cereri de imagini cartografice | Stadia Maps | Afișarea hărților | Nu se aplică (nu se stochează informații în echipamentul terminal) | Nu |
 | Solicitarea fișierului instrumentului de accesibilitate | jsDelivr | Livrarea instrumentului de accesibilitate | Nu se aplică (nu se stochează informații în echipamentul terminal) | Nu |
-| Cookie-uri și identificatori similari YouTube | Google | Redarea conținutului video și scopurile proprii ale Google | Stabilită de Google | [A SE DECIDE — a se vedea clauza 4.4.4] |
+| Cookie-uri și identificatori similari YouTube | Google | Redarea conținutului video și scopurile proprii ale Google | Stabilită de Google | Da, prin inițierea redării (clauza 4.4.4) |
 
 5.2. Pe Site nu sunt utilizate cookie-uri în scopuri de publicitate, de
 retargetare sau de urmărire între site-uri.
@@ -286,7 +294,7 @@ dezvăluite următoarelor categorii de destinatari:
 |---|---|---|---|
 | Cloudflare, Inc. | Găzduirea site-ului public și protecția împotriva atacurilor | Datele menționate la punctul 4.1.1 | Rețea globală, cu prelucrare la punctul de prezență cel mai apropiat |
 | [FURNIZORUL DE GĂZDUIRE A SISTEMULUI DE ADMINISTRARE A CONȚINUTULUI] | Găzduirea sistemului de administrare a conținutului și a bazei de date | Datele menționate la punctele 4.1.1 și 4.5.1 | [●] |
-| CARTO Inc. | Furnizarea imaginilor cartografice | Datele menționate la punctul 4.3.2 | [●] |
+| Stadia Maps AB | Furnizarea imaginilor cartografice | Datele menționate la punctul 4.3.2 | [●] |
 | [OPERATORUL REȚELEI jsDelivr] | Livrarea instrumentului de accesibilitate | Datele menționate la punctul 4.7.2 | Rețea globală |
 | Google Ireland Limited | Găzduirea conținutului video | Datele menționate la punctul 4.4.2 | Global |
 | Google Ireland Limited (Google Workspace) | Transmiterea mesajelor de poștă electronică privind formularele | Conținutul comunicării | Uniunea Europeană și state terțe |
@@ -455,9 +463,9 @@ de interes public și de Legea nr. 16/1996 a Arhivelor Naționale.
 
 > **Această secțiune nu face parte din textul paginii.** Ștergeți-o înainte de a
 > publica politica pe Site. Nu este consultanță juridică: este o descriere
-> faptică a ceea ce face efectiv ccbt.ro, măsurată în codul și pe site-ul live
-> la 27 octombrie 2026, menită ca document de lucru pentru juristul care o
-> avizează.
+> faptică a ceea ce face efectiv ccbt.ro, verificată în cod și măsurată pe
+> site-ul live la 27 octombrie 2026, menită ca document de lucru pentru
+> juristul care o avizează.
 
 ## A. Ce trebuie completat (câmpurile din paranteze drepte)
 
@@ -466,30 +474,51 @@ de interes public și de Legea nr. 16/1996 a Arhivelor Naționale.
 | 1.1 | Adresa sediului, CIF, actul de înființare, forma exactă a subordonării |
 | 1.3 | Adresa de e-mail pentru protecția datelor |
 | 1.4 | Numele, telefonul și e-mailul responsabilului cu protecția datelor |
+| 4.2.1 | Dacă Umami este găzduit de noi sau de Umami Software, Inc. |
 | 4.5.1, 6.1 | Unde este găzduit serverul CMS (țara și furnizorul) |
 | 5.1 | Durata cookie-ului de accesibilitate și a `payload-token` |
 | 8.1 | Duratele de stocare — jurnalele de acces, transmiterile din formulare |
 
-## B. Trei lucruri care diferă față de politica alacrity.education
+## B. Ce este adaptat pentru o instituție publică
 
-Stiva tehnică este aceeași, însă **destinatarii efectivi nu sunt aceiași**, iar
-o politică ce numește destinatarul greșit este inexactă. Verificat în cod și
-măsurat pe site-ul live:
+Aceasta este deosebirea de fond față de politica scrisă pentru
+alacrity.education, iar ea străbate tot documentul:
 
-1. **Hărțile folosesc CARTO, nu Stadia Maps.** `src/blocks/StaticMap/Component.client.tsx`
-   trimite către `basemaps.cartocdn.com`; în proiect nu există nicio cheie
-   Stadia. Dacă treceți pe Stadia, clauza 4.3 și tabelul 6.1 trebuie schimbate.
-2. **Nu există niciun instrument de măsurare a audienței.** Umami nu este
-   instalat. Clauza 4.2 este marcată drept condiționată tocmai de aceea.
-3. **Există un instrument de accesibilitate pe care alacrity nu îl are** —
-   Sienna, încărcat de la `cdn.jsdelivr.net` la fiecare afișare de pagină
-   (`src/app/(frontend)/layout.tsx`). Clauzele 4.7 și rândurile corespunzătoare
-   din tabele sunt noi.
+- **Interesul legitim nu vă este disponibil.** Ultimul paragraf al articolului 6
+  alineatul (1) din RGPD exclude litera (f) pentru autoritățile publice în
+  îndeplinirea atribuțiilor lor. Sursa se sprijină aproape integral pe acest
+  temei; aici fiecare prelucrare trece pe litera (e), (c), (b) sau (a). Clauza
+  3.3 o spune explicit, iar dreptul de opoziție de la 9.1 litera f) este
+  formulat corespunzător.
+- **Responsabilul cu protecția datelor este obligatoriu**, nu opțional —
+  articolul 37 alineatul (1) litera (a). Clauza 1.4 nu mai oferă varianta „nu
+  este necesar", pe care o avea sursa.
+- **Identificarea operatorului** nu se face prin registrul comerțului și număr
+  J, ci prin actul de înființare și CIF.
+- **Retenția** trimite la Legea nr. 16/1996 a Arhivelor Naționale, iar
+  formularele pot constitui petiții sau solicitări în temeiul Legii nr.
+  544/2001 — de unde și temeiul suplimentar de la 4.5.5.
 
-## C. Problema care cere o decizie, nu o redactare
+## C. Două lucruri pe care politica le afirmă și care depind de o acțiune
 
-**Playerul YouTube se încarcă fără consimțământ.** Măsurat pe
-`ccbt-ro.pages.dev/patrimoniu`, înainte de orice clic, navigatorul contactează:
+1. **Stadia Maps (clauza 4.3).** Am adăugat suportul în
+   `src/blocks/StaticMap/Component.client.tsx`: cu `NEXT_PUBLIC_STADIA_API_KEY`
+   setat se folosește Stadia, fără cheie se revine la CARTO. Cheia trebuie
+   setată ca variabilă de depozit (`vars.NEXT_PUBLIC_STADIA_API_KEY`) **înainte**
+   ca această clauză să fie adevărată. Fără ea, clauza 4.3 și rândurile din
+   tabelele 5.1 și 6.1 trebuie să spună CARTO, nu Stadia.
+   Cheia se restricționează pe domeniu în contul Stadia: fiind o valoare
+   `NEXT_PUBLIC_*`, ea este inclusă în codul public al paginii.
+2. **Umami (clauza 4.2).** Nu este încă instalat. Clauza descrie corect ce face
+   Umami, dar până la instalare descrie ceva ce nu se întâmplă. Fie se
+   instalează înainte de publicarea politicii, fie clauza 4.2 și rândurile
+   corespunzătoare din tabelele 5.1, 6.1 și 8.1 se elimină.
+
+## D. Punctul pe care juristul trebuie să îl avizeze expres
+
+**Playerul YouTube se încarcă odată cu pagina.** Aceasta a fost decizia luată,
+iar clauza 4.4 o descrie deschis, fără să pretindă altceva. Ce se întâmplă,
+măsurat pe `ccbt-ro.pages.dev/patrimoniu`, înainte de orice clic:
 
 ```
 www.youtube-nocookie.com   (8 cereri)
@@ -501,35 +530,29 @@ fonts.gstatic.com          (2)
 
 Adresa IP a vizitatorului și adresa paginii ajung astfel la Google la simpla
 deschidere a paginii. `youtube-nocookie.com` amână **cookie-urile**, nu
-**transmiterea datelor**: consimțământul prevăzut la articolul 4 alineatul (5)
-din Legea nr. 506/2004 nu este necesar atât timp cât nu se stochează nimic în
-echipamentul terminal, dar transmiterea adresei IP către Google rămâne o
-prelucrare care are nevoie de un temei în articolul 6.
+**transmiterea**: nu se stochează nimic în echipamentul terminal până la
+redare, așa că articolul 4 alineatul (5) din Legea nr. 506/2004 este acoperit
+de inițierea redării — dar transmiterea adresei IP rămâne o prelucrare care are
+nevoie de un temei în articolul 6, iar interesul legitim nu vă este disponibil.
 
-Iar aici intervine diferența față de alacrity: **articolul 6 alineatul (1)
-litera (f) — interesul legitim — nu vă este disponibil.** Ultimul paragraf al
-articolului 6 alineatul (1) din RGPD îl exclude pentru autoritățile publice în
-îndeplinirea atribuțiilor lor. Rămâne, realist, consimțământul.
+Clauza 4.4.4 invocă articolul 6 alineatul (1) litera (e). Este o poziție
+apărabilă pentru o instituție de cultură care publică materiale despre
+patrimoniu, dar **nu este cea mai sigură**, iar unele autorități de supraveghere
+europene au considerat că pentru conținutul încorporat al unui terț temeiul
+corect este consimțământul. Recomandarea rămâne încărcarea la cerere — o
+modificare mică în `src/components/YouTubeEmbed/index.tsx`, care mută clauza pe
+articolul 6 alineatul (1) litera (a) și elimină problema. Spuneți-mi dacă
+reveniți asupra deciziei.
 
-Două variante, iar clauza 4.4.4 nu poate fi scrisă corect până nu alegeți una:
+## E. De verificat separat
 
-- **Varianta recomandată — player cu încărcare la cerere.** Până la clic se
-  afișează o imagine statică și o notă; playerul, și odată cu el orice cerere
-  către Google, se încarcă abia la solicitarea vizitatorului. Clauza 4.4.4
-  devine atunci articolul 6 alineatul (1) litera (a) plus articolul 4 alineatul
-  (5) din Legea nr. 506/2004, exact ca la alacrity. Este o modificare mică în
-  `src/components/YouTubeEmbed/index.tsx` — spuneți-mi și o fac.
-- **Varianta „lăsăm așa".** Clauza trebuie atunci să declare deschis că datele
-  ajung la Google la afișarea paginii, fără consimțământ, iar temeiul invocat ar
-  fi articolul 6 alineatul (1) litera (e). Este o poziție pe care un jurist ar
-  trebui să o accepte în mod expres; nu aș scrie-o fără avizul lui.
-
-## D. De verificat separat
-
-- **`sienna-accessibility@latest`** este încărcat fără versiune fixată. Oricine
-  publică o versiune nouă a pachetului rulează cod în navigatorul fiecărui
-  vizitator al ccbt.ro. Nu este o problemă de politică, ci una de securitate —
-  merită fixată la o versiune anume.
-- **Lipsesc SPF/DKIM pentru trimiterea prin Google** și lipsește DMARC pentru
-  ccbt.ro (a se vedea discuția privind formularele). Fără ele, mesajele
-  generate de formulare riscă să nu ajungă.
+- **`sienna-accessibility@latest`** este încărcat fără versiune fixată
+  (`src/app/(frontend)/layout.tsx`). Oricine publică o versiune nouă a
+  pachetului rulează cod în navigatorul fiecărui vizitator al ccbt.ro. Nu este o
+  problemă de politică, ci una de securitate — merită fixată la o versiune
+  anume.
+- **Lipsesc SPF/DKIM pentru trimiterea prin Google Workspace** și lipsește DMARC
+  pentru ccbt.ro. Fără ele, mesajele generate de formulare riscă să nu ajungă.
+- **Clauza 4.5.3** presupune că trimiterea prin e-mail a formularelor este
+  activă. La data redactării, variabilele SMTP nu sunt configurate și niciun
+  formular nu are o adresă de notificare completată.
