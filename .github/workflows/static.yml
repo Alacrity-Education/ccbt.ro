@@ -1,7 +1,8 @@
 # Builds ccbt.ro: the same code as cms.ccbt.ro, exported as a static site
-# (NEXT_PUBLIC_STATIC_EXPORT=true, output: 'export') and published as plain
-# files. The export reads every piece of content from the CMS's REST API over
-# HTTP, so this build needs no database, no tunnel and no Payload secret.
+# (NEXT_PUBLIC_STATIC_EXPORT=true, output: 'export') and published to
+# Cloudflare Pages. The export reads every piece of content from the CMS's REST
+# API over HTTP, so this build needs no database, no tunnel and no Payload
+# secret.
 #
 # Payload's admin UI and its route handlers cannot be prerendered, and Next has
 # no config switch to exclude an app route, so those directories are deleted
@@ -9,30 +10,28 @@
 # sitemap and robots.txt are force-static app routes and stay: the export is
 # expected to write them to out/.
 #
-# No static host has been chosen yet. Until one is, this workflow builds the
-# export, verifies it and uploads out/ as the `static-export` artifact, and the
-# publish step below skips with a notice — the same way docker.yml skips the
-# Coolify call when COOLIFY_WEBHOOK is unset, so the useful work still happens
-# while the hosting is being set up. Pointing it at a host means filling in one
-# step; the alternatives are written out in the comments there.
+# - Push to main: deploys production.
+# - Pull request into main: the identical build, deployed as a preview under
+#   the alias pr-<number>, with its link posted on the PR. Never over production.
+# - workflow_call / workflow_dispatch: so a CMS "content published" webhook
+#   relay can rebuild the site without a code change.
 #
 # Repository configuration:
+#   secrets.CLOUDFLARE_API_TOKEN     - token with the "Cloudflare Pages: Edit"
+#                                      permission
+#   secrets.CLOUDFLARE_ACCOUNT_ID    - Cloudflare account id
+#   vars.CLOUDFLARE_PAGES_PROJECT    - the Pages project name
 #   vars.NEXT_PUBLIC_PAYLOAD_API_URL - the CMS REST API this build reads,
 #                                      INCLUDING the /api suffix, e.g.
 #                                      https://cms.ccbt.ro/api
 #   vars.NEXT_PUBLIC_SERVER_URL      - public URL of the static site, no
 #                                      trailing slash, e.g. https://ccbt.ro
-#   secrets.STATIC_DEPLOY_WEBHOOK    - optional; URL the publish step calls to
-#                                      tell the host to pull the new build
-#   secrets.STATIC_DEPLOY_TOKEN      - optional; bearer token for that webhook
 #
-# A host that uploads instead of pulling needs its own credentials in place of
-# those two. For reference, Cloudflare Pages would need
-# secrets.CLOUDFLARE_API_TOKEN (scope "Cloudflare Pages: Edit"),
-# secrets.CLOUDFLARE_ACCOUNT_ID and vars.CLOUDFLARE_PAGES_PROJECT; GitHub Pages
-# would need no secrets but `permissions: pages: write, id-token: write` and the
-# actions/deploy-pages action; Netlify would need secrets.NETLIFY_AUTH_TOKEN and
-# vars.NETLIFY_SITE_ID.
+# The Pages project must be a *direct upload* project (created by this
+# workflow's first run, or with `wrangler pages project create`), and its
+# production branch must be `main` — a deploy whose branch name does not match
+# the project's production branch lands as a preview, so a mismatch here is a
+# site that silently never updates.
 #
 # Neither of the NEXT_PUBLIC_* values is a secret: both are inlined into the
 # exported HTML and JavaScript, so they are published the moment the site is.
@@ -46,8 +45,6 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-  # So a CMS "content published" webhook relay can rebuild the site without a
-  # code change. Nothing calls this yet.
   workflow_call:
     inputs:
       ref:
@@ -61,9 +58,14 @@ concurrency:
 
 jobs:
   build-and-publish:
+    # A pull request from a fork is given no secrets, so it cannot deploy a
+    # preview; running it would only fail at the last step.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      deployments: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -71,8 +73,30 @@ jobs:
           # Set when another workflow calls this one; otherwise the commit that
           # triggered the run.
           ref: ${{ inputs.ref || github.sha }}
+          # Strings on purpose: a bare 0 is falsy in a GitHub expression, so
+          # `&& 0 || 1` would always evaluate to 1. A pull request needs the
+          # history to diff against its base.
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+
+      # A pull request that only touches docs, tests or CI skips the build and
+      # the preview. Pushes to main, CMS publishes and manual runs always build.
+      - name: Does this change affect the site?
+        id: scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != pull_request ]; then
+            build=true
+          else
+            build=$(bash scripts/ci/needs-build.sh "$BASE_SHA" "$HEAD_SHA" \
+              .github/workflows/static.yml scripts/ci/needs-build.sh scripts/ci/check-static-output.mjs)
+          fi
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          [ "$build" = true ] || echo "Skipped: this pull request changes nothing the static site reads." >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-node@v4
+        if: steps.scope.outputs.build == 'true'
         with:
           # Matches the Dockerfile's node:22 base, so both builds run the same
           # runtime and a problem that appears in one appears in the other.
@@ -82,6 +106,7 @@ jobs:
       # npm ci, not npm install: the lockfile is the record of what the CMS
       # image was built from, and the two sites must ship the same dependencies.
       - name: Install dependencies
+        if: steps.scope.outputs.build == 'true'
         run: npm ci
 
       # Next has no way to exclude app routes via config, so anything that
@@ -91,6 +116,7 @@ jobs:
       # The sitemap and robots routes are deliberately NOT removed; the export
       # is supposed to emit them, and "Check export" fails if it did not.
       - name: Strip server-only routes
+        if: steps.scope.outputs.build == 'true'
         run: |
           rm -rf "src/app/(payload)"
           rm -rf "src/app/(frontend)/next"
@@ -100,6 +126,7 @@ jobs:
       # for the server build and would overwrite or fight with the exported
       # sitemap routes. Calling next directly skips the hook.
       - name: Build static export
+        if: steps.scope.outputs.build == 'true'
         run: npx next build
         env:
           NEXT_PUBLIC_STATIC_EXPORT: 'true'
@@ -110,6 +137,7 @@ jobs:
       # that take a route parameter simply prerender nothing. Without this
       # guard that publishes a near-empty site over a working one.
       - name: Verify export
+        if: steps.scope.outputs.build == 'true'
         run: |
           test -f out/index.html || { echo "::error::out/index.html missing"; exit 1; }
           test -f out/404.html   || { echo "::error::out/404.html missing"; exit 1; }
@@ -123,67 +151,64 @@ jobs:
       # Page metadata, the footer, internal links, sitemap.xml, robots.txt and
       # every image the pages load from the CMS.
       - name: Check export
+        if: steps.scope.outputs.build == 'true'
         env:
           SITE_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
         run: node scripts/ci/check-static-output.mjs out
 
-      # Uploaded whether or not a host is configured, so the build is always
-      # inspectable and a chosen host can be fed from here by hand in the
-      # meantime.
+      # Kept alongside the deploy so a published build is always inspectable
+      # offline, and so a failed upload still leaves something to publish.
       - name: Upload export as artifact
+        if: steps.scope.outputs.build == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: static-export
           path: out/
           retention-days: 7
 
-      # ---------------------------------------------------------------------
-      # PUBLISH — the one step to change once a static host is chosen.
-      #
-      # As written it suits a host that pulls: Coolify's static resource, or
-      # anything else that exposes a deploy webhook. Point it at the host by
-      # setting secrets.STATIC_DEPLOY_WEBHOOK (and STATIC_DEPLOY_TOKEN if the
-      # webhook wants a bearer token). Skipped with a notice when unset, like
-      # the Coolify call in docker.yml, so the build still reports green while
-      # hosting is undecided. `secrets` cannot be read in an `if:`, hence the
-      # guard inside the script.
-      #
-      # For a host that is pushed to, replace this whole step. Cloudflare Pages:
-      #
-      #   - name: Deploy to Cloudflare Pages
-      #     uses: cloudflare/wrangler-action@v3
-      #     with:
-      #       apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #       accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      #       command: pages deploy out --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }}
-      #
-      # GitHub Pages: add `pages: write` and `id-token: write` to the job's
-      # permissions, then actions/upload-pages-artifact followed by
-      # actions/deploy-pages.
-      #
-      # Whichever is used, keep it off pull requests: a PR build must be
-      # checked, never published over the live site.
-      # ---------------------------------------------------------------------
-      - name: Publish the export
-        if: github.event_name != 'pull_request'
+      # A pull request deploys under the branch alias pr-<number>, which
+      # Cloudflare serves at its own hostname and never promotes to production.
+      - name: Deploy to Cloudflare Pages
+        if: steps.scope.outputs.build == 'true'
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy out
+            --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+            --branch=${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+
+      - name: Post the preview link on the PR
+        if: steps.scope.outputs.build == 'true' && github.event_name == 'pull_request'
         env:
-          STATIC_DEPLOY_WEBHOOK: ${{ secrets.STATIC_DEPLOY_WEBHOOK }}
-          STATIC_DEPLOY_TOKEN: ${{ secrets.STATIC_DEPLOY_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          ALIAS_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
         run: |
-          if [ -z "$STATIC_DEPLOY_WEBHOOK" ]; then
-            echo "::notice::No static host configured (STATIC_DEPLOY_WEBHOOK is unset) — the export was built, checked and uploaded as the static-export artifact, but not published."
-            exit 0
+          {
+            echo '<!-- static-preview -->'
+            echo '### Previzualizare ccbt.ro'
+            echo
+            echo "**${ALIAS_URL:-$DEPLOY_URL}**"
+            echo
+            echo "Construit din \`${SHA:0:7}\` cu conținutul live din CMS. Exact acest build: ${DEPLOY_URL:-n/a}"
+          } > preview.md
+          # One comment per PR, edited in place, rather than a new one per push.
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- static-preview -->"))) | .id' | head -n1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@preview.md > /dev/null
+          else
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file preview.md
           fi
-          # --fail so a rejected webhook fails the run rather than reporting a
-          # deploy that never happened.
-          curl --fail --silent --show-error --max-time 60 \
-            --request POST "$STATIC_DEPLOY_WEBHOOK" \
-            --header "Authorization: Bearer $STATIC_DEPLOY_TOKEN"
-          echo
-          echo "::notice::Static deploy requested"
+          echo "Preview: ${ALIAS_URL:-$DEPLOY_URL}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Summary
-        if: always()
+        if: always() && steps.scope.outputs.build == 'true'
         run: |
           {
             echo "### Static export"
@@ -191,5 +216,6 @@ jobs:
             echo "- Pages: $(find out -name '*.html' 2>/dev/null | wc -l)"
             echo "- CMS API: ${{ vars.NEXT_PUBLIC_PAYLOAD_API_URL || 'not configured' }}"
             echo "- Site URL: ${{ vars.NEXT_PUBLIC_SERVER_URL || 'not configured' }}"
+            echo "- Deployed: ${{ steps.deploy.outputs.deployment-url || 'no' }}"
             echo "- Artifact: \`static-export\`"
           } >> "$GITHUB_STEP_SUMMARY"

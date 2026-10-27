@@ -241,9 +241,23 @@ The seed script will also create a demo user for demonstration purposes only:
 | Site | What it is | Build | Deployed by |
 | --- | --- | --- | --- |
 | cms.ccbt.ro | The Payload admin, the REST and GraphQL API, and a server-rendered copy of the site | Next.js standalone server in a Docker image, reads PostgreSQL directly | `.github/workflows/docker.yml` pushes images to GHCR; Coolify runs them |
-| ccbt.ro | The public site visitors see | Static export: `NEXT_PUBLIC_STATIC_EXPORT=true` and `output: 'export'`, reads all content from the CMS over its REST API at build time | `.github/workflows/static.yml` builds and checks `out/` |
+| ccbt.ro | The public site visitors see | Static export: `NEXT_PUBLIC_STATIC_EXPORT=true` and `output: 'export'`, reads all content from the CMS over its REST API at build time | `.github/workflows/static.yml` builds, checks and uploads `out/` to Cloudflare Pages |
 
 Editors work in the admin at `cms.ccbt.ro/admin`. Publishing a document there does not change ccbt.ro on its own: the static site only changes when the **Static site** workflow runs again and re-reads the API. Images are served by the CMS on both sites, so media is never copied into the export.
+
+### Cloudflare Pages
+
+The static site is a Cloudflare Pages **direct upload** project: the build happens in GitHub Actions and `wrangler pages deploy` uploads `out/`. Pages never builds this repository itself, so there is nothing to configure on the Cloudflare side beyond the project and the domain.
+
+| Setting | Value |
+| --- | --- |
+| `secrets.CLOUDFLARE_API_TOKEN` | API token with the **Cloudflare Pages: Edit** permission |
+| `secrets.CLOUDFLARE_ACCOUNT_ID` | Account id, from the Cloudflare dashboard sidebar |
+| `vars.CLOUDFLARE_PAGES_PROJECT` | The Pages project name |
+
+The project's **production branch must be `main`**. Cloudflare decides whether an upload is production or a preview by comparing the `--branch` it was given against the project's production branch; if they differ, every deploy lands as a preview and the live site silently never updates.
+
+A pull request deploys the same build under the branch alias `pr-<number>` and the workflow posts the preview URL on the PR, editing one comment rather than adding a new one per push. Pull requests from forks are skipped entirely: GitHub gives them no secrets, so they could not deploy anyway.
 
 Which data source a page uses is decided in `src/utilities/siteMode.ts` and `src/utilities/frontendData.ts`: pages ask `getReader()` for their content, and that is Payload's Local API on the server build and the REST API in the export. Anything that cannot work without a request — cookies, headers, search params read on the server, draft preview, the admin bar — must either check `isStaticExport` or live in one of the routes the export deletes.
 
