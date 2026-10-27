@@ -4,7 +4,7 @@ import type { CallToActionBlock as CTABlockProps, Form } from "@/payload-types";
 
 import RichText from "@/components/RichText";
 import { CMSLink } from "@/components/Link";
-import { BaseMotif, BaseMotifMobile } from "./Motif";
+import { BaseMotifMobile } from "./Motif";
 import { CTAModal } from "../Primitive.client";
 
 export const BaseCTA: React.FC<CTABlockProps & { id?: string | null }> = ({
@@ -33,26 +33,15 @@ export const BaseCTA: React.FC<CTABlockProps & { id?: string | null }> = ({
       <BaseMotifMobile className="h-auto w-full" />
     </div>
 
-    {/* The braid, from `lg` up. The block is banded, and a banded block paints
-        an opaque fill over the page-wide ribbon, so RenderBlocks draws none
-        behind it (see components/PageMotif) — the lane was simply empty.
+    {/* No braid of its own above `lg`: the page-wide ribbon runs behind this
+        block and through it (see components/PageMotif and RenderBlocks).
 
-        Centred rather than anchored to the top, which is the whole of why it
-        reads as continuous. The artwork opens and closes with three straight
-        bars and carries the braid between them; anchored at the top, a short
-        band showed the thin opening rows and left a detached fragment above
-        the weave. Centred, any band shorter than the artwork is a window on
-        the middle of the braid, so `overflow-hidden` always cuts it through
-        the thick of the weave and it reads as passing behind the section.
-
-        No height is assumed: this holds at every band height the block can
-        take, measured at 320, 400 and 604. */}
-    <div
-      aria-hidden
-      className="pointer-events-none absolute top-1/2 right-0 z-0 hidden w-[200px] -translate-y-1/2 lg:block xl:w-[250px]"
-    >
-      <BaseMotif className="h-auto w-full" />
-    </div>
+        It used to draw one, because a banded block ended the ribbon's run.
+        That left this section's braid stranded — the page ribbon stopped above
+        it, a separate slab of weave sat inside it with a flat cut top and
+        bottom, and the ribbon picked up again below. Letting the one ribbon
+        pass through is what makes it continuous; there is nothing here for a
+        white fill to hide. */}
 
     <div className="relative z-10 container mx-auto py-16 sm:py-20 lg:py-24">
       {/* This block always runs full width — RenderBlocks bands it on sight of

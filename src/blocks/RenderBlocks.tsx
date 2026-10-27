@@ -104,10 +104,18 @@ export const RenderBlocks: React.FC<{
     const layout = block as BlockLayout;
     const banded = isBanded(blockType, layout);
     const edged = hasDividers(blockType, layout);
-    // A banded block carries its own fill; any other block gets one only when
-    // the editor has asked for the motif to be hidden. Either way an opaque
-    // fill is what paints the ribbon out.
-    const opaque = banded || layout.showMotif === false;
+    // Whether this block paints the ribbon out, which is what ends a run.
+    //
+    // Being banded is not the same question. A band's fill is
+    // `--color-base-200`, and on this theme that is #FFFFFF — the same white
+    // as the page. The timeline still breaks the run on purpose: it is a dense
+    // interactive block with its own bars and fade gradients, and a ribbon
+    // behind it is noise. The base CTA is a headline, a line of copy and a
+    // button, so it has nothing to hide behind an invisible fill, and breaking
+    // the run there cost more than it gave — the ribbon stopped above the
+    // block and started again below it, leaving the CTA's own braid stranded
+    // in white with a flat cut at each end.
+    const opaque = blockType === "timeline" || layout.showMotif === false;
 
     return [
       {
@@ -123,11 +131,16 @@ export const RenderBlocks: React.FC<{
               // pull up over the previous block's margin (unless first).
               BLOCK_MARGIN,
               flush && index > 0 && FLUSH_PULL,
-              // Two things at once: the block takes the container's full
-              // measure back (see `data-full-bleed` above), and its own
-              // opaque background covers the ribbon running behind it —
-              // which is what makes a full-width section read as a break.
-              banded && "bg-base-200 relative w-full",
+              // The band takes the container's full measure back (see
+              // `data-full-bleed` above) and gives the block something to
+              // position against.
+              banded && "relative w-full",
+              // The fill, which is the part that covers the ribbon running
+              // behind at `-z-10`. Only a block that is meant to break the
+              // run paints one — `bg-base-200` is #FFFFFF and so is the page
+              // under it, so this is never a colour anyone sees; its whole
+              // effect is on what shows through.
+              banded && opaque && "bg-base-200",
               // The ribbon runs behind the blocks, so a block hides it by
               // painting over it. A banded block already has a fill of its
               // own and needs nothing here.
