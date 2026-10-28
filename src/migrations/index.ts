@@ -16,6 +16,8 @@ import * as migration_20261012_064051_form_block_variant from './20261012_064051
 import * as migration_20261012_085710_form_phone_and_multi_select from './20261012_085710_form_phone_and_multi_select';
 import * as migration_20261017_103905_hero_align_cta_dividers_archive_months from './20261017_103905_hero_align_cta_dividers_archive_months';
 import * as migration_20261017_104348_archive_cards_drop_starry from './20261017_104348_archive_cards_drop_starry';
+import * as migration_20261026_124225_form_slug from './20261026_124225_form_slug';
+import * as migration_20261028_145146_publications_block from './20261028_145146_publications_block';
 
 export const migrations = [
   {
@@ -106,6 +108,16 @@ export const migrations = [
   {
     up: migration_20261017_104348_archive_cards_drop_starry.up,
     down: migration_20261017_104348_archive_cards_drop_starry.down,
-    name: '20261017_104348_archive_cards_drop_starry'
+    name: '20261017_104348_archive_cards_drop_starry',
+  },
+  {
+    up: migration_20261026_124225_form_slug.up,
+    down: migration_20261026_124225_form_slug.down,
+    name: '20261026_124225_form_slug',
+  },
+  {
+    up: migration_20261028_145146_publications_block.up,
+    down: migration_20261028_145146_publications_block.down,
+    name: '20261028_145146_publications_block'
   },
 ];

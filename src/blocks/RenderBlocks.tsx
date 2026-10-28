@@ -32,6 +32,7 @@ import { CarouselLogoBlock } from "@/blocks/LogoCarouselBlock/Component";
 import { StaticMapBlock } from "@/blocks/StaticMap/Component";
 import { TimelineBlock } from "@/blocks/Timeline/Component";
 import { TeamBlock } from "@/blocks/Team/Component";
+import { PublicationsBlockComponent } from "@/blocks/Publications/Component";
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -44,6 +45,7 @@ const blockComponents = {
   staticMap: StaticMapBlock,
   timeline: TimelineBlock,
   team: TeamBlock,
+  publications: PublicationsBlockComponent,
 };
 
 /**

@@ -22,6 +22,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import {CardBlock} from "@/blocks/CardBlock/config";
+import { PublicationsBlock } from "@/blocks/Publications/config";
 import {CarouselLogoBlock} from "@/blocks/LogoCarouselBlock/config";
 import { StaticMap } from "@/blocks/StaticMap/config";
 import { Team } from "@/blocks/Team/config";
@@ -77,7 +78,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, CarouselLogoBlock, StaticMap, Timeline, Team ],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock,CardBlock, CarouselLogoBlock, StaticMap, Timeline, Team, PublicationsBlock ],
               required: false,
               admin: {
                 initCollapsed: true,

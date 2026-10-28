@@ -290,6 +290,7 @@ export interface Page {
         | StaticMapBlock
         | TimelineBlock
         | TeamBlock
+        | PublicationsBlock
       )[]
     | null;
   meta?: {
@@ -1171,6 +1172,49 @@ export interface TeamBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PublicationsBlock".
+ */
+export interface PublicationsBlock {
+  /**
+   * Optional. Leave empty if the page already has one above.
+   */
+  heading?: string | null;
+  items?:
+    | {
+        /**
+         * Shown on the spine, set vertically. Long titles are trimmed to fit the cover's height — keep it to the name of the publication.
+         */
+        title: string;
+        /**
+         * Shown whole, at its own proportions. It is never cropped and nothing is laid over it.
+         */
+        cover: number | Media;
+        /**
+         * Optional. Appears under the cover.
+         */
+        author?: string | null;
+        /**
+         * Optional, but worth filling in: it is what lets the list be ordered or grouped later without editing every entry by hand.
+         */
+        year?: number | null;
+        /**
+         * Optional. With a file, the publication opens it and its size is shown. Without one, fill in the link below instead.
+         */
+        file?: (number | null) | Media;
+        /**
+         * Used only when there is no file.
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  showMotif?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'publications';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1623,6 +1667,7 @@ export interface PagesSelect<T extends boolean = true> {
         staticMap?: T | StaticMapBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
         team?: T | TeamBlockSelect<T>;
+        publications?: T | PublicationsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1931,6 +1976,27 @@ export interface TeamBlockSelect<T extends boolean = true> {
                   };
               id?: T;
             };
+        id?: T;
+      };
+  showMotif?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PublicationsBlock_select".
+ */
+export interface PublicationsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        cover?: T;
+        author?: T;
+        year?: T;
+        file?: T;
+        url?: T;
         id?: T;
       };
   showMotif?: T;
