@@ -23,9 +23,6 @@ export const PublicationsBlock: Block = {
       name: "heading",
       type: "text",
       label: "Section heading",
-      admin: {
-        description: "Optional. Leave empty if the page already has one above.",
-      },
     },
     {
       name: "items",
@@ -46,10 +43,6 @@ export const PublicationsBlock: Block = {
           type: "text",
           required: true,
           label: "Title",
-          admin: {
-            description:
-              "Shown on the spine, set vertically. Long titles are trimmed to fit the cover's height — keep it to the name of the publication.",
-          },
         },
         {
           name: "cover",
@@ -57,25 +50,16 @@ export const PublicationsBlock: Block = {
           relationTo: "media",
           required: true,
           label: "Cover",
-          admin: {
-            description:
-              "Shown whole, at its own proportions. It is never cropped and nothing is laid over it.",
-          },
         },
         {
           name: "author",
           type: "text",
           label: "Author / editor",
-          admin: { description: "Optional. Appears under the cover." },
         },
         {
           name: "year",
           type: "number",
           label: "Year",
-          admin: {
-            description:
-              "Optional, but worth filling in: it is what lets the list be ordered or grouped later without editing every entry by hand.",
-          },
         },
         {
           /**
@@ -87,17 +71,12 @@ export const PublicationsBlock: Block = {
           type: "upload",
           relationTo: "media",
           label: "File (PDF)",
-          admin: {
-            description:
-              "Optional. With a file, the publication opens it and its size is shown. Without one, fill in the link below instead.",
-          },
         },
         {
           name: "url",
           type: "text",
           label: "External link",
           admin: {
-            description: "Used only when there is no file.",
             condition: (_data, siblingData) => !siblingData?.file,
           },
         },
