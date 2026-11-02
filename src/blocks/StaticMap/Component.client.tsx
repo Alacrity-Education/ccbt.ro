@@ -7,46 +7,37 @@ import { FaLocationDot } from "react-icons/fa6";
 import Link from "next/link";
 
 /**
- * The three monochrome basemaps the variants resolve to.
+ * The three monochrome basemaps the variants resolve to, all from CARTO.
  *
  * Monochrome keeps the map from competing with the brand colours, so the
  * marker is the only saturated thing on it. The variant values are unchanged,
  * so existing blocks keep rendering; only what each one points at has moved.
  *
- * Two providers, chosen by whether a Stadia key is configured:
+ * The key goes on the style URL alone: CARTO writes it into every tile, glyph
+ * and sprite URL of the style it returns, so nothing further has to carry it.
+ * Without one the styles are still served today, which is why a missing key
+ * falls back to a bare URL rather than to no map.
  *
- * - **Stadia Maps** when `NEXT_PUBLIC_STADIA_API_KEY` is set. Stadia signs a
- *   data processing agreement, which is what lets the privacy policy name a
- *   processor under Article 28 GDPR rather than merely a recipient.
- * - **CARTO** otherwise. It serves these styles with no account and no token,
- *   which is why it was here first and why it stays as the fallback — a
- *   missing key leaves a working map rather than a blank frame.
+ * The key is restricted by domain, and that is checked against the Referer the
+ * browser sends: from ccbt.ro and cms.ccbt.ro it is accepted, from anywhere
+ * else it is refused with a 403 and the map stays blank. Every hostname that
+ * serves this site has to be on the key's list in the CARTO dashboard — the
+ * Cloudflare Pages address and its preview subdomains included.
  *
- * Whichever is used, the visitor's browser requests the tiles *directly*, so
- * that provider sees their IP address. The privacy policy has to name the one
- * actually in use: see docs/politica-de-confidentialitate.md, clause 4.3. A
- * key present in the build and a key absent are two different documents, so
- * this is not a detail to leave to chance — if the key is not set in
- * production, clause 4.3 must say CARTO.
+ * The visitor's browser requests the tiles directly, so CARTO sees their IP
+ * address; that is what clause 4.3 of the privacy policy describes (see
+ * docs/politica-de-confidentialitate.md).
  */
-const STADIA_KEY = process.env.NEXT_PUBLIC_STADIA_API_KEY;
+const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY;
 
-const stadia = (style: string): string =>
-  `https://tiles.stadiamaps.com/styles/${style}.json?api_key=${STADIA_KEY}`;
+const carto = (style: string): string =>
+  `https://basemaps.cartocdn.com/gl/${style}/style.json${CARTO_KEY ? `?key=${CARTO_KEY}` : ""}`;
 
-const VARIANT_TO_STYLE: Record<NonNullable<StaticMapBlock["variant"]>, string> =
-  STADIA_KEY
-    ? {
-        default: stadia("alidade_smooth"),
-        mono: stadia("stamen_toner_lite"),
-        "mono-black": stadia("alidade_smooth_dark"),
-      }
-    : {
-        default: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-        mono: "https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json",
-        "mono-black":
-          "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-      };
+const VARIANT_TO_STYLE: Record<NonNullable<StaticMapBlock["variant"]>, string> = {
+  default: carto("positron-gl-style"),
+  mono: carto("positron-nolabels-gl-style"),
+  "mono-black": carto("dark-matter-gl-style"),
+};
 
 export const StaticMapBlockComponent: React.FC<StaticMapBlock> = (props) => {
   const { variant, initialView, markers } = props || {};

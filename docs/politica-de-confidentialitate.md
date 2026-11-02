@@ -52,9 +52,9 @@
 
 #### 4.3. Funcționalitatea de hartă
 
-4.3.1. Anumite pagini ale Site-ului afișează o hartă. Harta este redată în navigatorul vizitatorului prin intermediul bibliotecii MapLibre GL JS, servită de pe propriul nostru domeniu. Imaginile cartografice sunt solicitate de navigatorul vizitatorului direct de la Stadia Maps („**Stadia Maps**”), pe măsură ce harta este afișată.
+4.3.1. Anumite pagini ale Site-ului afișează o hartă. Harta este redată în navigatorul vizitatorului prin intermediul bibliotecii MapLibre GL JS, servită de pe propriul nostru domeniu. Imaginile cartografice sunt solicitate de navigatorul vizitatorului direct de la serviciul de hărți de bază CARTO, operat de CartoDB Inc., 307 Fifth Avenue, Floor 9, New York, NY 10016, Statele Unite ale Americii („**CARTO**”), pe măsură ce harta este afișată.
 
-4.3.2. Ca urmare a acestei solicitări directe, Stadia Maps primește adresa IP a vizitatorului, identificatorul aplicației client și identificatorii imaginilor cartografice solicitate, care indică zona geografică afișată. Nu transmitem către Stadia Maps nicio altă dată și nu primim în schimb nicio informație privind vizitatorul. Stadia Maps acționează în calitate de persoană împuternicită de operator, în temeiul unui acord de prelucrare a datelor încheiat potrivit articolului 28 din RGPD. Politica sa de confidențialitate este disponibilă la [https://stadiamaps.com/privacy-policy/](https://stadiamaps.com/privacy-policy/).
+4.3.2. Ca urmare a acestei solicitări directe, CARTO primește adresa IP a vizitatorului, adresa paginii pe care este afișată harta, identificatorul aplicației client și identificatorii imaginilor cartografice solicitate, care indică zona geografică afișată. Nu transmitem către CARTO nicio altă dată și nu primim în schimb nicio informație privind vizitatorul. CARTO acționează în calitate de persoană împuternicită de operator, potrivit articolului 28 din RGPD, în temeiul condițiilor sale de utilizare a hărților de bază și al acordului său de prelucrare a datelor cu caracter personal. CARTO trunchiază adresa IP la primire, eliminându-i ultimul segment, și păstrează înregistrările cererilor astfel rezultate în Statele Unite ale Americii timp de treizeci de zile. Politica sa de confidențialitate este disponibilă la [https://carto.com/privacy](https://carto.com/privacy).
 
 4.3.3. Harta se încarcă la deschiderea paginii care o conține, și nu la interacțiunea cu aceasta.
 
@@ -109,7 +109,7 @@
 - **Preferințe de accesibilitate** (memorie locală sau cookie) — origine: primară; scop: reținerea setărilor de accesibilitate alese de vizitator; durată: până la ștergerea datelor de navigare, respectiv 365 de zile în cazul cookie-ului; consimțământ necesar: nu (strict necesar).
 - **payload-token** (cookie) — origine: primară; scop: autentificarea personalului editorial în sistemul de administrare a conținutului; plasat exclusiv la autentificarea persoanelor autorizate și niciodată în privința vizitatorilor Site-ului; durată: 2 ore de la autentificare; consimțământ necesar: nu (strict necesar).
 - **payload-theme** (memorie locală) — origine: primară; scop: reținerea variantei de afișare (luminoasă sau întunecată) alese în interfața de administrare a conținutului; plasat exclusiv pentru personalul editorial și niciodată în privința vizitatorilor Site-ului; durată: până la ștergerea datelor de navigare; consimțământ necesar: nu (strict necesar).
-- **Solicitări de imagini cartografice** — origine: Stadia Maps; scop: afișarea hărților; durată: nu se aplică (nu se stochează informații în echipamentul terminal); consimțământ necesar: nu.
+- **Solicitări de imagini cartografice** — origine: CARTO; scop: afișarea hărților; durată: nu se aplică (nu se stochează informații în echipamentul terminal); consimțământ necesar: nu.
 - **Măsurarea audienței** — origine: primară (aplicație găzduită de noi); scop: măsurarea afișărilor de pagină fără cookie-uri; durată: nu se aplică (nu se stochează informații în echipamentul terminal); consimțământ necesar: nu.
 - **Solicitarea instrumentului de accesibilitate** — origine: jsDelivr; scop: livrarea fișierului instrumentului; durată: nu se aplică (nu se stochează informații în echipamentul terminal); consimțământ necesar: nu.
 - **Cookie-uri și identificatori similari YouTube** — origine: Google; scop: redarea conținutului video și scopurile proprii ale Google; durată: stabilită de Google; consimțământ necesar: da (a se vedea clauza 4.4).
@@ -122,7 +122,7 @@
 
 - **Cloudflare, Inc.** — funcție: livrarea Site-ului și protecția împotriva atacurilor; date: cele menționate la clauza 4.1.1; locul prelucrării: rețeaua globală de puncte de distribuție.
 - **[]** — funcție: furnizarea infrastructurii pe care rulează serverul menționat la clauza 4.1.2; date: cele menționate la clauzele 4.1.1, 4.2.2 și 4.5.1, astfel cum sunt păstrate pe acel server; locul prelucrării: [].
-- **Stadia Maps** — funcție: furnizarea imaginilor cartografice; date: cele menționate la clauza 4.3.2; locul prelucrării: [].
+- **CartoDB Inc. (CARTO)** — funcție: furnizarea imaginilor cartografice; date: cele menționate la clauza 4.3.2; locul prelucrării: Statele Unite ale Americii.
 - **[]** — funcție: livrarea instrumentului de accesibilitate (rețeaua jsDelivr); date: cele menționate la clauza 4.6.2; locul prelucrării: rețea globală.
 - **Google Ireland Limited** — funcție: găzduirea conținutului video (YouTube); date: cele menționate la clauza 4.4.2; locul prelucrării: global.
 - **Google Ireland Limited** — funcție: transmiterea mesajelor de e-mail (Google Workspace); date: conținutul comunicării; locul prelucrării: global.
@@ -146,6 +146,7 @@
 8.1. Datele cu caracter personal sunt păstrate pe următoarele durate:
 
 - **Accesarea Site-ului (clauza 4.1)** — []. Înregistrările deținute de Cloudflare sunt păstrate potrivit acordului său de prelucrare a datelor.
+- **Funcționalitatea de hartă (clauza 4.3)** — înregistrările cererilor păstrate de CARTO, cu adresa IP trunchiată, sunt șterse după treizeci de zile de la cerere.
 - **Măsurarea audienței (clauza 4.2)** — [].
 - **Formulare transmise prin Site (clauza 4.5)** — [].
 - **Abonarea la buletinul informativ (clauza 4.5)** — până la retragerea consimțământului.
