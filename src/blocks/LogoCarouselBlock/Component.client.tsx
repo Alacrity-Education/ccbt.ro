@@ -10,10 +10,7 @@ interface CarouselProps {
 }
 
 export const CarouselCard = ({ media, link }: { media: MediaType | number; link: string }) => (
-  // `draggable={false}`: a native link drag starts a ghost image and swallows
-  // the pointer, so the first few pixels of every drag that began on a logo —
-  // which is most of them — went to the browser instead of to the carousel.
-  <Link href={link} target="_blank" rel="noopener noreferrer" draggable={false}>
+  <Link href={link} target="_blank" rel="noopener noreferrer">
     <div className="flex items-center justify-center p-2 h-30 sm:h-40 aspect-square bg-white border border-primary/40 rounded-lg overflow-hidden hover:shadow-lg transition-shadow shrink-0">
       <Media
         imgClassName="h-full w-full object-contain"
@@ -29,13 +26,11 @@ export const CarouselCard = ({ media, link }: { media: MediaType | number; link:
 const FRICTION = 0.18
 // Auto-scroll speed in px per frame at 60 fps (1 ≈ 60 px/s)
 const AUTO_SPEED = 1
-// How far the pointer must travel before a press counts as a drag rather than
-// a click. Below it the logo's link still opens; at or past it the click that
-// ends the drag is swallowed, or every drag would navigate away.
-const DRAG_SLOP = 5
-// How much of the release velocity carries on as a throw. The spring already
-// decays, so this only decides how far one flick travels.
-const THROW = 12
+// Below this many pixels a drag is a click that wobbled, not a drag.
+const DRAG_THRESHOLD = 5
+// How far a flick carries after release, as a multiple of the last frame's
+// travel. The spring in the tick loop does the actual easing.
+const FLICK_MOMENTUM = 8
 
 const Carousel: React.FC<CarouselProps> = ({ children }) => {
   const trackRef  = useRef<HTMLDivElement>(null)
@@ -45,13 +40,14 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
   const targetRef = useRef(0)    // destination the spring chases
   const pausedRef = useRef(false)
   const rafRef    = useRef<number | null>(null)
-  // Live drag: where the pointer went down, where the track was at the time,
-  // how far it has travelled since, and the last step's distance — which is
-  // the velocity the throw is built from.
-  const dragRef   = useRef<{ id: number; startX: number; startPos: number; lastX: number; velocity: number; distance: number; captured: boolean } | null>(null)
-  // Raised by a drag that travelled, lowered by the click it produced.
-  const clickGuardRef = useRef(false)
-  const [dragging, setDragging] = useState(false)
+  const dragRef   = useRef<{
+    pointerId: number
+    startX: number
+    startPos: number
+    lastX: number
+    velocity: number
+    moved: boolean
+  } | null>(null)
   const [numCopies, setNumCopies] = useState(10)
 
   const items = React.Children.toArray(children).filter(Boolean)
@@ -94,12 +90,7 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
         // Auto-scroll: advance both pos and target together so there is no
         // spring lag for the baseline drift. Paused while the user hovers or touches.
         // Use half speed on narrow screens so fast motion doesn't feel jarring.
-        //
-        // A live drag is checked for separately rather than left to the pause
-        // flag: a mouse that leaves the element mid-drag fires `mouseleave`,
-        // which resumes, and the drift would then fight the pointer for the
-        // position every frame.
-        if (!pausedRef.current && !dragRef.current) {
+        if (!pausedRef.current) {
           const speed = window.innerWidth < 640 ? AUTO_SPEED * 0.5 : AUTO_SPEED
           posRef.current    -= speed
           targetRef.current -= speed
@@ -107,13 +98,9 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
 
         // When pos crosses a copy boundary, normalise it and shift target by the
         // same delta so the spring's remaining distance is perfectly preserved.
-        // A drag in progress is anchored to an absolute position too, so it
-        // takes the same shift — otherwise the next pointer move would undo
-        // the wrap and the track would jump a whole copy backwards.
         const n = normalise(posRef.current, W)
         if (n !== posRef.current) {
           targetRef.current += n - posRef.current
-          if (dragRef.current) dragRef.current.startPos += n - posRef.current
           posRef.current = n
         }
 
@@ -137,7 +124,7 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
     const el = wrapRef.current
     if (!el) return
     const pause  = () => { pausedRef.current = true  }
-    const resume = () => { pausedRef.current = false }
+    const resume = () => { if (!dragRef.current) pausedRef.current = false }
     el.addEventListener('mouseenter',  pause)
     el.addEventListener('mouseleave',  resume)
     el.addEventListener('touchstart',  pause,  { passive: true })
@@ -152,108 +139,77 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
     }
   }, [])
 
-  // Drag to scroll.
-  //
-  // Pointer events rather than mouse events, so one path covers the mouse, a
-  // pen and a finger. `touch-action: pan-y` on the element is what splits the
-  // two axes on a phone: a sideways drag comes here, an up-and-down one is
-  // left to the page, and neither has to be guessed at from the coordinates.
-  //
-  // Position and target move together while the pointer is down, so the track
-  // sits exactly under it instead of chasing it a frame behind — the spring is
-  // only re-engaged on release, to carry the throw.
-  //
-  // Nothing is captured until the pointer has travelled DRAG_SLOP. Capturing
-  // on the press would retarget every following event at this element, the
-  // click among them, and the click is what opens the logo's link — so a
-  // carousel that could be dragged would be one whose logos no longer opened.
-  useEffect(() => {
-    const el = wrapRef.current
-    if (!el) return
+  /**
+   * Drag to scroll, mouse only.
+   *
+   * Touch is left alone: the track is a transform, not a scroller, so taking
+   * touch over would mean reimplementing momentum and fighting the browser for
+   * the gesture. A finger gets the auto-scroll and the arrows.
+   *
+   * The drag writes pos and target together so the track tracks the cursor
+   * exactly — letting the spring chase the cursor instead adds a lag that
+   * reads as the logos sliding out from under the hand. On release the last
+   * frame's travel becomes a flick: target moves ahead of pos, and the tick
+   * loop's spring eases the rest.
+   */
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return
+    dragRef.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startPos: posRef.current,
+      lastX: e.clientX,
+      velocity: 0,
+      moved: false,
+    }
+    pausedRef.current = true
+  }
 
-    const down = (e: PointerEvent) => {
-      // Secondary buttons belong to the browser's own menus.
-      if (e.button !== 0) return
-      // A drag that produced no click leaves the guard raised; a new press is
-      // the point at which it can no longer be meant for anything.
-      clickGuardRef.current = false
-      dragRef.current = {
-        id: e.pointerId,
-        startX: e.clientX,
-        startPos: posRef.current,
-        lastX: e.clientX,
-        velocity: 0,
-        distance: 0,
-        captured: false,
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag) return
+
+    const dx = e.clientX - drag.startX
+    if (!drag.moved && Math.abs(dx) < DRAG_THRESHOLD) return
+
+    if (!drag.moved) {
+      drag.moved = true
+      e.currentTarget.setPointerCapture(drag.pointerId)
+    }
+
+    drag.velocity = e.clientX - drag.lastX
+    drag.lastX = e.clientX
+
+    posRef.current    = drag.startPos + dx
+    targetRef.current = posRef.current
+    applyTransform(posRef.current)
+  }
+
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag) return
+
+    if (drag.moved) {
+      if (e.currentTarget.hasPointerCapture(drag.pointerId)) {
+        e.currentTarget.releasePointerCapture(drag.pointerId)
       }
-      pausedRef.current = true
-    }
+      targetRef.current = posRef.current + drag.velocity * FLICK_MOMENTUM
 
-    const move = (e: PointerEvent) => {
-      const drag = dragRef.current
-      if (!drag || drag.id !== e.pointerId) return
-
-      const dx = e.clientX - drag.startX
-      drag.distance = Math.max(drag.distance, Math.abs(dx))
-
-      // Still inside the slop: this may yet turn out to be a click, so leave
-      // the track where it is and leave the events alone.
-      if (!drag.captured) {
-        if (drag.distance < DRAG_SLOP) return
-        drag.captured = true
-        setDragging(true)
-        el.setPointerCapture(e.pointerId)
+      // Each card is a link; without this the click that follows the release
+      // opens whichever one the drag ended on.
+      const swallow = (click: MouseEvent) => {
+        click.preventDefault()
+        click.stopPropagation()
       }
-
-      drag.velocity = e.clientX - drag.lastX
-      drag.lastX = e.clientX
-      posRef.current = drag.startPos + dx
-      targetRef.current = posRef.current
-      applyTransform(posRef.current)
+      const el = e.currentTarget
+      el.addEventListener('click', swallow, { capture: true, once: true })
+      window.setTimeout(() => el.removeEventListener('click', swallow, true), 0)
     }
 
-    const up = (e: PointerEvent) => {
-      const drag = dragRef.current
-      if (!drag || drag.id !== e.pointerId) return
-      dragRef.current = null
-
-      if (drag.captured) {
-        setDragging(false)
-        if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId)
-        // The throw. The spring takes it from here.
-        targetRef.current = posRef.current + drag.velocity * THROW
-        // The click this press is about to produce has to be swallowed, or
-        // every drag that started on a logo would also open it.
-        clickGuardRef.current = true
-      }
-
-      // A mouse that is still over the carousel keeps it paused, the way a
-      // plain hover does; a finger has left for good.
-      if (e.pointerType !== 'mouse') pausedRef.current = false
-    }
-
-    // Capture phase, because the click lands on the logo's own link: by the
-    // time it bubbled up here the navigation would already be under way.
-    const click = (e: MouseEvent) => {
-      if (!clickGuardRef.current) return
-      clickGuardRef.current = false
-      e.preventDefault()
-      e.stopPropagation()
-    }
-
-    el.addEventListener('pointerdown',   down)
-    el.addEventListener('pointermove',   move)
-    el.addEventListener('pointerup',     up)
-    el.addEventListener('pointercancel', up)
-    el.addEventListener('click',         click, true)
-    return () => {
-      el.removeEventListener('pointerdown',   down)
-      el.removeEventListener('pointermove',   move)
-      el.removeEventListener('pointerup',     up)
-      el.removeEventListener('pointercancel', up)
-      el.removeEventListener('click',         click, true)
-    }
-  }, [])
+    dragRef.current = null
+    // Hovering still counts as paused; mouseleave resumes.
+    pausedRef.current = e.currentTarget.matches(':hover')
+  }
 
   // Re-anchor when copy width changes (e.g. responsive card size breakpoint hit)
   useEffect(() => {
@@ -265,7 +221,6 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
       const n = normalise(posRef.current, W)
       if (n !== posRef.current) {
         targetRef.current += n - posRef.current
-        if (dragRef.current) dragRef.current.startPos += n - posRef.current
         posRef.current = n
       }
       setNumCopies(computeCopies(W))
@@ -293,26 +248,27 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
   return (
     <div
       ref={wrapRef}
-      // `touch-action: pan-y` hands the vertical axis back to the page, so a
-      // phone can still scroll past a carousel it happens to start the gesture
-      // on; the horizontal axis is ours. `select-none` stops a drag across the
-      // logos from highlighting the page instead of moving the track.
-      className={`w-full touch-pan-y py-16 select-none ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      // Each logo is an image inside a link, both draggable by default: a real
+      // mouse would lift a ghost of the logo instead of moving the track.
+      onDragStart={(e) => e.preventDefault()}
+      className="w-full py-16 select-none cursor-default [@media(hover:hover)_and_(pointer:fine)]:cursor-grab [@media(hover:hover)_and_(pointer:fine)]:active:cursor-grabbing"
     >
       <div className="relative">
 
         {/* Arrows live outside the overflow-hidden clip so they are never cropped.
 
-            `inset-0` alone left this over-constrained against `.container`'s own
-            max-width: with left and right both pinned, the max-width won and the
-            box anchored left, so the right arrow sat short of the right edge and
-            the pair read as off-centre. `mx-auto` resolves it and centres the
-            box; `bottom-4` matches the track's own `pb-4`, so the arrows centre
-            on the logos rather than on the logos plus their padding.
-
-            Hidden below `lg`: the carousel drifts on its own and takes a swipe,
-            so on a phone the arrows only cover logos. */}
-        <div className="absolute inset-x-0 top-0 bottom-4 container mx-auto pointer-events-none z-10 hidden lg:block">
+            The one place this differs from the alacrity.education carousel it
+            is otherwise copied from. With `inset-0`, left and right are both
+            pinned against `.container`'s max-width; the max-width wins and the
+            box anchors left, so the right arrow sat short of the right edge —
+            measured here. `mx-auto` centres the box, and `bottom-4` matches the
+            track's `pb-4` so the arrows centre on the logos, not on the logos
+            plus their padding. */}
+        <div className="absolute inset-x-0 top-0 bottom-4 container mx-auto pointer-events-none z-10">
           <button
             onClick={() => scroll('left')}
             className="pointer-events-auto absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
@@ -333,9 +289,8 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
           </button>
         </div>
 
-        {/* overflow-hidden clips the wide track; the `lg` padding keeps items
-            clear of the arrows, which only exist at that width. */}
-        <div className="overflow-hidden px-4 pb-4 lg:px-12">
+        {/* overflow-hidden clips the wide track; px-12 keeps items clear of the arrows */}
+        <div className="overflow-hidden px-12 pb-4">
           {/* numCopies identical copies — dynamically sized to always cover the viewport.
               pr-6 on each copy adds a trailing gap equal to the inter-item gap,
               so the loop point is visually seamless. */}
