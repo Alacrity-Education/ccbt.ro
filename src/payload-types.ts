@@ -290,6 +290,7 @@ export interface Page {
         | StaticMapBlock
         | TimelineBlock
         | TeamBlock
+        | GalleryBlock
         | PublicationsBlock
       )[]
     | null;
@@ -1179,6 +1180,31 @@ export interface TeamBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  sections?:
+    | {
+        title?: string | null;
+        color: 'purple' | 'coral';
+        items?:
+          | {
+              image: number | Media;
+              title?: string | null;
+              subtitle?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  showMotif?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PublicationsBlock".
  */
 export interface PublicationsBlock {
@@ -1653,6 +1679,7 @@ export interface PagesSelect<T extends boolean = true> {
         staticMap?: T | StaticMapBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
         team?: T | TeamBlockSelect<T>;
+        gallery?: T | GalleryBlockSelect<T>;
         publications?: T | PublicationsBlockSelect<T>;
       };
   meta?:
@@ -1967,6 +1994,30 @@ export interface TeamBlockSelect<T extends boolean = true> {
                     url?: T;
                     label?: T;
                   };
+              id?: T;
+            };
+        id?: T;
+      };
+  showMotif?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock_select".
+ */
+export interface GalleryBlockSelect<T extends boolean = true> {
+  sections?:
+    | T
+    | {
+        title?: T;
+        color?: T;
+        items?:
+          | T
+          | {
+              image?: T;
+              title?: T;
+              subtitle?: T;
               id?: T;
             };
         id?: T;
