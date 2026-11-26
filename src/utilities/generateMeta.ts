@@ -55,7 +55,15 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title ? `${doc.meta.title} — ${SITE_NAME}` : SITE_NAME
+  // The Meta Title holds the page's own name and the site's is appended here,
+  // so the field must not carry it too (see generateTitle in plugins). Left
+  // empty, the document's title stands in: falling straight back to the site
+  // name gave every such page the same <title>, which is how they all read in
+  // a tab bar and in search results. The home page is the exception — it is
+  // the site, so its name alone is the right title.
+  const ownTitle =
+    doc?.meta?.title || (doc?.slug === 'home' ? null : doc?.title) || null
+  const title = ownTitle ? `${ownTitle} — ${SITE_NAME}` : SITE_NAME
 
   const url = docURL(collection, doc?.slug)
 

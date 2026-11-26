@@ -3,6 +3,8 @@ import type { Block } from "payload";
 import { richTextEditor } from "@/fields/richTextEditor";
 import { sectionBackground } from "@/fields/sectionBackground"
 
+import { MONTHS_RO } from "./groupByMonth";
+
 export const Archive: Block = {
   slug: "archive",
   interfaceName: "ArchiveBlock",
@@ -42,6 +44,48 @@ export const Archive: Block = {
           'Files the cards under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.',
         condition: (_, siblingData) => siblingData.style === "cards",
       },
+    },
+    // Months headed even when no post is filed under them, so a link to
+    // `/evenimente#aprilie-2026` has somewhere to land before April's events
+    // are written up. A month that does have posts merges with its group.
+    // A select and a number rather than a date picker: a month-only date is
+    // stored as midnight in the editor's timezone, which is the last day of the
+    // previous month in UTC — the month the build would then file it under.
+    {
+      name: "extraMonths",
+      type: "array",
+      label: "Months shown without posts",
+      labels: { singular: "Month", plural: "Months" },
+      admin: {
+        initCollapsed: true,
+        condition: (_, siblingData) =>
+          siblingData.style === "cards" && siblingData.groupByDate !== false,
+      },
+      fields: [
+        {
+          type: "row",
+          fields: [
+            {
+              name: "month",
+              type: "select",
+              required: true,
+              options: MONTHS_RO.map((label, i) => ({
+                label,
+                value: String(i + 1),
+              })),
+              admin: { width: "50%" },
+            },
+            {
+              name: "year",
+              type: "number",
+              required: true,
+              min: 2000,
+              max: 2100,
+              admin: { width: "50%", step: 1 },
+            },
+          ],
+        },
+      ],
     },
     {
       name: "populateBy",

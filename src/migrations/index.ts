@@ -18,6 +18,7 @@ import * as migration_20261017_103905_hero_align_cta_dividers_archive_months fro
 import * as migration_20261017_104348_archive_cards_drop_starry from './20261017_104348_archive_cards_drop_starry';
 import * as migration_20261026_124225_form_slug from './20261026_124225_form_slug';
 import * as migration_20261028_145146_publications_block from './20261028_145146_publications_block';
+import * as migration_20261126_140845_archive_extra_months from './20261126_140845_archive_extra_months';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20261028_145146_publications_block.up,
     down: migration_20261028_145146_publications_block.down,
-    name: '20261028_145146_publications_block'
+    name: '20261028_145146_publications_block',
+  },
+  {
+    up: migration_20261126_140845_archive_extra_months.up,
+    down: migration_20261126_140845_archive_extra_months.down,
+    name: '20261126_140845_archive_extra_months'
   },
 ];

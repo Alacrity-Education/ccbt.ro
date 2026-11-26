@@ -907,6 +907,13 @@ export interface ArchiveBlock {
    * Files the cards under a heading per calendar month — "Octombrie 2026" — newest month first. With this on, an Individual Selection is re-ordered by date rather than kept in the order you arranged it in.
    */
   groupByDate?: boolean | null;
+  extraMonths?:
+    | {
+        month: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
+        year: number;
+        id?: string | null;
+      }[]
+    | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
   categories?: (number | Category)[] | null;
@@ -1175,35 +1182,14 @@ export interface TeamBlock {
  * via the `definition` "PublicationsBlock".
  */
 export interface PublicationsBlock {
-  /**
-   * Optional. Leave empty if the page already has one above.
-   */
   heading?: string | null;
   items?:
     | {
-        /**
-         * Shown on the spine, set vertically. Long titles are trimmed to fit the cover's height — keep it to the name of the publication.
-         */
         title: string;
-        /**
-         * Shown whole, at its own proportions. It is never cropped and nothing is laid over it.
-         */
         cover: number | Media;
-        /**
-         * Optional. Appears under the cover.
-         */
         author?: string | null;
-        /**
-         * Optional, but worth filling in: it is what lets the list be ordered or grouped later without editing every entry by hand.
-         */
         year?: number | null;
-        /**
-         * Optional. With a file, the publication opens it and its size is shown. Without one, fill in the link below instead.
-         */
         file?: (number | null) | Media;
-        /**
-         * Used only when there is no file.
-         */
         url?: string | null;
         id?: string | null;
       }[]
@@ -1801,6 +1787,13 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   style?: T;
   groupByDate?: T;
+  extraMonths?:
+    | T
+    | {
+        month?: T;
+        year?: T;
+        id?: T;
+      };
   populateBy?: T;
   relationTo?: T;
   categories?: T;

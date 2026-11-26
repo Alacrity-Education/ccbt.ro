@@ -127,6 +127,7 @@ export const CardsArchiveBlock: React.FC<
     selectedDocs,
     longCardStyles,
     groupByDate,
+    extraMonths,
   } = props;
 
   const styles: CardStyle[] = [
@@ -181,7 +182,7 @@ export const CardsArchiveBlock: React.FC<
   // saved before it existed hold no value at all — they get the months too.
   const grouped = groupByDate !== false;
   const { groups, undated } = grouped
-    ? groupPostsByMonth(posts)
+    ? groupPostsByMonth(posts, extraMonths ?? [])
     : { groups: [], undated: posts };
 
   // The running position across every month, so the four card styles cycle
@@ -206,17 +207,23 @@ export const CardsArchiveBlock: React.FC<
       <div className={cn("flex w-full flex-col gap-10")}>
         {groups.map((group) => (
           <div key={group.key}>
-            <MonthHeading className="mb-4">{group.label}</MonthHeading>
-            <CardGrid>
-              {group.posts.map((post) => (
-                <PostCard
-                  key={post.id ?? `${group.key}-${position}`}
-                  post={post}
-                  index={position++}
-                  styles={styles}
-                />
-              ))}
-            </CardGrid>
+            {/* A month added by hand with nothing filed under it yet is the
+                heading alone — no grid, so no margin hanging under it. */}
+            <MonthHeading className={group.posts.length ? "mb-4" : undefined}>
+              {group.label}
+            </MonthHeading>
+            {group.posts.length > 0 && (
+              <CardGrid>
+                {group.posts.map((post) => (
+                  <PostCard
+                    key={post.id ?? `${group.key}-${position}`}
+                    post={post}
+                    index={position++}
+                    styles={styles}
+                  />
+                ))}
+              </CardGrid>
+            )}
           </div>
         ))}
 

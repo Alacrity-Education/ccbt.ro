@@ -15,14 +15,13 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
-import { SITE_NAME } from '@/utilities/siteMeta'
+import { slugify } from '@/utilities/slugify'
 
-// What the SEO plugin pre-fills the admin's Meta Title with. It reads from the
-// same constant as the page titles and the Open Graph defaults, so an editor
-// who leaves it alone gets the suffix the rest of the site already uses.
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | ${SITE_NAME}` : SITE_NAME
-}
+// What the SEO plugin pre-fills the admin's Meta Title with: the document's own
+// title and nothing else. generateMeta appends the site's name to whatever is
+// here, so pre-filling it with the name as well printed it twice in every tab
+// that used the generate button.
+const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => doc?.title ?? ''
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   const url = getServerSideURL()
@@ -128,7 +127,7 @@ export const plugins: Plugin[] = [
         // than to a numeric id it would have to look up at build time and
         // would silently point at the wrong form if one were ever recreated.
         // Same field the pages use, generated from the title.
-        return [slugField(), ...defaultFields].map((field) => {
+        return [slugField({ slugify }), ...defaultFields].map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,

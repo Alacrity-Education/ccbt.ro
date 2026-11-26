@@ -7,7 +7,7 @@ import type { Post } from "@/payload-types";
  * real risk in a slim container image, and one that would only show in
  * production.
  */
-const MONTHS_RO = [
+export const MONTHS_RO = [
   "Ianuarie",
   "Februarie",
   "Martie",
@@ -43,9 +43,25 @@ const postDate = (post: Post): Date | null => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+/** A month the archive shows even when no post is filed under it. */
+export type ExtraMonth = {
+  /** 1–12, as the select stores it: `"4"` is April. */
+  month?: string | null;
+  year?: number | null;
+};
+
+const groupKey = (year: number, monthIndex: number): string =>
+  `${year}-${String(monthIndex + 1).padStart(2, "0")}`;
+
 /**
  * Posts gathered into one group per calendar month, newest month first and
  * newest post first inside each.
+ *
+ * `extraMonths` are months the editor wants headed even with nothing under
+ * them yet — the homepage programme links to every month of the season, and a
+ * month whose events are not written up still needs its anchor to land on.
+ * One that does have posts is the same group, so the heading is never written
+ * twice; one with a month or year that does not parse is ignored.
  *
  * The sort is applied here rather than left to the caller because grouping by
  * date and showing the groups out of date order makes no sense — which also
@@ -57,6 +73,7 @@ const postDate = (post: Post): Date | null => {
  */
 export const groupPostsByMonth = (
   posts: Post[],
+  extraMonths: ExtraMonth[] = [],
 ): { groups: PostGroup[]; undated: Post[] } => {
   const undated: Post[] = [];
   const byKey = new Map<string, PostGroup>();
@@ -74,7 +91,7 @@ export const groupPostsByMonth = (
   for (const { post, date } of dated) {
     const month = date.getMonth();
     const year = date.getFullYear();
-    const key = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const key = groupKey(year, month);
 
     const group = byKey.get(key);
     if (group) group.posts.push(post);
@@ -86,5 +103,22 @@ export const groupPostsByMonth = (
       });
   }
 
-  return { groups: [...byKey.values()], undated };
+  for (const extra of extraMonths) {
+    const month = Number(extra.month) - 1;
+    const year = Number(extra.year);
+    if (!Number.isInteger(month) || month < 0 || month > 11) continue;
+    if (!Number.isInteger(year)) continue;
+
+    const key = groupKey(year, month);
+    if (!byKey.has(key))
+      byKey.set(key, { key, label: `${MONTHS_RO[month]} ${year}`, posts: [] });
+  }
+
+  // `YYYY-MM` sorts as text in date order. The posts already arrived newest
+  // first, but the extra months can be anywhere in the list.
+  const groups = [...byKey.values()].sort((a, b) =>
+    b.key.localeCompare(a.key),
+  );
+
+  return { groups, undated };
 };

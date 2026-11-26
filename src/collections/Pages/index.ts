@@ -10,6 +10,7 @@ import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
+import { slugify } from '@/utilities/slugify'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
@@ -123,7 +124,7 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
-    slugField(),
+    slugField({ slugify }),
   ],
   hooks: {
     afterChange: [revalidatePage],
