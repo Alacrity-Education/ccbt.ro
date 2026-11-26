@@ -65,7 +65,7 @@ const GalleryItem: React.FC<{
         fill
         resource={item.image}
         // Two to a row, four from `lg` (see the grid below).
-        size="(min-width: 1024px) 25vw, 50vw"
+        size="(min-width: 1440px) 320px, (min-width: 1024px) 23vw, 40vw"
         htmlElement={null}
         pictureClassName="absolute inset-3 sm:inset-4"
         imgClassName="object-contain transition-transform duration-300 group-hover:scale-[1.03]"

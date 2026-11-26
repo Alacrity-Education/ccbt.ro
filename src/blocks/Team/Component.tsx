@@ -51,13 +51,12 @@ const MemberCard: React.FC<{ member: Member; color?: string | null }> = ({
           <Media
             fill
             resource={member.photo}
-            // Two cards to a row, four from `lg` — so a card is about half the
-            // viewport, then about a quarter. Without this the browser assumes
-            // the photo fills the window and fetches one sized for it: these
-            // are drawn near 300px and were arriving around a megabyte each.
-            // Rounded up rather than down, since guessing small is the one
-            // error that shows.
-            size="(min-width: 1024px) 25vw, 50vw"
+            // Measured, not derived: two to a row and then four, minus the
+            // motif's lane, and capped at 317px once the container stops
+            // growing at 1440. Without this the browser assumes the photo
+            // fills the window and fetches one sized for it. Rounded up rather
+            // than down, since guessing small is the one error that shows.
+            size="(min-width: 1440px) 320px, (min-width: 1024px) 23vw, 40vw"
             pictureClassName="absolute inset-0 h-full w-full"
             imgClassName="object-cover object-center"
           />

@@ -9,7 +9,6 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { isStaticExport } from '@/utilities/siteMode'
 
 /**
  * The derivatives that are the same picture at a smaller size, narrowest
@@ -97,12 +96,19 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
    * The CMS already made the smaller copies at upload, so the fix is to offer
    * them directly and let the browser choose, with `sizes` back in play.
    *
+   * The server build takes the same path rather than Next's optimiser. That
+   * optimiser resizes on request, on the CMS's own machine, from the original
+   * upload — a team page asked it for forty 9000x6000 photographs at once and
+   * each one took seven seconds — and its output is not cached by Cloudflare.
+   * The derivatives are already made, are the same files the static site
+   * serves, and come out of Cloudflare's cache.
+   *
    * SVGs are excluded: there are no derivatives of a vector, and it is already
    * the smallest thing it can be.
    */
   const doc = typeof resource === "object" ? resource : null
   const copies =
-    isStaticExport && !srcFromProps && doc?.sizes && doc.mimeType !== "image/svg+xml"
+    !srcFromProps && doc?.sizes && doc.mimeType !== "image/svg+xml"
       ? RESIZED.flatMap((name) => {
           const copy = doc.sizes?.[name]
           return copy?.url && copy.width
