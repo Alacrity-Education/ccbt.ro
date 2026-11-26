@@ -70,6 +70,8 @@ export default async function Page() {
 export function generateMetadata(): Metadata {
   return {
     title: `Articole — ${SITE_NAME}`,
+    description:
+      'Toate evenimentele și articolele Centrului Cultural Botoșani: concerte, festivaluri, expoziții, ateliere și proiecte dedicate patrimoniului.',
     alternates: { canonical: `${SITE_URL}/posts` },
   }
 }

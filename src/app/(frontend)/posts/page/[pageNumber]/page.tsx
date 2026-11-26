@@ -71,6 +71,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { pageNumber } = await paramsPromise
   return {
     title: `Articole, pagina ${pageNumber || ''} — ${SITE_NAME}`,
+    description:
+      'Toate evenimentele și articolele Centrului Cultural Botoșani: concerte, festivaluri, expoziții, ateliere și proiecte dedicate patrimoniului.',
     alternates: { canonical: `${SITE_URL}/posts/page/${pageNumber}` },
   }
 }

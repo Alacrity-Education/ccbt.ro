@@ -52,6 +52,7 @@ export default async function Page() {
 export function generateMetadata(): Metadata {
   return {
     title: `Căutare — ${SITE_NAME}`,
+    description: 'Caută în paginile și evenimentele Centrului Cultural Botoșani.',
     alternates: { canonical: `${SITE_URL}/search` },
   }
 }
